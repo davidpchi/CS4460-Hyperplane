@@ -1,9 +1,4 @@
-{
- "meta": {
-  "limit": 600, 
-  "offset": 3000, 
-  "total_count": 7202
- }, 
+var bills6=[{
  "objects": [
   {
    "bill_resolution_type": "bill", 
@@ -55762,4 +55757,4 @@
    ]
   }
  ]
-}
+}]

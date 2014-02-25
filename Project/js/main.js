@@ -31,7 +31,8 @@ var rawLegislatorData = null;
 
 //this will be our whole data set
 var legislatorData = {};
-var stateData = {};
+var stateData = [];
+var billData = [];
 
 //congress number
 //TODO: Implement a way to switch between congresses
@@ -39,13 +40,74 @@ var selectedCongress = 113;
 
 //run this at start
 function init(){
-	//load bill data
+	//load the bills data
+	loadBillsData();
+	
+	//load legislator data
     d3.csv('data/113/legislators.csv', function(err,data){        
         rawLegislatorData = data;
         if (isDataOkay()) {
             draw();
         }
     });
+}
+
+function loadBillsData() {
+	var curIndex = 0; 
+	for (var n = 0; n < bills1[0].objects.length; n++) {
+		billData[curIndex] = bills1[0].objects[n];
+		curIndex++;
+	};
+	for (var n = 0; n < bills2[0].objects.length; n++) {
+		billData[curIndex] = bills2[0].objects[n];
+		curIndex++;
+	};
+	for (var n = 0; n < bills3[0].objects.length; n++) {
+		billData[curIndex] = bills3[0].objects[n];
+		curIndex++;
+	};
+	for (var n = 0; n < bills4[0].objects.length; n++) {
+		billData[curIndex] = bills4[0].objects[n];
+		curIndex++;
+	};
+	for (var n = 0; n < bills5[0].objects.length; n++) {
+		billData[curIndex] = bills5[0].objects[n];
+		curIndex++;
+	};
+	for (var n = 0; n < bills6[0].objects.length; n++) {
+		billData[curIndex] = bills6[0].objects[n];
+		curIndex++;
+	};
+	for (var n = 0; n < bills7[0].objects.length; n++) {
+		billData[curIndex] = bills7[0].objects[n];
+		curIndex++;
+	};
+	for (var n = 0; n < bills8[0].objects.length; n++) {
+		billData[curIndex] = bills8[0].objects[n];
+		curIndex++;
+	};
+	for (var n = 0; n < bills9[0].objects.length; n++) {
+		billData[curIndex] = bills9[0].objects[n];
+		curIndex++;
+	};
+	for (var n = 0; n < bills10[0].objects.length; n++) {
+		billData[curIndex] = bills10[0].objects[n];
+		curIndex++;
+	};
+	for (var n = 0; n < bills11[0].objects.length; n++) {
+		billData[curIndex] = bills11[0].objects[n];
+		curIndex++;
+	};
+	for (var n = 0; n < bills12[0].objects.length; n++) {
+		billData[curIndex] = bills12[0].objects[n];
+		curIndex++;
+	};
+	for (var n = 0; n < bills13[0].objects.length; n++) {
+		billData[curIndex] = bills13[0].objects[n];
+		curIndex++;
+	};
+	console.log("bills13 done");
+	console.log(curIndex);
 }
 
 /**

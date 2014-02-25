@@ -1,9 +1,4 @@
-{
- "meta": {
-  "limit": 600, 
-  "offset": 1800, 
-  "total_count": 7196
- }, 
+var bills4=[{
  "objects": [
   {
    "bill_resolution_type": "bill", 
@@ -55268,4 +55263,4 @@
    ]
   }
  ]
-}
+}]
