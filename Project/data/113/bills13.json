@@ -1,0 +1,206 @@
+{
+ "meta": {
+  "limit": 600, 
+  "offset": 7200, 
+  "total_count": 7202
+ }, 
+ "objects": [
+  {
+   "bill_resolution_type": "bill", 
+   "bill_type": "house_bill", 
+   "bill_type_label": "H.R.", 
+   "congress": 113, 
+   "current_status": "reported", 
+   "current_status_date": "2014-02-11", 
+   "current_status_description": "The committees assigned to this bill sent it to the House or Senate as a whole for consideration on February 11, 2014.", 
+   "current_status_label": "Reported by Committee", 
+   "display_number": "H.R. 3865", 
+   "docs_house_gov_postdate": "2014-02-21T14:24:09", 
+   "id": 331475, 
+   "introduced_date": "2014-01-14", 
+   "is_alive": true, 
+   "is_current": true, 
+   "link": "https://www.govtrack.us/congress/bills/113/hr3865", 
+   "major_actions": [
+    [
+     "datetime.datetime(2014, 1, 14, 0, 0)", 
+     2, 
+     "Referred to the House Committee on Ways and Means.", 
+     "<action datetime=\"2014-01-14\" state=\"REFERRED\">\n      <text>Referred to the House Committee on Ways and Means.</text>\n    </action>\n    "
+    ], 
+    [
+     "datetime.datetime(2014, 2, 11, 0, 0)", 
+     3, 
+     "Ordered to be Reported in the Nature of a Substitute (Amended) by the Yeas and Nays: 23 - 13.", 
+     "<calendar datetime=\"2014-02-11\" state=\"REPORTED\">\n      <text>Ordered to be Reported in the Nature of a Substitute (Amended) by the Yeas and Nays: 23 - 13.</text>\n    </calendar>\n    "
+    ]
+   ], 
+   "noun": "bill", 
+   "number": 3865, 
+   "senate_floor_schedule_postdate": null, 
+   "sliplawnum": null, 
+   "sliplawpubpriv": null, 
+   "source": "thomas-congproj", 
+   "source_link": null, 
+   "sponsor": {
+    "bioguideid": "C000071", 
+    "birthday": "1953-07-09", 
+    "cspanid": 23039, 
+    "firstname": "Dave", 
+    "gender": "male", 
+    "gender_label": "Male", 
+    "id": 400058, 
+    "lastname": "Camp", 
+    "link": "https://www.govtrack.us/congress/members/dave_camp/400058", 
+    "middlename": "Lee", 
+    "name": "Rep. Dave Camp [R-MI4]", 
+    "namemod": "", 
+    "nickname": "", 
+    "osid": "N00008086", 
+    "pvsid": "26911", 
+    "sortname": "Camp, Dave (Rep.) [R-MI4]", 
+    "twitterid": "RepDaveCamp", 
+    "youtubeid": "DaveCampYT"
+   }, 
+   "sponsor_role": {
+    "congress_numbers": [
+     113
+    ], 
+    "current": true, 
+    "description": "Representative for Michigan's 4th congressional district", 
+    "district": 4, 
+    "enddate": "2015-01-03", 
+    "id": 42703, 
+    "leadership_title": null, 
+    "party": "Republican", 
+    "person": 400058, 
+    "phone": "202-225-3561", 
+    "role_type": "representative", 
+    "role_type_label": "Representative", 
+    "senator_class": null, 
+    "senator_rank": null, 
+    "startdate": "2013-01-03", 
+    "state": "MI", 
+    "title": "Rep.", 
+    "title_long": "Representative", 
+    "website": "http://camp.house.gov"
+   }, 
+   "thomas_link": "http://thomas.loc.gov/cgi-bin/bdquery/z?d113:hr3865:", 
+   "title": "H.R. 3865: Stop Targeting of Political Beliefs by the IRS Act of 2014", 
+   "title_without_number": "Stop Targeting of Political Beliefs by the IRS Act of 2014", 
+   "titles": [
+    [
+     "short", 
+     "introduced", 
+     "Stop Targeting of Political Beliefs by the IRS Act of 2014"
+    ], 
+    [
+     "short", 
+     "reported to house", 
+     "Stop Targeting of Political Beliefs by the IRS Act of 2014"
+    ], 
+    [
+     "official", 
+     "introduced", 
+     "To prohibit the Internal Revenue Service from modifying the standard for determining whether an organization is operated exclusively for the promotion of social welfare for purposes of section 501(c)(4) of the Internal Revenue Code of 1986."
+    ]
+   ]
+  }, 
+  {
+   "bill_resolution_type": "bill", 
+   "bill_type": "house_bill", 
+   "bill_type_label": "H.R.", 
+   "congress": 113, 
+   "current_status": "reported", 
+   "current_status_date": "2013-11-21", 
+   "current_status_description": "The committees assigned to this bill sent it to the House or Senate as a whole for consideration on November 21, 2013.", 
+   "current_status_label": "Reported by Committee", 
+   "display_number": "H.R. 3193", 
+   "docs_house_gov_postdate": "2014-02-21T17:56:53", 
+   "id": 330188, 
+   "introduced_date": "2013-09-26", 
+   "is_alive": true, 
+   "is_current": true, 
+   "link": "https://www.govtrack.us/congress/bills/113/hr3193", 
+   "major_actions": [
+    [
+     "datetime.datetime(2013, 9, 26, 0, 0)", 
+     2, 
+     "Referred to the House Committee on Financial Services.", 
+     "<action datetime=\"2013-09-26\" state=\"REFERRED\">\n      <text>Referred to the House Committee on Financial Services.</text>\n    </action>\n    "
+    ], 
+    [
+     "datetime.datetime(2013, 11, 21, 0, 0)", 
+     3, 
+     "Ordered to be Reported by the Yeas and Nays: 32 - 25.", 
+     "<calendar datetime=\"2013-11-21\" state=\"REPORTED\">\n      <text>Ordered to be Reported by the Yeas and Nays: 32 - 25.</text>\n    </calendar>\n    "
+    ]
+   ], 
+   "noun": "bill", 
+   "number": 3193, 
+   "senate_floor_schedule_postdate": null, 
+   "sliplawnum": null, 
+   "sliplawpubpriv": null, 
+   "source": "thomas-congproj", 
+   "source_link": null, 
+   "sponsor": {
+    "bioguideid": "D000614", 
+    "birthday": "1971-10-03", 
+    "cspanid": 623570, 
+    "firstname": "Sean", 
+    "gender": "male", 
+    "gender_label": "Male", 
+    "id": 412488, 
+    "lastname": "Duffy", 
+    "link": "https://www.govtrack.us/congress/members/sean_duffy/412488", 
+    "middlename": "P.", 
+    "name": "Rep. Sean Duffy [R-WI7]", 
+    "namemod": "", 
+    "nickname": "", 
+    "osid": "N00030967", 
+    "pvsid": "126238", 
+    "sortname": "Duffy, Sean (Rep.) [R-WI7]", 
+    "twitterid": "RepSeanDuffy", 
+    "youtubeid": "RepSeanDuffy"
+   }, 
+   "sponsor_role": {
+    "congress_numbers": [
+     113
+    ], 
+    "current": true, 
+    "description": "Representative for Wisconsin's 7th congressional district", 
+    "district": 7, 
+    "enddate": "2015-01-03", 
+    "id": 43066, 
+    "leadership_title": null, 
+    "party": "Republican", 
+    "person": 412488, 
+    "phone": "202-225-3365", 
+    "role_type": "representative", 
+    "role_type_label": "Representative", 
+    "senator_class": null, 
+    "senator_rank": null, 
+    "startdate": "2013-01-03", 
+    "state": "WI", 
+    "title": "Rep.", 
+    "title_long": "Representative", 
+    "website": "http://duffy.house.gov"
+   }, 
+   "thomas_link": "http://thomas.loc.gov/cgi-bin/bdquery/z?d113:hr3193:", 
+   "title": "H.R. 3193: Consumer Financial Protection Safety and Soundness Improvement Act of 2013", 
+   "title_without_number": "Consumer Financial Protection Safety and Soundness Improvement Act of 2013", 
+   "titles": [
+    [
+     "short", 
+     "introduced", 
+     "Consumer Financial Protection Safety and Soundness Improvement Act of 2013"
+    ], 
+    [
+     "official", 
+     "introduced", 
+     "To amend the Consumer Financial Protection Act of 2010 to strengthen the review authority of the Financial Stability Oversight Council of regulations issued by the Bureau of Consumer Financial Protection, and for other purposes."
+    ]
+   ]
+  }
+ ]
+}
