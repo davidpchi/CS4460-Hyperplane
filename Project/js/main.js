@@ -31,8 +31,8 @@ var rawLegislatorData = null;
 
 //this will be our whole data set
 var legislatorData = {};
-var stateData = [];
-var billData = [];
+var stateData = {};
+var billData = {};
 
 //congress number
 //TODO: Implement a way to switch between congresses
@@ -138,7 +138,8 @@ function draw() {
 				lastname: rawLegislatorData[i].lastname,
 				state: rawLegislatorData[i].state,
 				title: rawLegislatorData[i].title,
-				website: rawLegislatorData[i].website
+				website: rawLegislatorData[i].website,
+				bills: []
 				//TODO: NEED TO ADD BILLS
             };
 			
@@ -157,6 +158,14 @@ function draw() {
 			else if (legislatorData[legislator].title === "Sen") 
 				stateData[legislatorData[legislator].state].senatorCount++;
         }
+		
+		//loop through our bills and associate them with legislators
+		for (var bill in billData) {
+			if (legislatorData[billData[bill].sponsor.bioguideid] != null) 
+				legislatorData[billData[bill].sponsor.bioguideid].bills.push[billData[bill]];
+		}
+		
+		console.log(legislatorData);
         
         for (var state in stateData) {
 		
@@ -187,7 +196,7 @@ function draw() {
                 newElement.textContent = stateData[state].name;
                 svgMap.appendChild(newElement);
             }
-        }
+        }		
     });
 }
 
