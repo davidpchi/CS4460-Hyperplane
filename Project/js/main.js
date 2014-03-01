@@ -161,8 +161,9 @@ function draw() {
 		
 		//loop through our bills and associate them with legislators
 		for (var bill in billData) {
-			if (legislatorData[billData[bill].sponsor.bioguideid] != null) 
-				legislatorData[billData[bill].sponsor.bioguideid].bills.push[billData[bill]];
+			if (legislatorData[billData[bill].sponsor.bioguideid] != null) {
+				legislatorData[billData[bill].sponsor.bioguideid].bills.push(billData[bill]);
+			}
 		}
 		
 		console.log(legislatorData);
@@ -177,7 +178,13 @@ function draw() {
                 })
                 .attr('stroke-width', function() {
                     return (1);
-                });
+                })
+				.attr('stroke', "black")
+				.on('click', function() {
+					resetMap();
+					d3.select(this).attr('stroke', 'yellow')
+					               .attr('stroke-width', 2);
+				});;
 				
 			//for now, remove the overlay
 			d3.selectAll('#overlay_' + stateData[state].name).remove();
@@ -198,6 +205,16 @@ function draw() {
             }
         }		
     });
+}
+
+function resetMap() {
+	//reset all of map outlines to black 
+    for (var state in stateData) {
+		d3.selectAll('#' + stateData[state].name)
+			.attr('stroke', "black")
+			.attr('stroke-width', 1);
+
+	}
 }
 
 /**
