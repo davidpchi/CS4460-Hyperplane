@@ -22,6 +22,7 @@ var yAxis = d3.svg.axis()
 	
 var circle;
 var svg;
+var view = "Map";
 
 var xLabel = "kernelLength";
 var yLabel = "kernelWidth";
@@ -118,55 +119,35 @@ function isDataOkay() {
     return (rawLegislatorData != null);
 }
 
+
+function draw()
+{
+	createData();
+	
+	if (view == "Map")
+	{
+		drawMap();
+	}
+	else if (view == "Histogram")
+	{
+		drawHistogram();
+	}
+	else if (view == "Circles")
+	{
+		drawCircles();
+	}
+}
+
 /**
 	Load the svgs, process data, and attach the data over to our vis.
 */
-function draw() {
+function drawMap() {
 	//load the map
 	//this custom svg has an overlay of a separate on top to allow for hatches over heatmap
     d3.xml("data/custom.svg", "image/svg+xml", function(xml) {
         document.getElementById('vis').appendChild(xml.documentElement);
 
-        //loop through all the legislators in our raw data
-        for (var i = 0; i < rawLegislatorData.length; i++) {
-			//in our legislatorData, use bill_id as the key
-            legislatorData[rawLegislatorData[i].bioguide_id] = {
-                bioguide_id: rawLegislatorData[i].bioguide_id,
-				firstname: rawLegislatorData[i].firstname,
-				lastname: rawLegislatorData[i].lastname,
-				gender: rawLegislatorData[i].gender,
-				lastname: rawLegislatorData[i].lastname,
-				state: rawLegislatorData[i].state,
-				title: rawLegislatorData[i].title,
-				website: rawLegislatorData[i].website,
-				bills: []
-				//TODO: NEED TO ADD BILLS
-            };
-			
-			//init our state data
-			stateData[rawLegislatorData[i].state] = {
-				name: rawLegislatorData[i].state,
-				representativeCount: 0,
-				senatorCount: 0
-			}
-        }
-		
-		//loop through our legislator data to finalize our state data
-		for (var legislator in legislatorData) {
-			if (legislatorData[legislator].title === "Rep") 
-				stateData[legislatorData[legislator].state].representativeCount++;
-			else if (legislatorData[legislator].title === "Sen") 
-				stateData[legislatorData[legislator].state].senatorCount++;
-        }
-		
-		//loop through our bills and associate them with legislators
-		for (var bill in billData) {
-			if (legislatorData[billData[bill].sponsor.bioguideid] != null) {
-				legislatorData[billData[bill].sponsor.bioguideid].bills.push(billData[bill]);
-			}
-		}
-		
-		console.log(legislatorData);
+        
         
         for (var state in stateData) {
 		
@@ -205,6 +186,14 @@ function draw() {
             }
         }		
     });
+}
+
+function drawHistogram()
+{
+}
+
+function drawCircles()
+{
 }
 
 function resetMap() {
@@ -249,5 +238,60 @@ a string and it will be displayed. For example,
 **/
 function showDetails(string){
     d3.select('#details').html(string);
+}
+
+function selectView(viewSelect)
+{
+    var viewselect = document.getElementById("viewSelect");
+	view = viewselect.options[viewselect.selectedIndex].text;
+	
+	d3.select('svg').remove();
+	console.log(view);
+	draw();
+	
+}
+
+function createData()
+{
+    //loop through all the legislators in our raw data
+	for (var i = 0; i < rawLegislatorData.length; i++) {
+		//in our legislatorData, use bill_id as the key
+		legislatorData[rawLegislatorData[i].bioguide_id] = {
+			bioguide_id: rawLegislatorData[i].bioguide_id,
+			firstname: rawLegislatorData[i].firstname,
+			lastname: rawLegislatorData[i].lastname,
+			gender: rawLegislatorData[i].gender,
+			lastname: rawLegislatorData[i].lastname,
+			state: rawLegislatorData[i].state,
+			title: rawLegislatorData[i].title,
+			website: rawLegislatorData[i].website,
+			bills: []
+			//TODO: NEED TO ADD BILLS
+		};
+		
+		//init our state data
+		stateData[rawLegislatorData[i].state] = {
+			name: rawLegislatorData[i].state,
+			representativeCount: 0,
+			senatorCount: 0
+		}
+	}
+	
+	//loop through our legislator data to finalize our state data
+	for (var legislator in legislatorData) {
+		if (legislatorData[legislator].title === "Rep") 
+			stateData[legislatorData[legislator].state].representativeCount++;
+		else if (legislatorData[legislator].title === "Sen") 
+			stateData[legislatorData[legislator].state].senatorCount++;
+	}
+	
+	//loop through our bills and associate them with legislators
+	for (var bill in billData) {
+		if (legislatorData[billData[bill].sponsor.bioguideid] != null) {
+			legislatorData[billData[bill].sponsor.bioguideid].bills.push(billData[bill]);
+		}
+	}
+	
+	console.log(legislatorData);
 }
 
