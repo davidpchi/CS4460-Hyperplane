@@ -162,9 +162,7 @@ function drawMap() {
                 })
 				.attr('stroke', "black")
 				.on('click', function() {
-					resetMap();
-					d3.select(this).attr('stroke', 'yellow')
-					               .attr('stroke-width', 2);
+					mapOnClick(this);
 				});;
 				
 			//for now, remove the overlay
@@ -194,6 +192,15 @@ function drawHistogram()
 
 function drawCircles()
 {
+}
+
+/**
+Call the following function when a state on the map is clicked. 
+*/
+function mapOnClick(object) {
+	resetMap();
+	d3.select(object).attr('stroke', 'yellow')
+				   .attr('stroke-width', 2);
 }
 
 function resetMap() {
