@@ -122,6 +122,9 @@ function isDataOkay() {
 
 function draw()
 {
+	//clear the visualizatino
+	d3.select("svg").remove();
+	
 	createData();
 	
 	if (view == "Map")
@@ -146,8 +149,6 @@ function drawMap() {
 	//this custom svg has an overlay of a separate on top to allow for hatches over heatmap
     d3.xml("data/custom.svg", "image/svg+xml", function(xml) {
         document.getElementById('vis').appendChild(xml.documentElement);
-
-        
         
         for (var state in stateData) {
 		
@@ -192,6 +193,72 @@ function drawHistogram()
 
 function drawCircles()
 {
+	var root = {
+		firstname: "113th",
+		lastname: "Congress", 
+		children: [],
+		bills: []
+	};
+	//create a flattened one-level tree of legislators
+	for (var legislator in legislatorData) {
+		var legislator = legislatorData[legislator];
+		root.children.push(legislator);
+		root.bills.push("1");
+	}
+	
+	console.log('root children', root.children);
+	
+	var diameter = 960,
+		format = d3.format(",d"),
+		color = d3.scale.category20c();
+	
+	//959
+	//700
+	
+	svg = d3.select("#vis").append("svg")
+		.attr("width", 959)
+		.attr("height", 600)
+		.attr("class", "bubble");
+	
+	var bubble = d3.layout.pack()
+		.value(function(d){return d.bills.length})
+		//.children(function(d){return null;})
+		.size([959, 600])
+		.padding(1.5);
+
+		console.log('root', root);
+		console.log('we are here', bubble.nodes(root));
+
+	var vis = svg.datum(root).selectAll(".node")
+		.data(bubble.nodes)
+		.enter()
+		.append("g");
+
+	//http://stackoverflow.com/questions/18587107/how-to-add-image-into-center-of-svg-circle	
+				
+	var circles = vis.append("circle")
+		.attr("stroke", "black")
+		.style("fill", function(d) { return "white"})
+		.attr("cx", function(d) { return d.x; })
+		.attr("cy", function(d) { return d.y; })
+		.attr("r", function(d) { return d.r; })
+		.attr("title", function(d) { 
+			return d.firstname + " " + (d.lastname + ": " + format(d.bills.length));
+		});;
+		//.attr("data-toggle", "tooltip")
+	
+	for (var circle in circles) {
+		$(circles[circle]).tooltip({
+			'container': 'body',
+			'placement': 'bottom'
+		});	
+		
+		$(circles[circle]).hover(function(){
+			$(this).css("fill","#02baff");
+		},function(){
+			$(this).css("fill","white");
+		});
+	}
 }
 
 /**
