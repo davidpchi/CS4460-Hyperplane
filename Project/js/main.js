@@ -164,7 +164,7 @@ function drawMap() {
 				.attr('stroke', "black")
 				.on('click', function() {
 					mapOnClick(this);
-				});;
+				});
 				
 			//for now, remove the overlay
 			d3.selectAll('#overlay_' + stateData[state].name).remove();
@@ -196,6 +196,7 @@ function drawCircles()
 	var root = {
 		firstname: "113th",
 		lastname: "Congress", 
+		imageURL: "",
 		children: [],
 		bills: []
 	};
@@ -205,6 +206,11 @@ function drawCircles()
 		root.children.push(legislator);
 		root.bills.push("1");
 	}
+	
+	//DEBUG CODE HERE: 
+	//DO NOT UNCOMMENT THIS UNLESS YOU KNOW WHAT YOU ARE DOING
+	//genImageData();
+	//END DEBUG CODE
 	
 	console.log('root children', root.children);
 	
@@ -257,7 +263,7 @@ function drawCircles()
 		.style("fill", function(d) { return "white"})
 		.attr("x", function(d) { return d.x - d.r/2;})
 		.attr("y", function(d) { return d.y - d.r/2; })
-		.attr("xlink:href", "http://placehold.it/150.png")
+		.attr("xlink:href", function(d) {return "https://cdn3.iconfinder.com/data/icons/pictofoundry-pro-vector-set/512/Avatar-512.png";})
 		.attr('height', function(d) { return d.r;})
 		.attr('width', function(d) { return d.r;});
 		//.attr('clip-path', "url(#cut-off-bottom)")
@@ -351,6 +357,43 @@ function selectView(viewSelect)
 	
 }
 
+/**
+## genImageData()
+This is a admin function that will use google images to grab all the images 
+of the senators and save it to an array. IT SHOULD NOT GET RUN UNDER NORMAL 
+CIRCUMSTANCES AND WILL BE REMOVED IN PRODUCTION.
+**/
+function genImageData() {
+
+	var myArr = [];
+
+	var returnArray = [];
+	
+	for (var legislator in legislatorData) {
+		(function(legislator, legislatorData){myArr.push(function(done) {
+			var person = legislatorData[legislator];
+			var firstName = person.firstname;
+			var lastName = person.lastname;
+			var imageSearch = new google.search.ImageSearch();
+			var dumbFunction = function() {
+				var myRes = null;
+				if (imageSearch.results.length != 0) {
+					myRes = imageSearch.results[0].url;
+					returnArray[firstName + lastName] = myRes;
+				}
+				done(null, myRes);
+			}
+			imageSearch.setSearchCompleteCallback(this, dumbFunction, null);
+			imageSearch.execute(legislatorData[legislator].firstname + " " 
+				+ legislatorData[legislator].lastname);
+		})})(legislator, legislatorData);
+	}
+	
+	async.parallel(myArr, function(err,result) {
+		console.log(returnArray);
+	});
+}
+
 function createData()
 {
     //loop through all the legislators in our raw data
@@ -365,6 +408,7 @@ function createData()
 			state: rawLegislatorData[i].state,
 			title: rawLegislatorData[i].title,
 			website: rawLegislatorData[i].website,
+			imageURL: rawLegislatorData[i].imageURL,
 			bills: []
 			//TODO: NEED TO ADD BILLS
 		};
