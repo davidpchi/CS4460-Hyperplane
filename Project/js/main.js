@@ -219,6 +219,13 @@ function drawCircles()
 		.attr("width", 959)
 		.attr("height", 600)
 		.attr("class", "bubble");
+
+	svg.append("g").append("clipPath")
+		.attr('id', 'cut-off-bottom')
+		.append("circle")
+			.attr('cx', 100)
+			.attr('cy', 100)
+			.attr('r', 50);		
 	
 	var bubble = d3.layout.pack()
 		.value(function(d){return d.bills.length})
@@ -239,24 +246,43 @@ function drawCircles()
 	var circles = vis.append("circle")
 		.attr("stroke", "black")
 		.style("fill", function(d) { return "white"})
-		.attr("cx", function(d) { return d.x; })
+		.attr("cx", function(d) { return d.x;})
 		.attr("cy", function(d) { return d.y; })
-		.attr("r", function(d) { return d.r; })
-		.attr("title", function(d) { 
-			return d.firstname + " " + (d.lastname + ": " + format(d.bills.length));
-		});;
+		.attr("r", function(d) { return d.r; });
+		
+		//.attr("data-toggle", "tooltip")
+
+	var imagePortraits = vis.append("image")
+		.attr("stroke", "black")
+		.style("fill", function(d) { return "white"})
+		.attr("x", function(d) { return d.x - d.r/2;})
+		.attr("y", function(d) { return d.y - d.r/2; })
+		.attr("xlink:href", "http://placehold.it/150.png")
+		.attr('height', function(d) { return d.r;})
+		.attr('width', function(d) { return d.r;});
+		//.attr('clip-path', "url(#cut-off-bottom)")
 		//.attr("data-toggle", "tooltip")
 	
-	for (var circle in circles) {
-		$(circles[circle]).tooltip({
+	var onHoverCircles = vis.append("circle")
+		.attr("stroke", "black")
+		.style("fill-opacity", 0.0)
+		.attr("cx", function(d) { return d.x;})
+		.attr("cy", function(d) { return d.y; })
+		.attr("r", function(d) { return d.r; })
+		.attr("title", function(d) { 					
+			return d.firstname + " " + (d.lastname + ": " + format(d.bills.length));	
+		});
+		
+	for (var circle in onHoverCircles) {
+		$(onHoverCircles[circle]).tooltip({
 			'container': 'body',
 			'placement': 'bottom'
 		});	
 		
-		$(circles[circle]).hover(function(){
-			$(this).css("fill","#02baff");
+		$(onHoverCircles[circle]).hover(function(){
+			$(this).css("stroke","red");
 		},function(){
-			$(this).css("fill","white");
+			$(this).css("stroke","black");
 		});
 	}
 }
