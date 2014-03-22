@@ -271,6 +271,7 @@ function drawCircles()
 	
 	var onHoverCircles = vis.append("circle")
 		.attr("stroke", "black")
+		.attr("id", function(d) {return d.bioguide_id})
 		.style("fill-opacity", 0.0)
 		.attr("cx", function(d) { return d.x;})
 		.attr("cy", function(d) { return d.y; })
@@ -278,7 +279,8 @@ function drawCircles()
 		.attr("title", function(d) { 					
 			return d.firstname + " " + (d.lastname + ": " + format(d.bills.length));	
 		});
-		
+	
+	//add functionality to the onHover of the circles
 	for (var circle in onHoverCircles) {
 		$(onHoverCircles[circle]).tooltip({
 			'container': 'body',
@@ -290,16 +292,29 @@ function drawCircles()
 		},function(){
 			$(this).css("stroke","black");
 		});
+		
+		$(onHoverCircles[circle]).on('click', function() {circlesOnClick(this);});
 	}
 }
 
 /**
 Call the following function when a state on the map is clicked. 
+TODO: Sanat and Ching, update the UI here
 */
 function mapOnClick(object) {
 	resetMap();
 	d3.select(object).attr('stroke', 'yellow')
 				   .attr('stroke-width', 2);
+	//to get the state, simply pull the ID of the object
+}
+
+/**
+Call the following functino when a legislator on the circle packing grid is clicked.
+TODO: Sanat and Ching, update the UI here
+*/
+function circlesOnClick(object) {
+	//to get the legislator, simply pull the ID of the object
+	//this will be the same as the legislator's bioguide ID
 }
 
 function resetMap() {
