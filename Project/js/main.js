@@ -39,9 +39,17 @@ var billData = {};
 //congress number
 //TODO: Implement a way to switch between congresses
 var selectedCongress = 113;
+var maxLegislatorCountForState;
+var maxBillCountForState;
+var maxBillCountForLegislator;
 
 //run this at start
 function init(){
+
+	maxLegislatorCountForState = 0;
+	maxBillCountForState = 0;
+	maxBillCountForLegislator = 0;
+	
 	//load the bills data
 	loadBillsData();
 	
@@ -49,7 +57,10 @@ function init(){
     d3.csv('data/113/legislators.csv', function(err,data){        
         rawLegislatorData = data;
         if (isDataOkay()) {
-            draw();
+			//create our finalized data sets
+			createData();
+			//finally, kick off the first draw
+			draw();
         }
     });
 	
@@ -127,9 +138,7 @@ function draw()
 {
 	//clear the visualizatino
 	d3.select("svg").remove();
-	
-	createData();
-	
+		
 	if (view == "Map")
 	{
 		drawMap();
@@ -154,12 +163,13 @@ function drawMap() {
         document.getElementById('vis').appendChild(xml.documentElement);
         
         for (var state in stateData) {
-		
-			//encode the total number of legislators with the color red of each state
-			var totalLegis = stateData[state].representativeCount + stateData[state].senatorCount;
+			//TODO: need to provide a way to switch which maximum is being used to compute color
+			//atm, it is just the maxLegilslatorCount
+			var color = computeColorByValue("legislatorCount", maxLegislatorCountForState, stateData[state]);
+			
             d3.selectAll('#' + stateData[state].name)
                 .attr('fill', function() {
-                    return ("rgb(" + totalLegis * 4 + ",0,0)");
+                    return (color);
                 })
                 .attr('stroke-width', function() {
                     return (1);
@@ -468,29 +478,31 @@ function mapOnClick(object) {
 }
 
 function mapOnHoverEnter(object) {
-	resetMapFill();
-	d3.select(object).attr('fill', 'yellow')
-				   .attr('stroke-width', 2);
+	d3.select(object).attr('fill', 'yellow');
 	//to get the state, simply pull the ID of the object
 }
 
 //TODO: mapOnHoverExit is broken
 function mapOnHoverExit(object) {
-	resetMapFill();
 	var state = stateData[object.id];
-	var color = computeColorByValue("legislatorCount", state);
+	//TODO: need to provide a way to switch which maximum is being used to compute color
+	//atm, it is just the maxLegilslatorCount
+	var color = computeColorByValue("legislatorCount", maxLegislatorCountForState, state);
 	d3.select(object)
-		.attr('fill', color)
-		.attr('stroke-width', 2);
+		.attr('fill', color);
 	//d3.select(object).attr('fill', 'black')
 	//			   .attr('stroke-width', 2);
 	//to get the state, simply pull the ID of the object
 }
 
-function computeColorByValue(val, stateObj) {
-	if (val === "legislatorCount") {
+function computeColorByValue(valType, maxVal, stateObj) {
+	var colorScale = ['rgb(247,252,253)','rgb(229,245,249)','rgb(204,236,230)','rgb(153,216,201)','rgb(102,194,164)','rgb(65,174,118)','rgb(35,139,69)','rgb(0,88,36)'];
+	
+	if (valType === "legislatorCount") {
 		var totalLegis = stateObj.representativeCount + stateObj.senatorCount;
-		return ("rgb(" + totalLegis * 4 + ",0,0)");
+		console.log(maxVal);
+		var colorIndex = Math.round(totalLegis/maxVal * (colorScale.length-1));
+		return (colorScale[colorIndex]);
 	}
 	
 	return ("black");
@@ -513,10 +525,6 @@ function resetMapOutlines() {
 			.attr('stroke-width', 1);
 
 	}
-}
-
-function resetMapFill() {
-	//reset all of the map fills to their proper colors
 }
 
 /**
@@ -703,7 +711,16 @@ function createData()
 		}
 	}
 	
-	console.log(legislatorData);
+	//calculate maximums
+	for (var state in stateData) {
+		//calculate the total number of legislators for each state
+		var totalLegis = stateData[state].representativeCount + stateData[state].senatorCount;
+		//keep a running track of what the highest legislatorCount is
+		if (totalLegis > maxLegislatorCountForState) 
+			maxLegislatorCountForState = totalLegis;
+		//TODO: NEED TO CALCULATE MAX BILL COUNT FOR STATES
+	}	
+	//TODO: NEED TO CALCULATE MAX BILL COUNT FOR LEGISLATORS
 }
 
 function histClick() //add stuff here
