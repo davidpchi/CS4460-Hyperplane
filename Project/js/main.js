@@ -474,12 +474,15 @@ function mapOnClick(object) {
 	resetMapOutlines();
 	d3.select(object).attr('stroke', 'yellow')
 				   .attr('stroke-width', 2);
-	//to get the state, simply pull the ID of the object
+	state = stateData[object.id];
+	document.getElementById("StateName").innerHTML= "<b>State Name:</b> " + state.name;
+	document.getElementById("RepCount").innerHTML= "<b>State Name:</b> " + state.representativeCount;
+	document.getElementById("SenatorCount").innerHTML= "<b>State Name:</b> " + state.senatorCount;
 }
 
 function mapOnHoverEnter(object) {
 	d3.select(object).attr('fill', 'yellow');
-	//to get the state, simply pull the ID of the object
+	state = stateData[object.id];
 }
 
 //TODO: mapOnHoverExit is broken
@@ -490,9 +493,6 @@ function mapOnHoverExit(object) {
 	var color = computeColorByValue("legislatorCount", maxLegislatorCountForState, state);
 	d3.select(object)
 		.attr('fill', color);
-	//d3.select(object).attr('fill', 'black')
-	//			   .attr('stroke-width', 2);
-	//to get the state, simply pull the ID of the object
 }
 
 function computeColorByValue(valType, maxVal, stateObj) {
