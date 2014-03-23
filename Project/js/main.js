@@ -5,9 +5,9 @@ DIV ON THE PAGE.
 
 This function is passed the variables to initially draw on the x and y axes.
 **/
-var margin = {top: 40, right: 20, bottom: 30, left: 40}; //this is an object aht has been created
-var width = 960 - margin.left - margin.right;
-var height = 500 - margin.top - margin.bottom;
+var margin = {top: 80, right: 30, bottom: 30, left: 30}; //this is an object aht has been created
+var width = 930 - margin.left - margin.right;
+var height = 600 - margin.top - margin.bottom;
 
 var x = d3.scale.linear().range([0, width]);
 var y = d3.scale.linear().range([height,0]);
@@ -23,6 +23,7 @@ var yAxis = d3.svg.axis()
 var circle;
 var svg;
 var view = "Map";
+var histSort = "nameAscending";
 
 var xLabel = "kernelLength";
 var yLabel = "kernelWidth";
@@ -51,6 +52,8 @@ function init(){
             draw();
         }
     });
+	
+	document.getElementById("histSorter").style.visibility="hidden";
 }
 
 function loadBillsData() {
@@ -189,6 +192,156 @@ function drawMap() {
 
 function drawHistogram()
 {
+	var svg = d3.select("#vis").append("svg")
+		.attr("width", width + margin.left + margin.right)
+		.attr("height", height + margin.top + margin.bottom)
+		.append("g")
+		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+		
+	var barWidth = (width)/50;
+	var scaling = 5;
+	
+	var stateArray = $.map(stateData, function(value, index) {
+		return [value];
+		});
+	
+	if (histSort == "Number Descending")
+	{
+		stateArray.sort(function(a, b){
+			var dif = (b.representativeCount+b.senatorCount)-(a.representativeCount+a.senatorCount);
+			if (dif == 0)
+			{
+				var nameA=a.name.toLowerCase(), nameB=b.name.toLowerCase()
+				if (nameA < nameB) //sort string ascending
+					return -1 
+				if (nameA > nameB)
+					return 1
+				return 0 //default return value (no sorting)
+			}
+			else
+			{
+				return dif;
+			}
+		});
+	}
+	else if (histSort == "Number Ascending")
+	{
+		stateArray.sort(function(a, b){
+			var dif = (a.representativeCount+a.senatorCount)-(b.representativeCount+b.senatorCount);
+			if (dif == 0)
+			{
+				var nameA=a.name.toLowerCase(), nameB=b.name.toLowerCase()
+				if (nameA < nameB) //sort string ascending
+					return -1 
+				if (nameA > nameB)
+					return 1
+				return 0 //default return value (no sorting)
+			}
+			else
+			{
+				return dif;
+			}
+		});
+	}
+	else if (histSort == "Name Descending")
+	{
+		stateArray.sort(function(a, b){
+			var nameA=a.name.toLowerCase(), nameB=b.name.toLowerCase()
+			if (nameA > nameB) //sort string ascending
+				return -1 
+			if (nameA < nameB)
+				return 1
+			return 0 //default return value (no sorting)
+		});
+	}
+	else //if (histSort == "Name Ascending")
+	{
+		stateArray.sort(function(a, b){
+			var nameA=a.name.toLowerCase(), nameB=b.name.toLowerCase()
+			if (nameA < nameB) //sort string ascending
+				return -1 
+			if (nameA > nameB)
+				return 1
+			return 0 //default return value (no sorting)
+		});
+	}
+	console.log(stateArray);
+	
+	var histScale = d3.scale.linear()
+		.domain([0, 80])
+        .range([height, 0]);
+	
+	var histAxis = d3.svg.axis()
+		.scale(histScale)
+		.orient("left");
+		
+	svg.append("g")
+		.attr("class", "axis")
+		.call(histAxis);
+	
+	for (var state in stateData)
+	{
+		var numLeg = stateData[state].representativeCount+stateData[state].senatorCount;
+		var offset = stateArray.indexOf(stateData[state])*barWidth+10;
+		svg.append("rect")
+			.attr("x", offset)
+			.attr("width", barWidth-1)
+			.attr("height", height - histScale(numLeg))
+			.attr("y", histScale(numLeg))
+			.attr("fill", "#000080")
+			.on("mouseover", function() {
+				d3.select(this)
+					.attr("fill", "#008000")
+				})
+			.on("mouseout", function() {
+				d3.select(this)
+					.attr("fill", "#000080")
+				})
+			.on("click", function() {histClick(this)});
+			
+		if (histScale(numLeg)<=height-12)
+		{
+			svg.append("text")
+				.text(numLeg)
+				.attr("x", offset+(barWidth/2)-1)
+				.attr("y", histScale(numLeg)+10)
+				.attr("font-family", "sans-serif")
+				.attr("font-size", "10px")
+				.attr("fill", "white")
+				.attr("text-anchor", "middle");
+		}
+		else
+		{
+			svg.append("text")
+				.text(numLeg)
+				.attr("x", offset+(barWidth/2)-1)
+				.attr("y", histScale(numLeg)-2)
+				.attr("font-family", "sans-serif")
+				.attr("font-size", "10px")
+				.attr("fill", "black")
+				.attr("text-anchor", "middle");
+		}
+		
+		svg.append("text")
+			.text(stateData[state].name)
+			.attr("x", offset+(barWidth/2)-1)
+			.attr("y", height+10)
+			.attr("font-family", "sans-serif")
+			.attr("font-size", "10px")
+			.attr("fill", "black")
+			.attr("text-anchor", "middle");
+	}
+	
+	svg.append("text")
+		.text("Number of Legislators")
+		.attr("x", width/2)
+		.attr("y", -10)
+		.attr("font-family", "serif")
+		.attr("font-size", "24px")
+		.attr("fill", "black")
+		.attr("text-anchor", "middle");
+	
+	
 }
 
 function drawCircles()
@@ -361,15 +514,72 @@ function showDetails(string){
     d3.select('#details').html(string);
 }
 
-function selectView(viewSelect)
+function selectView()
 {
-    var viewselect = document.getElementById("viewSelect");
-	view = viewselect.options[viewselect.selectedIndex].text;
+    var viewSelect = document.getElementById("viewSelect");
+	view = viewSelect.options[viewSelect.selectedIndex].text;
 	
 	d3.select('svg').remove();
 	console.log(view);
+	
+	if (view == "Histogram")
+	{
+		document.getElementById("histSorter").style.visibility="visible";
+	}
+	else
+	{
+		document.getElementById("histSorter").style.visibility="hidden";
+	}
+	
 	draw();
 	
+}
+
+function changeHistSort()
+{
+	var sortSelect = document.getElementById("histSorter");
+	histSort = sortSelect.options[sortSelect.selectedIndex].text;
+	
+	d3.select('svg').remove();
+	console.log(histSort);
+	draw();
+}
+
+/**
+## genImageData()
+This is a admin function that will use google images to grab all the images 
+of the senators and save it to an array. IT SHOULD NOT GET RUN UNDER NORMAL 
+CIRCUMSTANCES AND WILL BE REMOVED IN PRODUCTION.
+**/
+function genImageData() {
+
+	var myArr = [];
+
+	var returnArray = [];
+	
+	for (var legislator in legislatorData) {
+		(function(legislator, legislatorData){myArr.push(function(done) {
+			var person = legislatorData[legislator];
+			var firstName = person.firstname;
+			var lastName = person.lastname;
+			var imageSearch = new google.search.ImageSearch();
+			var dumbFunction = function() {
+				var myRes = null;
+				if (imageSearch.results.length != 0) {
+					myRes = imageSearch.results[0].url;
+					returnArray[firstName + lastName] = myRes;
+				}
+				done(null, myRes);
+			}
+			imageSearch.setSearchCompleteCallback(this, dumbFunction, null);
+			imageSearch.execute(legislatorData[legislator].firstname + " " 
+				+ legislatorData[legislator].lastname);
+		})})(legislator, legislatorData);
+	}
+	
+	async.parallel(myArr, function(err,result) {
+		console.log(returnArray);
+	});
 }
 
 /**
@@ -429,10 +639,13 @@ function createData()
 		};
 		
 		//init our state data
-		stateData[rawLegislatorData[i].state] = {
-			name: rawLegislatorData[i].state,
-			representativeCount: 0,
-			senatorCount: 0
+		if (rawLegislatorData[i].title=="Rep"||rawLegislatorData[i].title=="Sen")
+		{
+			stateData[rawLegislatorData[i].state] = {
+				name: rawLegislatorData[i].state,
+				representativeCount: 0,
+				senatorCount: 0
+			}
 		}
 	}
 	
@@ -454,3 +667,7 @@ function createData()
 	console.log(legislatorData);
 }
 
+function histClick() //add stuff here
+{
+	console.log("histClick");
+}

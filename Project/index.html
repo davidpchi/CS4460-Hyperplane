@@ -23,6 +23,21 @@
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
 	    <link rel="stylesheet" href="css/main.css">
 		<title>CS 4460 Project</title>
+		<style type="text/css">
+			
+			.axis path,
+			.axis line {
+				fill: none;
+				stroke: black;
+				shape-rendering: crispEdges;
+			}
+			
+			.axis text {
+				font-family: sans-serif;
+				font-size: 11px;
+			}
+
+		</style>
     </head>
 
     <body onload="onload()">
@@ -48,7 +63,18 @@
 			      <option>Circles</option>
 			    </select>
 				</span>
+				<p></p>
+				<span>
+				<select id="histSorter"  onchange="changeHistSort()">
+			      <option>Name Ascending</option>
+			      <option>Name Descending</option>  
+			      <option>Number Ascending</option>
+				  <option>Number Descending</option>
+			    </select>
+				</span>
 			</div>
+			
+
 		</div>
 
 		<!-- Controls -->
