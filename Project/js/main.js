@@ -167,6 +167,12 @@ function drawMap() {
 				.attr('stroke', "black")
 				.on('click', function() {
 					mapOnClick(this);
+				})
+				.on('mouseover', function() {
+					mapOnHoverEnter(this);
+				})
+				.on('mouseout', function() {
+					mapOnHoverExit(this);
 				});
 				
 			//for now, remove the overlay
@@ -455,10 +461,39 @@ Call the following function when a state on the map is clicked.
 TODO: Sanat and Ching, update the UI here
 */
 function mapOnClick(object) {
-	resetMap();
+	resetMapOutlines();
 	d3.select(object).attr('stroke', 'yellow')
 				   .attr('stroke-width', 2);
 	//to get the state, simply pull the ID of the object
+}
+
+function mapOnHoverEnter(object) {
+	resetMapFill();
+	d3.select(object).attr('fill', 'yellow')
+				   .attr('stroke-width', 2);
+	//to get the state, simply pull the ID of the object
+}
+
+//TODO: mapOnHoverExit is broken
+function mapOnHoverExit(object) {
+	resetMapFill();
+	var state = stateData[object.id];
+	var color = computeColorByValue("legislatorCount", state);
+	d3.select(object)
+		.attr('fill', color)
+		.attr('stroke-width', 2);
+	//d3.select(object).attr('fill', 'black')
+	//			   .attr('stroke-width', 2);
+	//to get the state, simply pull the ID of the object
+}
+
+function computeColorByValue(val, stateObj) {
+	if (val === "legislatorCount") {
+		var totalLegis = stateObj.representativeCount + stateObj.senatorCount;
+		return ("rgb(" + totalLegis * 4 + ",0,0)");
+	}
+	
+	return ("black");
 }
 
 /**
@@ -470,7 +505,7 @@ function circlesOnClick(object) {
 	//this will be the same as the legislator's bioguide ID
 }
 
-function resetMap() {
+function resetMapOutlines() {
 	//reset all of map outlines to black 
     for (var state in stateData) {
 		d3.selectAll('#' + stateData[state].name)
@@ -478,6 +513,10 @@ function resetMap() {
 			.attr('stroke-width', 1);
 
 	}
+}
+
+function resetMapFill() {
+	//reset all of the map fills to their proper colors
 }
 
 /**
