@@ -5,8 +5,8 @@ DIV ON THE PAGE.
 
 This function is passed the variables to initially draw on the x and y axes.
 **/
-var margin = {top: 80, right: 30, bottom: 30, left: 30}; //this is an object aht has been created
-var width = 930 - margin.left - margin.right;
+var margin = {top: 80, right: 50, bottom: 30, left: 30}; //this is an object aht has been created
+var width = 950 - margin.left - margin.right;
 var height = 600 - margin.top - margin.bottom;
 
 var x = d3.scale.linear().range([0, width]);
@@ -29,6 +29,9 @@ var histSort;
 var mapOptions;
 var histOptions;
 var circleOptions;
+
+var abbrToName = {};
+var nameToAbbr = {};
 
 var xLabel = "kernelLength";
 var yLabel = "kernelWidth";
@@ -79,6 +82,8 @@ function init(){
 	histOptions = menu.options[menu.selectedIndex].text;
 	menu = document.getElementById("circleOptions");
 	circleOptions = menu.options[menu.selectedIndex].text;
+	
+	makeAbbrTables();
 }
 
 function loadBillsData() {
@@ -238,13 +243,13 @@ function drawHistogram()
 	if (histSort == "Number Descending")
 	{
 		stateArray.sort(function(a, b){
-			return histNumSort(a,b);
+			return histNumSortRev(a,b);
 		});
 	}
 	else if (histSort == "Number Ascending")
 	{
 		stateArray.sort(function(a, b){
-			return histNumSort(b,a);
+			return histNumSort(a,b);
 		});
 	}
 	else if (histSort == "Name Descending")
@@ -277,7 +282,7 @@ function drawHistogram()
 	{
 		var numLeg = stateData[state].representativeCount+stateData[state].senatorCount;
 		var offset = stateArray.indexOf(stateData[state])*barWidth+10;
-		var bar = svg.append("rect")
+		svg.append("rect")
 			.attr("id", "hist"+stateData[state].name)
 			.attr("x", offset)
 			.attr("width", barWidth-1)
@@ -351,6 +356,107 @@ function drawHistogram()
 		.attr("fill", "black")
 		.attr("text-anchor", "middle");
 	
+	
+}
+
+function updateHistogram()
+{	
+	var barWidth = (width)/50;
+	var scaling = 5;
+	
+	var stateArray = $.map(stateData, function(value, index) {
+		return [value];
+		});
+	
+	if (histSort == "Number Descending")
+	{
+		stateArray.sort(function(a, b){
+			return histNumSortRev(a,b);
+		});
+	}
+	else if (histSort == "Number Ascending")
+	{
+		stateArray.sort(function(a, b){
+			return histNumSort(a,b);
+		});
+	}
+	else if (histSort == "Name Descending")
+	{
+		stateArray.sort(function(a, b){
+			return histAlphaSort(b,a);
+		});
+	}
+	else //if (histSort == "Name Ascending")
+	{
+		stateArray.sort(function(a, b){
+			return histAlphaSort(a,b);
+		});
+	}
+	console.log(stateArray);
+	
+	var histScale = d3.scale.linear()
+		.domain([0, 80])
+        .range([height, 0]);
+	
+	// var histAxis = d3.svg.axis()
+		// .scale(histScale)
+		// .orient("left");
+		
+	// svg.append("g")
+		// .attr("class", "axis")
+		// .call(histAxis);
+	
+	for (var state in stateData)
+	{
+		var numLeg = stateData[state].representativeCount+stateData[state].senatorCount;
+		var offset = stateArray.indexOf(stateData[state])*barWidth+10;
+		d3.select("#hist"+stateData[state].name)
+			.transition()
+			.attr("x", offset)
+			.attr("width", barWidth-1)
+			.attr("height", height - histScale(numLeg))
+			.attr("y", histScale(numLeg))
+			.attr("fill", "#000080")
+			.duration(1000);
+			
+		if (histScale(numLeg)<=height-12)
+		{
+			d3.select("#hist"+stateData[state].name+"value")
+				.transition()
+				// .text(numLeg)
+				.attr("x", offset+(barWidth/2)-1)
+				.attr("y", histScale(numLeg)+10)
+				.attr("fill", "white")
+				.duration(1000);
+		}
+		else
+		{
+			d3.select("#hist"+stateData[state].name+"value")
+				.transition()
+				// .text(numLeg)
+				.attr("x", offset+(barWidth/2)-1)
+				.attr("y", histScale(numLeg)-2)
+				.attr("fill", "black")
+				.duration(1000);
+		}
+		
+		d3.select("#hist"+stateData[state].name+"name")
+			.transition()
+			// .text(stateData[state].name)
+			.attr("x", offset+(barWidth/2)-1)
+			.attr("y", height+10)
+			.attr("fill", "black")
+			.duration(1000);
+	}
+	
+	// svg.append("text")
+		// .text("Number of Legislators")
+		// .attr("x", width/2)
+		// .attr("y", -10)
+		// .attr("font-family", "serif")
+		// .attr("font-size", "24px")
+		// .attr("fill", "black")
+		// .attr("text-anchor", "middle");
 	
 }
 
@@ -609,9 +715,9 @@ function changeHistSort()
 	var menu = document.getElementById("histSort");
 	histSort = menu.options[menu.selectedIndex].text;
 	
-	d3.select('svg').remove();
+	// d3.select('svg').remove();
 	console.log(histSort);
-	draw();
+	updateHistogram();
 }
 
 function changeMapOptions()
@@ -792,7 +898,8 @@ function histOnHoverEnter(object)
 	d3.select("#"+object.id+"name")
 		.attr("y",height+25)
 		.attr("font-size", "16px")
-		.attr("font-weight", "bold");
+		.attr("font-weight", "bold")
+		.text(abbrToName[object.id.substring(object.id.length-2,object.id.length)]);
 }
 
 function histOnHoverExit(object)
@@ -802,7 +909,8 @@ function histOnHoverExit(object)
 	d3.select("#"+object.id+"name")
 		.attr("y",height+10)
 		.attr("font-size", "10px")
-		.attr("font-weight", "normal");
+		.attr("font-weight", "normal")
+		.text(object.id.substring(object.id.length-2,object.id.length));
 }
 
 function histAlphaSort(a,b) //if b is later, return -1
@@ -815,7 +923,20 @@ function histAlphaSort(a,b) //if b is later, return -1
 	return 0 //default return value (no sorting)
 }
 
-function histNumSort(a,b) //if b is greater, return 1
+function histNumSort(a,b) //if a is greater, return 1
+{
+	var dif = (a.representativeCount+a.senatorCount)-(b.representativeCount+b.senatorCount);
+	if (dif == 0)
+	{
+		return histAlphaSort(a,b)
+	}
+	else
+	{
+		return dif;
+	}
+}
+
+function histNumSortRev(a,b) //if b is greater, return 1
 {
 	var dif = (b.representativeCount+b.senatorCount)-(a.representativeCount+a.senatorCount);
 	if (dif == 0)
@@ -826,4 +947,66 @@ function histNumSort(a,b) //if b is greater, return 1
 	{
 		return dif;
 	}
+}
+
+function makeAbbrTables()
+{
+	nameToAbbr = {
+	"Alabama":"AL",
+	"Alaska":"AK",
+	"Arizona":"AZ",
+	"Arkansas":"AR",
+	"California":"CA",
+	"Colorado":"CO",
+	"Connecticut":"CT",
+	"Delaware":"DE",
+	"Florida":"FL",
+	"Georgia":"GA",
+	"Hawaii":"HI",
+	"Idaho":"ID",
+	"Illinois":"IL",
+	"Indiana":"IN",
+	"Iowa":"IA",
+	"Kansas":"KS",
+	"Kentucky":"KY",
+	"Louisiana":"LA",
+	"Maine":"ME",
+	"Maryland":"MD",
+	"Massachusetts":"MA",
+	"Michigan":"MI",
+	"Minnesota":"MN",
+	"Mississippi":"MS",
+	"Missouri":"MO",
+	"Montana":"MT",
+	"Nebraska":"NE",
+	"Nevada":"NV",
+	"New Hampshire":"NH",
+	"New Jersey":"NJ",
+	"New Mexico":"NM",
+	"New York":"NY",
+	"North Carolina":"NC",
+	"North Dakota":"ND",
+	"Ohio":"OH",
+	"Oklahoma":"OK",
+	"Oregon":"OR",
+	"Pennsylvania":"PA",
+	"Rhode Island":"RI",
+	"South Carolina":"SC",
+	"South Dakota":"SD",
+	"Tennessee":"TN",
+	"Texas":"TX",
+	"Utah":"UT",
+	"Vermont":"VT",
+	"Virginia":"VA",
+	"Washington":"WA",
+	"West Virginia":"WV",
+	"Wisconsin":"WI",
+	"Wyoming":"WY"
+	}
+	
+	for (var name in nameToAbbr)
+	{
+		abbrToName[nameToAbbr[name]] = name;
+	}
+
 }
