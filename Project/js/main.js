@@ -516,6 +516,12 @@ TODO: Sanat and Ching, update the UI here
 function circlesOnClick(object) {
 	//to get the legislator, simply pull the ID of the object
 	//this will be the same as the legislator's bioguide ID
+	var legislator = legislatorData[object.id];
+	document.getElementById("legislator_img_src").src = getLegislatorImageURL(legislator.bioguide_id);
+}
+
+function getLegislatorImageURL(gov_id) {
+	return ("http://theunitedstates.io/images/congress/450x550/" + gov_id +".jpg");
 }
 
 function resetMapOutlines() {
