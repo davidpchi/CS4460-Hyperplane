@@ -892,7 +892,14 @@ function createData()
 
 function histOnClick(object) //add stuff here
 {
-	console.log("histClick");
+	for (var state in stateData)
+	{
+		d3.select("#hist"+stateData[state].name)
+			.attr("stroke-width",0);
+	}
+	d3.select(object)
+		.attr("stroke", "#00FFFF")
+		.attr("stroke-width",2);
 }
 
 function histOnHoverEnter(object)
