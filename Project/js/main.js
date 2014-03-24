@@ -22,8 +22,13 @@ var yAxis = d3.svg.axis()
 	
 var circle;
 var svg;
-var view = "Map";
-var histSort = "nameAscending";
+
+//for drop down menus
+var view;
+var histSort;
+var mapOptions;
+var histOptions;
+var circleOptions;
 
 var xLabel = "kernelLength";
 var yLabel = "kernelWidth";
@@ -64,7 +69,16 @@ function init(){
         }
     });
 	
-	document.getElementById("histSorter").style.visibility="hidden";
+	var menu = document.getElementById("viewSelect");
+	view = menu.options[menu.selectedIndex].text;
+	menu = document.getElementById("histSort");
+	histSort = menu.options[menu.selectedIndex].text;
+	menu = document.getElementById("mapOptions");
+	mapOptions = menu.options[menu.selectedIndex].text;
+	menu = document.getElementById("histOptions");
+	histOptions = menu.options[menu.selectedIndex].text;
+	menu = document.getElementById("circleOptions");
+	circleOptions = menu.options[menu.selectedIndex].text;
 }
 
 function loadBillsData() {
@@ -136,7 +150,7 @@ function isDataOkay() {
 
 function draw()
 {
-	//clear the visualizatino
+	//clear the visualization
 	d3.select("svg").remove();
 		
 	if (view == "Map")
@@ -224,61 +238,25 @@ function drawHistogram()
 	if (histSort == "Number Descending")
 	{
 		stateArray.sort(function(a, b){
-			var dif = (b.representativeCount+b.senatorCount)-(a.representativeCount+a.senatorCount);
-			if (dif == 0)
-			{
-				var nameA=a.name.toLowerCase(), nameB=b.name.toLowerCase()
-				if (nameA < nameB) //sort string ascending
-					return -1 
-				if (nameA > nameB)
-					return 1
-				return 0 //default return value (no sorting)
-			}
-			else
-			{
-				return dif;
-			}
+			return histNumSort(a,b);
 		});
 	}
 	else if (histSort == "Number Ascending")
 	{
 		stateArray.sort(function(a, b){
-			var dif = (a.representativeCount+a.senatorCount)-(b.representativeCount+b.senatorCount);
-			if (dif == 0)
-			{
-				var nameA=a.name.toLowerCase(), nameB=b.name.toLowerCase()
-				if (nameA < nameB) //sort string ascending
-					return -1 
-				if (nameA > nameB)
-					return 1
-				return 0 //default return value (no sorting)
-			}
-			else
-			{
-				return dif;
-			}
+			return histNumSort(b,a);
 		});
 	}
 	else if (histSort == "Name Descending")
 	{
 		stateArray.sort(function(a, b){
-			var nameA=a.name.toLowerCase(), nameB=b.name.toLowerCase()
-			if (nameA > nameB) //sort string ascending
-				return -1 
-			if (nameA < nameB)
-				return 1
-			return 0 //default return value (no sorting)
+			return histAlphaSort(b,a);
 		});
 	}
 	else //if (histSort == "Name Ascending")
 	{
 		stateArray.sort(function(a, b){
-			var nameA=a.name.toLowerCase(), nameB=b.name.toLowerCase()
-			if (nameA < nameB) //sort string ascending
-				return -1 
-			if (nameA > nameB)
-				return 1
-			return 0 //default return value (no sorting)
+			return histAlphaSort(a,b);
 		});
 	}
 	console.log(stateArray);
@@ -299,47 +277,63 @@ function drawHistogram()
 	{
 		var numLeg = stateData[state].representativeCount+stateData[state].senatorCount;
 		var offset = stateArray.indexOf(stateData[state])*barWidth+10;
-		svg.append("rect")
+		var bar = svg.append("rect")
+			.attr("id", "hist"+stateData[state].name)
 			.attr("x", offset)
 			.attr("width", barWidth-1)
 			.attr("height", height - histScale(numLeg))
 			.attr("y", histScale(numLeg))
 			.attr("fill", "#000080")
 			.on("mouseover", function() {
-				d3.select(this)
-					.attr("fill", "#008000")
+				histOnHoverEnter(this);
 				})
 			.on("mouseout", function() {
-				d3.select(this)
-					.attr("fill", "#000080")
+				histOnHoverExit(this);
 				})
-			.on("click", function() {histClick(this)});
+			.on("click", function() {
+				histOnClick(this);
+				});
 			
 		if (histScale(numLeg)<=height-12)
 		{
 			svg.append("text")
 				.text(numLeg)
+				.attr("id","hist"+stateData[state].name+"value")
 				.attr("x", offset+(barWidth/2)-1)
 				.attr("y", histScale(numLeg)+10)
 				.attr("font-family", "sans-serif")
 				.attr("font-size", "10px")
 				.attr("fill", "white")
-				.attr("text-anchor", "middle");
+				.attr("text-anchor", "middle")
+				.on("mouseover", function() {
+					histOnHoverEnter(d3.select("#"+this.id.substring(0,this.id.length-5)).node());
+					})
+				.on("mouseout", function() {
+					histOnHoverExit(d3.select("#"+this.id.substring(0,this.id.length-5)).node());
+					});
 		}
 		else
 		{
 			svg.append("text")
 				.text(numLeg)
+				.attr("id","hist"+stateData[state].name+"value")
 				.attr("x", offset+(barWidth/2)-1)
 				.attr("y", histScale(numLeg)-2)
 				.attr("font-family", "sans-serif")
 				.attr("font-size", "10px")
 				.attr("fill", "black")
-				.attr("text-anchor", "middle");
+				.attr("text-anchor", "middle")
+				.on("mouseover", function() {
+					histOnHoverEnter(d3.select("#"+this.id.substring(0,this.id.length-5)).node());
+					})
+				.on("mouseout", function() {
+					histOnHoverExit(d3.select("#"+this.id.substring(0,this.id.length-5)).node());
+					});
 		}
 		
 		svg.append("text")
 			.text(stateData[state].name)
+			.attr("id","hist"+stateData[state].name+"name")
 			.attr("x", offset+(barWidth/2)-1)
 			.attr("y", height+10)
 			.attr("font-family", "sans-serif")
@@ -570,19 +564,40 @@ function showDetails(string){
 
 function selectView()
 {
-    var viewSelect = document.getElementById("viewSelect");
-	view = viewSelect.options[viewSelect.selectedIndex].text;
+    var menu = document.getElementById("viewSelect");
+	view = menu.options[menu.selectedIndex].text;
 	
 	d3.select('svg').remove();
 	console.log(view);
 	
-	if (view == "Histogram")
+	
+	if (view == "Map")
 	{
-		document.getElementById("histSorter").style.visibility="visible";
+		document.getElementById("mapOptions").style.display="inline";
 	}
 	else
 	{
-		document.getElementById("histSorter").style.visibility="hidden";
+		document.getElementById("mapOptions").style.display="none";
+	}
+	
+	if (view == "Histogram")
+	{
+		document.getElementById("histOptions").style.display="inline";
+		document.getElementById("histSort").style.display="inline";
+	}
+	else
+	{
+		document.getElementById("histOptions").style.display="none";
+		document.getElementById("histSort").style.display="none";
+	}
+	
+	if (view == "Circles")
+	{
+		document.getElementById("circleOptions").style.display="inline";
+	}
+	else
+	{
+		document.getElementById("circleOptions").style.display="none";
 	}
 	
 	draw();
@@ -591,11 +606,41 @@ function selectView()
 
 function changeHistSort()
 {
-	var sortSelect = document.getElementById("histSorter");
-	histSort = sortSelect.options[sortSelect.selectedIndex].text;
+	var menu = document.getElementById("histSort");
+	histSort = menu.options[menu.selectedIndex].text;
 	
 	d3.select('svg').remove();
 	console.log(histSort);
+	draw();
+}
+
+function changeMapOptions()
+{
+	var menu = document.getElementById("mapOptions");
+	mapOptions = menu.options[menu.selectedIndex].text;
+	
+	d3.select('svg').remove();
+	console.log(mapOptions);
+	draw();
+}
+
+function changeHistOptions()
+{
+	var menu = document.getElementById("histOptions");
+	histOptions = menu.options[menu.selectedIndex].text;
+	
+	d3.select('svg').remove();
+	console.log(histOptions);
+	draw();
+}
+
+function changeCircleOptions()
+{
+	var menu = document.getElementById("circleOptions");
+	circleOptions = menu.options[menu.selectedIndex].text;
+	
+	d3.select('svg').remove();
+	console.log(circleOptions);
 	draw();
 }
 
@@ -735,7 +780,50 @@ function createData()
 	//TODO: NEED TO CALCULATE MAX BILL COUNT FOR LEGISLATORS
 }
 
-function histClick() //add stuff here
+function histOnClick(object) //add stuff here
 {
 	console.log("histClick");
+}
+
+function histOnHoverEnter(object)
+{
+	d3.select(object)
+		.attr("fill", "#008000");
+	d3.select("#"+object.id+"name")
+		.attr("y",height+25)
+		.attr("font-size", "16px")
+		.attr("font-weight", "bold");
+}
+
+function histOnHoverExit(object)
+{
+	d3.select(object)
+		.attr("fill", "#000080");
+	d3.select("#"+object.id+"name")
+		.attr("y",height+10)
+		.attr("font-size", "10px")
+		.attr("font-weight", "normal");
+}
+
+function histAlphaSort(a,b) //if b is later, return -1
+{
+	var nameA=a.name.toLowerCase(), nameB=b.name.toLowerCase()
+	if (nameA < nameB) //sort string ascending
+		return -1 
+	if (nameA > nameB)
+		return 1
+	return 0 //default return value (no sorting)
+}
+
+function histNumSort(a,b) //if b is greater, return 1
+{
+	var dif = (b.representativeCount+b.senatorCount)-(a.representativeCount+a.senatorCount);
+	if (dif == 0)
+	{
+		return histAlphaSort(a,b)
+	}
+	else
+	{
+		return dif;
+	}
 }

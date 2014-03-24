@@ -65,7 +65,28 @@
 				</span>
 				<p></p>
 				<span>
-				<select id="histSorter"  onchange="changeHistSort()">
+				<select id="mapOptions"  onchange="changeMapOptions()"  style="display:inline">
+			      <option>Legislators</option>
+			      <option>Bills</option>  
+			      <option>Population</option>
+			    </select>
+				</span>
+				<span>
+				<select id="histOptions"  onchange="changeHistOptions()"  style="display:none">
+			      <option>Legislators</option>
+			      <option>Bills</option>  
+			      <option>Population</option>
+			    </select>
+				</span>
+				<span>
+				<select id="circleOptions"  onchange="changeCircleOptions()"  style="display:none">
+			      <option>Gender</option>
+			      <option>Bills</option>  
+			      <option>State</option>
+			    </select>
+				</span>
+				<span>
+				<select id="histSort"  onchange="changeHistSort()"  style="display:none">
 			      <option>Name Ascending</option>
 			      <option>Name Descending</option>  
 			      <option>Number Ascending</option>
