@@ -476,8 +476,9 @@ function mapOnClick(object) {
 				   .attr('stroke-width', 2);
 	state = stateData[object.id];
 	document.getElementById("StateName").innerHTML= "<b>State Name:</b> " + state.name;
-	document.getElementById("RepCount").innerHTML= "<b>State Name:</b> " + state.representativeCount;
-	document.getElementById("SenatorCount").innerHTML= "<b>State Name:</b> " + state.senatorCount;
+	document.getElementById("RepCount").innerHTML= "<b>Rep Count:</b> " + state.representativeCount;
+	document.getElementById("SenatorCount").innerHTML= "<b>Senator Count:</b> " + state.senatorCount;
+	document.getElementById("BillCount").innerHTML= "<b>Bill Count:</b> " + state.billCount;
 }
 
 function mapOnHoverEnter(object) {
@@ -691,8 +692,16 @@ function createData()
 			stateData[rawLegislatorData[i].state] = {
 				name: rawLegislatorData[i].state,
 				representativeCount: 0,
-				senatorCount: 0
+				senatorCount: 0,
+				billCount: 0
 			}
+		}
+	}
+	
+	//loop through our bills and associate them with legislators
+	for (var bill in billData) {
+		if (legislatorData[billData[bill].sponsor.bioguideid] != null) {
+			legislatorData[billData[bill].sponsor.bioguideid].bills.push(billData[bill]);
 		}
 	}
 	
@@ -702,12 +711,9 @@ function createData()
 			stateData[legislatorData[legislator].state].representativeCount++;
 		else if (legislatorData[legislator].title === "Sen") 
 			stateData[legislatorData[legislator].state].senatorCount++;
-	}
-	
-	//loop through our bills and associate them with legislators
-	for (var bill in billData) {
-		if (legislatorData[billData[bill].sponsor.bioguideid] != null) {
-			legislatorData[billData[bill].sponsor.bioguideid].bills.push(billData[bill]);
+		
+		if (stateData[legislatorData[legislator].state] != null) {
+			stateData[legislatorData[legislator].state].billCount += legislatorData[legislator].bills.length;
 		}
 	}
 	
