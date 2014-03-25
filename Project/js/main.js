@@ -645,7 +645,7 @@ function circlesOnClick(object) {
 	document.getElementById("StateName").innerHTML= "<b>State Name:</b> " + legislator.state;
 	document.getElementById("RepCount").innerHTML= "<b>Rep Count:</b> " + stateData[legislator.state].representativeCount;
 	document.getElementById("SenatorCount").innerHTML= "<b>Senator Count:</b> " + stateData[legislator.state].senatorCount;
-	//document.getElementById("BillCount").innerHTML= "<b>Bill Count:</b> " + legislator.billCount;
+	document.getElementById("BillCount").innerHTML= "<b>Bill Count:</b> " + legislator.bills.length;
 	document.getElementById("StateIMG").innerHTML = "<img src=\"states_img/"+ stateData[legislator.state].name +".gif\" style=\"width: 192px; height: 192px; margin-left: 2px; margin-top: 2px;\">";
 }
 
