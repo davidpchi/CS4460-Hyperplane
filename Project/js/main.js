@@ -51,6 +51,9 @@ var maxLegislatorCountForState;
 var maxBillCountForState;
 var maxBillCountForLegislator;
 
+var filterName;
+var maxValForColorScale;
+
 //run this at start
 function init(){
 
@@ -180,11 +183,23 @@ function drawMap() {
 	//this custom svg has an overlay of a separate on top to allow for hatches over heatmap
     d3.xml("data/custom.svg", "image/svg+xml", function(xml) {
         document.getElementById('vis').appendChild(xml.documentElement);
-        
+		
+		//grab what filter we are using:
+		if (mapOptions === "Legislators") {
+			filterName = "legislatorCount";
+			maxValForColorScale = maxLegislatorCountForState;
+		}
+		else if (mapOptions === "Bills") {
+			filterName = "billCount";
+			maxValForColorScale = maxBillCountForState;
+		}
+		else if (mapOptions === "Population") {
+			filterName = "populationCount";
+			//TODO: will we provide support for population data? We currently do not
+		}
+		
         for (var state in stateData) {
-			//TODO: need to provide a way to switch which maximum is being used to compute color
-			//atm, it is just the maxLegilslatorCount
-			var color = computeColorByValue("legislatorCount", maxLegislatorCountForState, stateData[state]);
+			var color = computeColorByValue(filterName, maxValForColorScale, stateData[state]);
 			
             d3.selectAll('#' + stateData[state].name)
                 .attr('fill', function() {
@@ -591,12 +606,11 @@ function mapOnHoverEnter(object) {
 	state = stateData[object.id];
 }
 
-//TODO: mapOnHoverExit is broken
 function mapOnHoverExit(object) {
 	var state = stateData[object.id];
 	//TODO: need to provide a way to switch which maximum is being used to compute color
 	//atm, it is just the maxLegilslatorCount
-	var color = computeColorByValue("legislatorCount", maxLegislatorCountForState, state);
+	var color = computeColorByValue(filterName, maxValForColorScale, state);
 	d3.select(object)
 		.attr('fill', color);
 }
@@ -608,6 +622,11 @@ function computeColorByValue(valType, maxVal, stateObj) {
 		var totalLegis = stateObj.representativeCount + stateObj.senatorCount;
 		console.log(maxVal);
 		var colorIndex = Math.round(totalLegis/maxVal * (colorScale.length-1));
+		return (colorScale[colorIndex]);
+	}
+	
+	if (valType === "billCount") {
+		var colorIndex = Math.round(stateObj.billCount/maxVal * (colorScale.length-1));
 		return (colorScale[colorIndex]);
 	}
 	
@@ -886,7 +905,10 @@ function createData()
 		//keep a running track of what the highest legislatorCount is
 		if (totalLegis > maxLegislatorCountForState) 
 			maxLegislatorCountForState = totalLegis;
-		//TODO: NEED TO CALCULATE MAX BILL COUNT FOR STATES
+		//calculate the max bill count for the states
+		if (stateData[state].billCount > maxBillCountForState) {
+			maxBillCountForState = stateData[state].billCount;
+		}
 	}	
 	//TODO: NEED TO CALCULATE MAX BILL COUNT FOR LEGISLATORS
 }
