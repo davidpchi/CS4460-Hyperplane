@@ -642,7 +642,7 @@ function circlesOnClick(object) {
 	//this will be the same as the legislator's bioguide ID
 	var legislator = legislatorData[object.id];
 
-	//Updates bottom pan
+	//Updates bottom pane
 	document.getElementById("legislator_img_src").src = getLegislatorImageURL(legislator.bioguide_id);
 	document.getElementById("StateName").innerHTML= "<b>State Name:</b> " + legislator.state;
 	document.getElementById("RepCount").innerHTML= "<b>Rep Count:</b> " + stateData[legislator.state].representativeCount;
@@ -650,10 +650,27 @@ function circlesOnClick(object) {
 	document.getElementById("BillCount").innerHTML= "<b>Bill Count:</b> " + stateData[legislator.state].billCount;
 	document.getElementById("StateIMG").innerHTML = "<img src=\"states_img/"+ stateData[legislator.state].name +".gif\" style=\"width: 192px; height: 192px; margin-left: 2px; margin-top: 2px;\">";
 
-	//Update right pan
+	//Update right pane
 	//<div id="LegName"> <B>Legislator Name: </B></div>
 	document.getElementById("LegName").innerHTML= "<b>Name: </b> " + legislator.firstname + " " + legislator.lastname;
 	document.getElementById("indiBillCount").innerHTML= "<b>Bill Count:</b> " + legislator.bills.length;
+
+	//Legislator bills in Right Pane
+	// <SELECT NAME="BillSelect" SIZE="10" MULTIPLE width="300px" style="width: 300px">
+	// 					<OPTION> Bill1
+	// 					<OPTION> Bill2
+	// 					<OPTION> Bill3
+	// 					<OPTION> Bill4
+	// 					<OPTION> Bill5
+	// 					<OPTION> Bill6
+	// 				</SELECT>
+	var legBillHTML = "<SELECT NAME=\"BillSelect\" SIZE=\"10\" MULTIPLE width=\"300px\" style=\"width: 300px\">";
+	for(var i=0; i<legislator.bills.length; i++){
+		legBillHTML += "<option> " + legislator.bills[i]["display_number"];
+	}
+	legBillHTML += "</select>";
+	document.getElementById("legBills").innerHTML= legBillHTML;
+
 
 }
 
