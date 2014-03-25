@@ -641,12 +641,20 @@ function circlesOnClick(object) {
 	//to get the legislator, simply pull the ID of the object
 	//this will be the same as the legislator's bioguide ID
 	var legislator = legislatorData[object.id];
+
+	//Updates bottom pan
 	document.getElementById("legislator_img_src").src = getLegislatorImageURL(legislator.bioguide_id);
 	document.getElementById("StateName").innerHTML= "<b>State Name:</b> " + legislator.state;
 	document.getElementById("RepCount").innerHTML= "<b>Rep Count:</b> " + stateData[legislator.state].representativeCount;
 	document.getElementById("SenatorCount").innerHTML= "<b>Senator Count:</b> " + stateData[legislator.state].senatorCount;
-	document.getElementById("BillCount").innerHTML= "<b>Bill Count:</b> " + legislator.bills.length;
+	document.getElementById("BillCount").innerHTML= "<b>Bill Count:</b> " + stateData[legislator.state].billCount;
 	document.getElementById("StateIMG").innerHTML = "<img src=\"states_img/"+ stateData[legislator.state].name +".gif\" style=\"width: 192px; height: 192px; margin-left: 2px; margin-top: 2px;\">";
+
+	//Update right pan
+	//<div id="LegName"> <B>Legislator Name: </B></div>
+	document.getElementById("LegName").innerHTML= "<b>Name: </b> " + legislator.firstname + " " + legislator.lastname;
+	document.getElementById("indiBillCount").innerHTML= "<b>Bill Count:</b> " + legislator.bills.length;
+
 }
 
 function getLegislatorImageURL(gov_id) {
