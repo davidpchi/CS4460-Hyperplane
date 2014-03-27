@@ -873,8 +873,11 @@ function createData()
 			stateData[rawLegislatorData[i].state] = {
 				name: rawLegislatorData[i].state,
 				representativeCount: 0,
+				representatives: [],
 				senatorCount: 0,
-				billCount: 0
+				senators: [], 
+				billCount: 0,
+				bills: []
 			}
 		}
 	}
@@ -888,13 +891,20 @@ function createData()
 	
 	//loop through our legislator data to finalize our state data
 	for (var legislator in legislatorData) {
-		if (legislatorData[legislator].title === "Rep") 
+		if (legislatorData[legislator].title === "Rep") {
 			stateData[legislatorData[legislator].state].representativeCount++;
-		else if (legislatorData[legislator].title === "Sen") 
+			stateData[legislatorData[legislator].state].representatives.push(legislatorData[legislator]);
+		}
+		else if (legislatorData[legislator].title === "Sen") {
 			stateData[legislatorData[legislator].state].senatorCount++;
-		
+			stateData[legislatorData[legislator].state].senators.push(legislatorData[legislator]);
+		}
 		if (stateData[legislatorData[legislator].state] != null) {
 			stateData[legislatorData[legislator].state].billCount += legislatorData[legislator].bills.length;
+			var legislatorBills = legislatorData[legislator].bills;
+			for (var bill in legislatorBills) {
+				stateData[legislatorData[legislator].state].bills.push(legislatorBills[bill]);
+			}
 		}
 	}
 	
