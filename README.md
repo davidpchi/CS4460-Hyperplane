@@ -12,11 +12,9 @@ The **stateData** array contains the data organized by states. Each element of s
 * __representativeCount__: The number of representatives of that state
 * __senatorCount__: The number of senators of that state
 * __billCount__: The number of bills of that state
-* __representatives__: An array of all the representatives that come from that state
-* __senators__: An array of all the senators that come from that state
+* __representatives__: An array of all the representatives that come from that state. The elements of this array have the same attributes as the legislatorData data structure. 
+* __senators__: An array of all the senators that come from that state. The elements of this array have the same attributes as the legislatorData data structure. 
 * __bills__: An array of all the bills that come from that state
-
-TODO: Support will be included to have a list of senators and representatives by bioguide_id, and a list of bills by Id.
 
 Legislator Data
 -------
@@ -26,7 +24,7 @@ The **legislatorData** array contains the data organized by legislator. Each ele
 * __lastname__
 * __gender__
 * __state__
-* __title__
+* __title__: If the legislator is a representative or senator
 * __website__
 * __imageURL__: deprecated and will remove
 * __bills__: An array of bill objects that the legislator has created
