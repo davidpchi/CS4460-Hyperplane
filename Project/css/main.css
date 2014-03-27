@@ -118,6 +118,17 @@ html, body {
 
 }
 
+#backButton{
+    position: absolute;
+    width: 100px;
+    height: 50px;
+    margin-top: 25px;
+    margin-left: 150px;
+    border: 2px solid #999999;
+    text-align: center;
+    font: 20px serif;    
+}
+
 #changer{
     position: absolute;
     top: 10px;
@@ -129,7 +140,7 @@ html, body {
     position: absolute;
     width: 400px;
     height: 840px;
-    border: 1px solid black;
+    border: 2px solid #999999;
     text-align: center;
     font: 20px serif;
 }
@@ -138,9 +149,9 @@ html, body {
     margin-left: 45px;
     margin-top:20px;
     margin-bottom:20px;
-    width: 303px;
+    width: 302px;
     height: 369px;
-    border: 1px solid black;
+    border: 2px solid #999999;
 }
 
 #StateIMG{
@@ -149,7 +160,7 @@ html, body {
     margin-top:25px;
     width: 200px;
     height: 200px;
-    border: 1px solid black;
+    border: 2px solid #999999;
 }
 
 #StateInfo
@@ -184,7 +195,7 @@ html, body {
     position: absolute;
     width: 900px;
     height: 250px;
-    border: 1px solid black;
+    border: 2px solid #999999;
 }
 
 .axis path,

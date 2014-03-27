@@ -601,21 +601,24 @@ function mapOnClick(object) {
 	document.getElementById("StateIMG").innerHTML = "<img src=\"states_img/"+ state.name +".gif\" style=\"width: 192px; height: 192px; margin-left: 2px; margin-top: 2px;\">";
 
 
-	/* Not working yet, no data in state object
+	
 	var stateLegHTML = "<B>Legislator List:</B> <BR><SELECT  NAME=\"LegSelect\" SIZE=\"7\" MULTIPLE  style=\"width: 200px\">";
- 	for(var i=0; i<state.legislator.length; i++){
- 		stateLegHTML += "<OPTION> " + state.legislator[i];
+ 	for(var i=0; i<state.representativeCount; i++){
+ 		stateLegHTML += "<OPTION> " + state.representatives[i].firstname +" "+ state.representatives[i].lastname ;
+ 	}
+ 	for(var i=0; i<state.senatorCount; i++){
+ 		stateLegHTML += "<OPTION> " + state.senators[i].firstname +" "+ state.senators[i].lastname ;
  	}
  	stateLegHTML += "</SELECT>";
  	document.getElementById("LegSelect").innerHTML= stateLegHTML;
 
  	var stateBillHTML = "<B>Bills:</B> <BR> <SELECT NAME=\"BillSelect\" SIZE=\"7\" MULTIPLE style=\"width: 200px\">";
- 	for(var i=0; i<state.bill.length; i++){
- 		stateBillHTML += "<OPTION> " + state.bill[i]["display_number"];
+ 	for(var i=0; i<state.billCount; i++){
+ 		stateBillHTML += "<OPTION> " + state.bills[i]["display_number"];
  	}
  	stateBillHTML += "</SELECT>";
  	document.getElementById("BillSelect").innerHTML= stateBillHTML;
- 	*/
+ 	
 
 }
 
@@ -688,6 +691,25 @@ function circlesOnClick(object) {
 	}
 	legBillHTML += "</select>";
 	document.getElementById("legBills").innerHTML= legBillHTML;
+
+	var state = stateData[legislator.state];
+
+	var stateLegHTML = "<B>Legislator List:</B> <BR><SELECT  NAME=\"LegSelect\" SIZE=\"7\" MULTIPLE  style=\"width: 200px\">";
+ 	for(var i=0; i<state.representativeCount; i++){
+ 		stateLegHTML += "<OPTION> " + state.representatives[i].firstname +" "+ state.representatives[i].lastname ;
+ 	}
+ 	for(var i=0; i<state.senatorCount; i++){
+ 		stateLegHTML += "<OPTION> " + state.senators[i].firstname +" "+ state.senators[i].lastname ;
+ 	}
+ 	stateLegHTML += "</SELECT>";
+ 	document.getElementById("LegSelect").innerHTML= stateLegHTML;
+
+ 	var stateBillHTML = "<B>Bills:</B> <BR> <SELECT NAME=\"BillSelect\" SIZE=\"7\" MULTIPLE style=\"width: 200px\">";
+ 	for(var i=0; i<state.billCount; i++){
+ 		stateBillHTML += "<OPTION> " + state.bills[i]["display_number"];
+ 	}
+ 	stateBillHTML += "</SELECT>";
+ 	document.getElementById("BillSelect").innerHTML= stateBillHTML;
 
 
 }
@@ -992,21 +1014,22 @@ function histOnClick(object) //add stuff here
 	document.getElementById("BillCount").innerHTML= "<b>Bill Count:</b> " + stateChosen.billCount;
 	document.getElementById("StateIMG").innerHTML = "<img src=\"states_img/"+ stateChosen.name +".gif\" style=\"width: 192px; height: 192px; margin-left: 2px; margin-top: 2px;\">";
 
-	/* Not working yet, no data in state object
 	var stateLegHTML = "<B>Legislator List:</B> <BR><SELECT  NAME=\"LegSelect\" SIZE=\"7\" MULTIPLE  style=\"width: 200px\">";
- 	for(var i=0; i<state.legislator.length; i++){
- 		stateLegHTML += "<OPTION> " + state.legislator[i];
+ 	for(var i=0; i<stateChosen.representativeCount; i++){
+ 		stateLegHTML += "<OPTION> " + stateChosen.representatives[i].firstname + " " + stateChosen.representatives[i].lastname ;
+ 	}
+ 	for(var i=0; i<stateChosen.senatorCount; i++){
+ 		stateLegHTML += "<OPTION> " + stateChosen.senators[i].firstname +" "+ stateChosen.senators[i].lastname ;
  	}
  	stateLegHTML += "</SELECT>";
  	document.getElementById("LegSelect").innerHTML= stateLegHTML;
 
  	var stateBillHTML = "<B>Bills:</B> <BR> <SELECT NAME=\"BillSelect\" SIZE=\"7\" MULTIPLE style=\"width: 200px\">";
- 	for(var i=0; i<state.bill.length; i++){
- 		stateBillHTML += "<OPTION> " + state.bill[i]["display_number"];
+ 	for(var i=0; i<stateChosen.billCount; i++){
+ 		stateBillHTML += "<OPTION> " + stateChosen.bills[i]["display_number"];
  	}
  	stateBillHTML += "</SELECT>";
  	document.getElementById("BillSelect").innerHTML= stateBillHTML;
- 	*/
 
 }
 
