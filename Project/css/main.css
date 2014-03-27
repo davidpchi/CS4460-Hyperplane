@@ -111,7 +111,7 @@ html, body {
 
 #controls {
     position: absolute;
-    left:925px;
+    left:950px;
     top: 10px;
     height: 100%;
     width: 500px;
@@ -126,7 +126,7 @@ html, body {
 }
 
 #details {
-    position: : absolute;
+    position: absolute;
     width: 400px;
     height: 840px;
     border: 1px solid black;
@@ -135,11 +135,11 @@ html, body {
 }
 
 #IMG{
-    margin-left: 50px;
+    margin-left: 45px;
     margin-top:20px;
     margin-bottom:20px;
-    width: 300px;
-    height: 300px;
+    width: 303px;
+    height: 369px;
     border: 1px solid black;
 }
 

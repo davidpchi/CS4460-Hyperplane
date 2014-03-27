@@ -599,6 +599,24 @@ function mapOnClick(object) {
 	document.getElementById("SenatorCount").innerHTML= "<b>Senator Count:</b> " + state.senatorCount;
 	document.getElementById("BillCount").innerHTML= "<b>Bill Count:</b> " + state.billCount;
 	document.getElementById("StateIMG").innerHTML = "<img src=\"states_img/"+ state.name +".gif\" style=\"width: 192px; height: 192px; margin-left: 2px; margin-top: 2px;\">";
+
+
+	/* Not working yet, no data in state object
+	var stateLegHTML = "<B>Legislator List:</B> <BR><SELECT  NAME=\"LegSelect\" SIZE=\"7\" MULTIPLE  style=\"width: 200px\">";
+ 	for(var i=0; i<state.legislator.length; i++){
+ 		stateLegHTML += "<OPTION> " + state.legislator[i];
+ 	}
+ 	stateLegHTML += "</SELECT>";
+ 	document.getElementById("LegSelect").innerHTML= stateLegHTML;
+
+ 	var stateBillHTML = "<B>Bills:</B> <BR> <SELECT NAME=\"BillSelect\" SIZE=\"7\" MULTIPLE style=\"width: 200px\">";
+ 	for(var i=0; i<state.bill.length; i++){
+ 		stateBillHTML += "<OPTION> " + state.bill[i]["display_number"];
+ 	}
+ 	stateBillHTML += "</SELECT>";
+ 	document.getElementById("BillSelect").innerHTML= stateBillHTML;
+ 	*/
+
 }
 
 function mapOnHoverEnter(object) {
@@ -641,7 +659,37 @@ function circlesOnClick(object) {
 	//to get the legislator, simply pull the ID of the object
 	//this will be the same as the legislator's bioguide ID
 	var legislator = legislatorData[object.id];
+
+	//Updates bottom pane
 	document.getElementById("legislator_img_src").src = getLegislatorImageURL(legislator.bioguide_id);
+	document.getElementById("StateName").innerHTML= "<b>State Name:</b> " + legislator.state;
+	document.getElementById("RepCount").innerHTML= "<b>Rep Count:</b> " + stateData[legislator.state].representativeCount;
+	document.getElementById("SenatorCount").innerHTML= "<b>Senator Count:</b> " + stateData[legislator.state].senatorCount;
+	document.getElementById("BillCount").innerHTML= "<b>Bill Count:</b> " + stateData[legislator.state].billCount;
+	document.getElementById("StateIMG").innerHTML = "<img src=\"states_img/"+ stateData[legislator.state].name +".gif\" style=\"width: 192px; height: 192px; margin-left: 2px; margin-top: 2px;\">";
+
+	//Update right pane
+	//<div id="LegName"> <B>Legislator Name: </B></div>
+	document.getElementById("LegName").innerHTML= "<b>Name: </b> " + legislator.firstname + " " + legislator.lastname;
+	document.getElementById("indiBillCount").innerHTML= "<b>Bill Count:</b> " + legislator.bills.length;
+
+	//Legislator bills in Right Pane
+	// <SELECT NAME="BillSelect" SIZE="10" MULTIPLE width="300px" style="width: 300px">
+	// 					<OPTION> Bill1
+	// 					<OPTION> Bill2
+	// 					<OPTION> Bill3
+	// 					<OPTION> Bill4
+	// 					<OPTION> Bill5
+	// 					<OPTION> Bill6
+	// 				</SELECT>
+	var legBillHTML = "<SELECT NAME=\"BillSelect\" SIZE=\"10\" MULTIPLE width=\"300px\" style=\"width: 300px\">";
+	for(var i=0; i<legislator.bills.length; i++){
+		legBillHTML += "<option> " + legislator.bills[i]["display_number"];
+	}
+	legBillHTML += "</select>";
+	document.getElementById("legBills").innerHTML= legBillHTML;
+
+
 }
 
 function getLegislatorImageURL(gov_id) {
@@ -933,6 +981,33 @@ function histOnClick(object) //add stuff here
 	d3.select(object)
 		.attr("stroke", "#00FFFF")
 		.attr("stroke-width",2);
+
+	
+	stateID = ""+ object.id[4] + object.id[5];
+	// console.log(stateID);
+	stateChosen = stateData[stateID];
+	document.getElementById("StateName").innerHTML= "<b>State Name:</b> " + stateChosen.name;
+	document.getElementById("RepCount").innerHTML= "<b>Rep Count:</b> " + stateChosen.representativeCount;
+	document.getElementById("SenatorCount").innerHTML= "<b>Senator Count:</b> " + stateChosen.senatorCount;
+	document.getElementById("BillCount").innerHTML= "<b>Bill Count:</b> " + stateChosen.billCount;
+	document.getElementById("StateIMG").innerHTML = "<img src=\"states_img/"+ stateChosen.name +".gif\" style=\"width: 192px; height: 192px; margin-left: 2px; margin-top: 2px;\">";
+
+	/* Not working yet, no data in state object
+	var stateLegHTML = "<B>Legislator List:</B> <BR><SELECT  NAME=\"LegSelect\" SIZE=\"7\" MULTIPLE  style=\"width: 200px\">";
+ 	for(var i=0; i<state.legislator.length; i++){
+ 		stateLegHTML += "<OPTION> " + state.legislator[i];
+ 	}
+ 	stateLegHTML += "</SELECT>";
+ 	document.getElementById("LegSelect").innerHTML= stateLegHTML;
+
+ 	var stateBillHTML = "<B>Bills:</B> <BR> <SELECT NAME=\"BillSelect\" SIZE=\"7\" MULTIPLE style=\"width: 200px\">";
+ 	for(var i=0; i<state.bill.length; i++){
+ 		stateBillHTML += "<OPTION> " + state.bill[i]["display_number"];
+ 	}
+ 	stateBillHTML += "</SELECT>";
+ 	document.getElementById("BillSelect").innerHTML= stateBillHTML;
+ 	*/
+
 }
 
 function histOnHoverEnter(object)
