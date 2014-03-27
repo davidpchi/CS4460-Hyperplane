@@ -599,6 +599,24 @@ function mapOnClick(object) {
 	document.getElementById("SenatorCount").innerHTML= "<b>Senator Count:</b> " + state.senatorCount;
 	document.getElementById("BillCount").innerHTML= "<b>Bill Count:</b> " + state.billCount;
 	document.getElementById("StateIMG").innerHTML = "<img src=\"states_img/"+ state.name +".gif\" style=\"width: 192px; height: 192px; margin-left: 2px; margin-top: 2px;\">";
+
+
+	/* Not working yet, no data in state object
+	var stateLegHTML = "<B>Legislator List:</B> <BR><SELECT  NAME=\"LegSelect\" SIZE=\"7\" MULTIPLE  style=\"width: 200px\">";
+ 	for(var i=0; i<state.legislator.length; i++){
+ 		stateLegHTML += "<OPTION> " + state.legislator[i];
+ 	}
+ 	stateLegHTML += "</SELECT>";
+ 	document.getElementById("LegSelect").innerHTML= stateLegHTML;
+
+ 	var stateBillHTML = "<B>Bills:</B> <BR> <SELECT NAME=\"BillSelect\" SIZE=\"7\" MULTIPLE style=\"width: 200px\">";
+ 	for(var i=0; i<state.bill.length; i++){
+ 		stateBillHTML += "<OPTION> " + state.bill[i]["display_number"];
+ 	}
+ 	stateBillHTML += "</SELECT>";
+ 	document.getElementById("BillSelect").innerHTML= stateBillHTML;
+ 	*/
+
 }
 
 function mapOnHoverEnter(object) {
@@ -953,6 +971,33 @@ function histOnClick(object) //add stuff here
 	d3.select(object)
 		.attr("stroke", "#00FFFF")
 		.attr("stroke-width",2);
+
+	
+	stateID = ""+ object.id[4] + object.id[5];
+	// console.log(stateID);
+	stateChosen = stateData[stateID];
+	document.getElementById("StateName").innerHTML= "<b>State Name:</b> " + stateChosen.name;
+	document.getElementById("RepCount").innerHTML= "<b>Rep Count:</b> " + stateChosen.representativeCount;
+	document.getElementById("SenatorCount").innerHTML= "<b>Senator Count:</b> " + stateChosen.senatorCount;
+	document.getElementById("BillCount").innerHTML= "<b>Bill Count:</b> " + stateChosen.billCount;
+	document.getElementById("StateIMG").innerHTML = "<img src=\"states_img/"+ stateChosen.name +".gif\" style=\"width: 192px; height: 192px; margin-left: 2px; margin-top: 2px;\">";
+
+	/* Not working yet, no data in state object
+	var stateLegHTML = "<B>Legislator List:</B> <BR><SELECT  NAME=\"LegSelect\" SIZE=\"7\" MULTIPLE  style=\"width: 200px\">";
+ 	for(var i=0; i<state.legislator.length; i++){
+ 		stateLegHTML += "<OPTION> " + state.legislator[i];
+ 	}
+ 	stateLegHTML += "</SELECT>";
+ 	document.getElementById("LegSelect").innerHTML= stateLegHTML;
+
+ 	var stateBillHTML = "<B>Bills:</B> <BR> <SELECT NAME=\"BillSelect\" SIZE=\"7\" MULTIPLE style=\"width: 200px\">";
+ 	for(var i=0; i<state.bill.length; i++){
+ 		stateBillHTML += "<OPTION> " + state.bill[i]["display_number"];
+ 	}
+ 	stateBillHTML += "</SELECT>";
+ 	document.getElementById("BillSelect").innerHTML= stateBillHTML;
+ 	*/
+
 }
 
 function histOnHoverEnter(object)
