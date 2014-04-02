@@ -251,6 +251,37 @@ function drawMap() {
     });
 }
 
+function updateMap() {
+	
+	//grab what filter we are using:
+	if (mapOptions === "Legislators") {
+		filterName = "legislatorCount";
+		maxValForColorScale = maxLegislatorCountForState;
+	}
+	else if (mapOptions === "Bills") {
+		filterName = "billCount";
+		maxValForColorScale = maxBillCountForState;
+	}
+	else if (mapOptions === "Population") {
+		filterName = "populationCount";
+		//TODO: will we provide support for population data? We currently do not
+	}
+	
+	for (var state in stateData) {
+		var color = computeColorByValue(filterName, maxValForColorScale, stateData[state]);
+		
+		d3.selectAll('#' + stateData[state].name)
+			.transition()
+			.attr('fill', function() {
+				return (color);
+			})
+			.attr('stroke-width', function() {
+				return (1);
+			})
+			.attr('stroke', "black")
+			};
+}		
+
 function drawHistogram()
 {
 	document.getElementById("details").innerHTML = "<h><b>Welcome to Team Hyperplane.<br>This is the Histogram View</b></h>";
@@ -572,7 +603,16 @@ function drawCircles()
 	
 	var onHoverCircles = vis.append("circle")
 		.attr("stroke", "black")
-		.attr("id", function(d) {return d.bioguide_id})
+		.attr("id", function(d) {
+			if (d.bioguide_id != undefined)
+			{
+				return d.bioguide_id;
+			}
+			else 
+			{
+				return "circleRoot";
+			}
+			})
 		.style("fill-opacity", 0.0)
 		.attr("cx", function(d) { return d.x;})
 		.attr("cy", function(d) { return d.y; })
@@ -596,6 +636,8 @@ function drawCircles()
 		
 		$(onHoverCircles[circle]).on('click', function() {circlesOnClick(this);});
 	}
+	
+	d3.select("#circleRoot").call(function() {console.log("grabbed")});
 }
 
 /**
@@ -736,7 +778,7 @@ function circlesOnClick(object) {
 	//to get the legislator, simply pull the ID of the object
 	//this will be the same as the legislator's bioguide ID
 	var legislator = legislatorData[object.id];
-	console.log(object.id);
+	console.log("id: " + object.id);
 	//Updates bottom pane
 	
 	
@@ -896,9 +938,9 @@ function changeMapOptions()
 	var menu = document.getElementById("mapOptions");
 	mapOptions = menu.options[menu.selectedIndex].text;
 	
-	d3.select('svg').remove();
+	// d3.select('svg').remove();
 	console.log(mapOptions);
-	draw();
+	updateMap();
 }
 
 function changeHistOptions()
