@@ -1049,6 +1049,7 @@ function createData()
 			gender: rawLegislatorData[i].gender,
 			lastname: rawLegislatorData[i].lastname,
 			state: rawLegislatorData[i].state,
+			party: rawLegislatorData[i].party,
 			title: rawLegislatorData[i].title,
 			website: rawLegislatorData[i].website,
 			imageURL: rawLegislatorData[i].imageURL,
