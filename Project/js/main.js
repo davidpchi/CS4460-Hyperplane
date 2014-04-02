@@ -40,6 +40,7 @@ var histSort;
 var mapOptions;
 var histOptions;
 var circleOptions;
+var scatterOption;
 
 var abbrToName = {};
 var nameToAbbr = {};
@@ -96,6 +97,8 @@ function init(){
 	histOptions = menu.options[menu.selectedIndex].text;
 	menu = document.getElementById("circleOptions");
 	circleOptions = menu.options[menu.selectedIndex].text;
+	// menu = document.getElementById("scatterOptions");
+	// scatterOptions = menu.options[menu.selectedIndex].text;
 	
 	makeAbbrTables();
 }
@@ -183,6 +186,10 @@ function draw()
 	else if (view == "Circles")
 	{
 		drawCircles();
+	}
+	else if (view == "Scatterplot")
+	{
+		drawScatterplot();
 	}
 }
 
@@ -292,40 +299,45 @@ function drawHistogram()
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 		
 	var barWidth = (width)/50;
-	var scaling = 5;
+	
+	var property;
+	if (histOptions == "Legislators")
+	{
+		property = "legislatorCount";
+	}
+	else //if (histOptions == "Bills")
+	{
+		property = "billCount";
+	}
 	
 	var stateArray = $.map(stateData, function(value, index) {
 		return [value];
 		});
 	
-	if (histSort == "Number Descending")
+	if (histSort == "Legislators")
 	{
 		stateArray.sort(function(a, b){
-			return histNumSortRev(a,b);
+			return histLegislatorSort(a,b);
 		});
 	}
-	else if (histSort == "Number Ascending")
+	else if (histSort == "Alphabetical")
 	{
 		stateArray.sort(function(a, b){
-			return histNumSort(a,b);
+			return histAlphabetSort(a,b);
 		});
 	}
-	else if (histSort == "Name Descending")
+	else //if (histSort == "Bills")
 	{
 		stateArray.sort(function(a, b){
-			return histAlphaSort(b,a);
-		});
-	}
-	else //if (histSort == "Name Ascending")
-	{
-		stateArray.sort(function(a, b){
-			return histAlphaSort(a,b);
+			return histBillSort(a,b);
 		});
 	}
 	console.log(stateArray);
 	
+	
+	
 	var histScale = d3.scale.linear()
-		.domain([0, 80])
+		.domain([0, histMax(property)])
         .range([height, 0]);
 	
 	var histAxis = d3.svg.axis()
@@ -334,18 +346,19 @@ function drawHistogram()
 		
 	svg.append("g")
 		.attr("class", "axis")
+		.attr("id", "histAxis")
 		.call(histAxis);
 	
 	for (var state in stateData)
 	{
-		var numLeg = stateData[state].representativeCount+stateData[state].senatorCount;
+		var value = stateData[state][property];
 		var offset = stateArray.indexOf(stateData[state])*barWidth+10;
 		svg.append("rect")
 			.attr("id", "hist"+stateData[state].name)
 			.attr("x", offset)
 			.attr("width", barWidth-1)
-			.attr("height", height - histScale(numLeg))
-			.attr("y", histScale(numLeg))
+			.attr("height", height - histScale(value))
+			.attr("y", histScale(value))
 			.attr("fill", "#000080")
 			.on("mouseover", function() {
 				histOnHoverEnter(this);
@@ -357,13 +370,13 @@ function drawHistogram()
 				histOnClick(this);
 				});
 			
-		if (histScale(numLeg)<=height-12)
+		if (histScale(value)<=height-12)
 		{
 			svg.append("text")
-				.text(numLeg)
+				.text(value)
 				.attr("id","hist"+stateData[state].name+"value")
 				.attr("x", offset+(barWidth/2)-1)
-				.attr("y", histScale(numLeg)+10)
+				.attr("y", histScale(value)+10)
 				.attr("font-family", "sans-serif")
 				.attr("font-size", "10px")
 				.attr("fill", "white")
@@ -378,10 +391,10 @@ function drawHistogram()
 		else
 		{
 			svg.append("text")
-				.text(numLeg)
+				.text(value)
 				.attr("id","hist"+stateData[state].name+"value")
 				.attr("x", offset+(barWidth/2)-1)
-				.attr("y", histScale(numLeg)-2)
+				.attr("y", histScale(value)-2)
 				.attr("font-family", "sans-serif")
 				.attr("font-size", "10px")
 				.attr("fill", "black")
@@ -420,72 +433,78 @@ function drawHistogram()
 function updateHistogram()
 {	
 	var barWidth = (width)/50;
-	var scaling = 5;
+	
+	var property;
+	if (histOptions == "Legislators")
+	{
+		property = "legislatorCount";
+	}
+	else //if (histOptions == "Bills")
+	{
+		property = "billCount";
+	}
 	
 	var stateArray = $.map(stateData, function(value, index) {
 		return [value];
 		});
 	
-	if (histSort == "Number Descending")
+	if (histSort == "Legislators")
 	{
 		stateArray.sort(function(a, b){
-			return histNumSortRev(a,b);
+			return histLegislatorSort(a,b);
 		});
 	}
-	else if (histSort == "Number Ascending")
+	else if (histSort == "Alphabetical")
 	{
 		stateArray.sort(function(a, b){
-			return histNumSort(a,b);
+			return histAlphabetSort(a,b);
 		});
 	}
-	else if (histSort == "Name Descending")
+	else //if (histSort == "Bills")
 	{
 		stateArray.sort(function(a, b){
-			return histAlphaSort(b,a);
-		});
-	}
-	else //if (histSort == "Name Ascending")
-	{
-		stateArray.sort(function(a, b){
-			return histAlphaSort(a,b);
+			return histBillSort(a,b);
 		});
 	}
 	console.log(stateArray);
 	
 	var histScale = d3.scale.linear()
-		.domain([0, 80])
+		.domain([0, histMax(property)])
         .range([height, 0]);
 	
-	// var histAxis = d3.svg.axis()
-		// .scale(histScale)
-		// .orient("left");
+	var histAxis = d3.svg.axis()
+		.scale(histScale)
+		.orient("left");
 		
-	// svg.append("g")
-		// .attr("class", "axis")
-		// .call(histAxis);
+	d3.select("#histAxis")
+		.transition()
+		.duration(1500)
+		.call(histAxis);
+		
+		
 	
 	for (var state in stateData)
 	{
-		var numLeg = stateData[state].representativeCount+stateData[state].senatorCount;
+		var value = stateData[state][property];
 		var offset = stateArray.indexOf(stateData[state])*barWidth+10;
 		d3.select("#hist"+stateData[state].name)
 			.transition()
 			.delay(((d3.select("#hist"+stateData[state].name).attr("x")-10)/barWidth)*10)
 			.attr("x", offset)
 			.attr("width", barWidth-1)
-			.attr("height", height - histScale(numLeg))
-			.attr("y", histScale(numLeg))
+			.attr("height", height - histScale(value))
+			.attr("y", histScale(value))
 			.attr("fill", "#000080")
 			.duration(1000);
 			
-		if (histScale(numLeg)<=height-12)
+		if (histScale(value)<=height-12)
 		{
 			d3.select("#hist"+stateData[state].name+"value")
 				.transition()
-				// .text(numLeg)
+				.text(value)
 				.delay(((d3.select("#hist"+stateData[state].name+"value").attr("x")-10)/barWidth)*10)
 				.attr("x", offset+(barWidth/2)-1)
-				.attr("y", histScale(numLeg)+10)
+				.attr("y", histScale(value)+10)
 				.attr("fill", "white")
 				.duration(1000);
 		}
@@ -493,10 +512,10 @@ function updateHistogram()
 		{
 			d3.select("#hist"+stateData[state].name+"value")
 				.transition()
-				// .text(numLeg)
+				.text(value)
 				.delay(((d3.select("#hist"+stateData[state].name+"value").attr("x")-10)/barWidth)*10)
 				.attr("x", offset+(barWidth/2)-1)
-				.attr("y", histScale(numLeg)-2)
+				.attr("y", histScale(value)-2)
 				.attr("fill", "black")
 				.duration(1000);
 		}
@@ -519,6 +538,95 @@ function updateHistogram()
 		// .attr("font-size", "24px")
 		// .attr("fill", "black")
 		// .attr("text-anchor", "middle");
+	
+}
+
+function drawScatterplot()
+{
+	document.getElementById("details").innerHTML = "<h><b>Welcome to Team Hyperplane.<br>This is the Scatterplot View</b></h>";
+	var svg = d3.select("#vis").append("svg")
+		.attr("width", width + margin.left + margin.right)
+		.attr("height", height + margin.top + margin.bottom)
+		.append("g")
+		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+		
+	var barWidth = (width)/50;
+	
+	var property;
+	property = "billCount";
+	
+	var stateArray = $.map(stateData, function(value, index) {
+		return [value];
+	});
+	
+	stateArray.sort(function(a, b){
+		return histAlphabetSort(a,b);
+	});
+	
+	
+	
+	var scatterScale = d3.scale.linear()
+		.domain([0, scatterMax(property)])
+        .range([height, 0]);
+	
+	var scatterAxis = d3.svg.axis()
+		.scale(scatterScale)
+		.orient("left");
+		
+	svg.append("g")
+		.attr("class", "axis")
+		.attr("id", "histAxis")
+		.call(scatterAxis);
+		
+	for (var state in stateData)
+	{
+		var offset = stateArray.indexOf(stateData[state])*barWidth+10;
+		svg.append("text")
+			.text(stateData[state].name)
+			.attr("id","scatter"+stateData[state].name+"name")
+			.attr("x", offset)
+			.attr("y", height+10)
+			.attr("font-family", "sans-serif")
+			.attr("font-size", "10px")
+			.attr("fill", "black")
+			.attr("text-anchor", "middle");
+	}
+	console.log(stateArray);
+	for (var legislator in legislatorData)
+	{
+		var value = legislatorData[legislator][property];
+		var offset = stateArray.indexOf(stateData[legislatorData[legislator].state])*barWidth+10;
+		
+		var color;
+		if (legislatorData[legislator].party == "D")
+		{
+			color = "#000080";
+		}
+		else if (legislatorData[legislator].party == "R")
+		{
+			color = "#800000";
+		}
+		else
+		{
+			color = "#008000";
+		}
+		svg.append("circle")
+			.attr("id", "scatter"+stateData[state].name)
+			.attr("cx", offset)
+			.attr("cy", scatterScale(value))
+			.attr("r", 5)
+			.attr("fill", color)
+	}
+	
+	svg.append("text")
+		.text("Legislators Their Bill Counts")
+		.attr("x", width/2)
+		.attr("y", -10)
+		.attr("font-family", "serif")
+		.attr("font-size", "24px")
+		.attr("fill", "black")
+		.attr("text-anchor", "middle");
+	
 	
 }
 
@@ -948,9 +1056,9 @@ function changeHistOptions()
 	var menu = document.getElementById("histOptions");
 	histOptions = menu.options[menu.selectedIndex].text;
 	
-	d3.select('svg').remove();
+	// d3.select('svg').remove();
 	console.log(histOptions);
-	draw();
+	updateHistogram();
 }
 
 function changeCircleOptions()
@@ -1053,7 +1161,8 @@ function createData()
 			title: rawLegislatorData[i].title,
 			website: rawLegislatorData[i].website,
 			imageURL: rawLegislatorData[i].imageURL,
-			bills: []
+			bills: [],
+			billCount: 0
 			//TODO: NEED TO ADD BILLS
 		};
 		
@@ -1062,6 +1171,7 @@ function createData()
 		{
 			stateData[rawLegislatorData[i].state] = {
 				name: rawLegislatorData[i].state,
+				legislatorCount: 0,
 				representativeCount: 0,
 				representatives: [],
 				senatorCount: 0,
@@ -1076,6 +1186,7 @@ function createData()
 	for (var bill in billData) {
 		if (legislatorData[billData[bill].sponsor.bioguideid] != null) {
 			legislatorData[billData[bill].sponsor.bioguideid].bills.push(billData[bill]);
+			legislatorData[billData[bill].sponsor.bioguideid].billCount++;
 		}
 	}
 	
@@ -1083,10 +1194,12 @@ function createData()
 	for (var legislator in legislatorData) {
 		if (legislatorData[legislator].title === "Rep") {
 			stateData[legislatorData[legislator].state].representativeCount++;
+			stateData[legislatorData[legislator].state].legislatorCount++;
 			stateData[legislatorData[legislator].state].representatives.push(legislatorData[legislator]);
 		}
 		else if (legislatorData[legislator].title === "Sen") {
 			stateData[legislatorData[legislator].state].senatorCount++;
+			stateData[legislatorData[legislator].state].legislatorCount++;
 			stateData[legislatorData[legislator].state].senators.push(legislatorData[legislator]);
 		}
 		if (stateData[legislatorData[legislator].state] != null) {
@@ -1175,7 +1288,7 @@ function histOnHoverExit(object)
 		.text(object.id.substring(object.id.length-2,object.id.length));
 }
 
-function histAlphaSort(a,b) //if b is later, return -1
+function histAlphabetSort(a,b) //if b is later, return -1
 {
 	var nameA=a.name.toLowerCase(), nameB=b.name.toLowerCase()
 	if (nameA < nameB) //sort string ascending
@@ -1185,12 +1298,12 @@ function histAlphaSort(a,b) //if b is later, return -1
 	return 0 //default return value (no sorting)
 }
 
-function histNumSort(a,b) //if a is greater, return 1
+function histLegislatorSort(a,b) //if a is greater, return 1
 {
-	var dif = (a.representativeCount+a.senatorCount)-(b.representativeCount+b.senatorCount);
+	var dif = b.legislatorCount-a.legislatorCount;
 	if (dif == 0)
 	{
-		return histAlphaSort(a,b)
+		return histAlphabetSort(a,b)
 	}
 	else
 	{
@@ -1198,17 +1311,42 @@ function histNumSort(a,b) //if a is greater, return 1
 	}
 }
 
-function histNumSortRev(a,b) //if b is greater, return 1
+function histBillSort(a,b) //if a is greater, return 1
 {
-	var dif = (b.representativeCount+b.senatorCount)-(a.representativeCount+a.senatorCount);
+	var dif = b.billCount-a.billCount;
 	if (dif == 0)
 	{
-		return histAlphaSort(a,b)
+		return histAlphabetSort(a,b)
 	}
 	else
 	{
 		return dif;
 	}
+}
+
+function histMax(str)
+{
+	var max = 0;
+	for (var state in stateData)
+	{
+		if (stateData[state][str]>max)
+		{
+			max = stateData[state][str];
+		}
+	}
+	return max;
+}
+function scatterMax(str)
+{
+	var max = 0;
+	for (var legislator in legislatorData)
+	{
+		if (legislatorData[legislator][str]>max)
+		{
+			max = legislatorData[legislator][str];
+		}
+	}
+	return max;
 }
 
 function makeAbbrTables()
