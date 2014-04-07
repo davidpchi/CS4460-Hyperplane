@@ -282,10 +282,6 @@ function updateMap() {
 			.attr('fill', function() {
 				return (color);
 			})
-			.attr('stroke-width', function() {
-				return (1);
-			})
-			.attr('stroke', "black")
 			};
 }		
 
