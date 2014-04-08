@@ -118,12 +118,13 @@ html, body {
 
 }
 
+
 #backButton{
     position: absolute;
     width: 100px;
     height: 50px;
-    margin-top: 25px;
-    margin-left: 150px;
+    left: 150px;
+    bottom: 10px;
     border: 2px solid #999999;
     text-align: center;
     font: 20px serif;    

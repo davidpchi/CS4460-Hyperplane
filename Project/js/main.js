@@ -8,17 +8,19 @@ This function is passed the variables to initially draw on the x and y axes.
 var margin = {top: 80, right: 50, bottom: 30, left: 30}; //this is an object aht has been created
 var width = 950 - margin.left - margin.right;
 var height = 600 - margin.top - margin.bottom;
+var navStack = new Array();
 
 var legPanel = "<div id=\"IMG\"><img id=\"legislator_img_src\" width=\"300\" src=\"\"></div >"+
 				"<div id=\"LegName\"> <B>Legislator Name: </B></div>"+
 				"<div id=\"District\"><B>District: </B></div>"+
 				"<B>Bills:</B> <BR>"+
 				"<div id=\"legBills\">"+
-				"<SELECT NAME=\"BillSelect\" id=\"bot_selectBill\"onchange=\"bot_selectBill() \" SIZE=\"10\" MULTIPLE width=\"300px\" style=\"width: 300px\"></SELECT></div>"+
-				"<div id=\"indiBillCount\"> <B>Number of Bills: </B> </div>"+
-				"<div id=\"backButton\"><b>Back</b></div>";
+				"<SELECT NAME=\"BillSelect\" id=\"bot_selectBill\"onchange=\"bot_selectBill() \" SIZE=\"10\"  width=\"300px\" style=\"width: 300px\"></SELECT></div>"+
+				"<div id=\"indiBillCount\" onC> <B>Number of Bills: </B> </div>"+
+				"<div><button id=\"backButton\" onclick=\"clickBack()\" type=\"button\">Back</button></div>";
 
-var bilPanel = "<div id = \"Bill\"> </div>";
+var bilPanel = "<div id = \"Bill\"> </div>"+
+				"<div><button id=\"backButton\" onclick=\"clickBack()\" type=\"button\">Back</button></div>";
 
 var x = d3.scale.linear().range([0, width]);
 var y = d3.scale.linear().range([height,0]);
@@ -762,7 +764,7 @@ function mapOnClick(object) {
 
 
 	
-	var stateLegHTML = "<B>Legislator List:</B> <BR><SELECT  id=\"bot_legSelect\"  onchange=\"bot_legSelect()\" NAME=\"LegSelect\" SIZE=\"7\" MULTIPLE  style=\"width: 200px\">";
+	var stateLegHTML = "<B>Legislator List:</B> <BR><SELECT  id=\"bot_legSelect\"  onchange=\"bot_legSelect()\" NAME=\"LegSelect\" SIZE=\"7\"  style=\"width: 200px\">";
  	for(var i=0; i<state.representativeCount; i++){
  		stateLegHTML += "<OPTION> " + state.representatives[i].firstname +" "+ state.representatives[i].lastname ;
  	}
@@ -772,7 +774,7 @@ function mapOnClick(object) {
  	stateLegHTML += "</SELECT>";
  	document.getElementById("LegSelect").innerHTML= stateLegHTML;
 
- 	var stateBillHTML = "<B>Bills:</B> <BR> <SELECT NAME=\"BillSelect\" id=\"bot_selectBill\"onchange=\"bot_selectBill()\" SIZE=\"7\" MULTIPLE style=\"width: 200px\">";
+ 	var stateBillHTML = "<B>Bills:</B> <BR> <SELECT NAME=\"BillSelect\" id=\"bot_selectBill\"onchange=\"bot_selectBill()\" SIZE=\"7\"  style=\"width: 200px\">";
  	for(var i=0; i<state.billCount; i++){
  		stateBillHTML += "<OPTION> " + state.bills[i]["display_number"];
  	}
@@ -798,7 +800,7 @@ function bot_legSelect(){
   			break;
   		}
   	}
-  	 
+  	navStack.push(["Leg", legislator]);
   	 //var legislator = legislatorData[1];
 
   	document.getElementById("details").innerHTML = legPanel;
@@ -818,7 +820,7 @@ function bot_legSelect(){
 	// 					<OPTION> Bill5
 	// 					<OPTION> Bill6
 	// 				</SELECT>
-	var legBillHTML = "<SELECT NAME=\"BillSelect\" id=\"right_selectBill\"onchange=\"right_selectBill()  \"SIZE=\"10\" MULTIPLE width=\"300px\" style=\"width: 300px\">";
+	var legBillHTML = "<SELECT NAME=\"BillSelect\" id=\"right_selectBill\"onchange=\"right_selectBill()  \"SIZE=\"10\" width=\"300px\" style=\"width: 300px\">";
 	for(var i=0; i<legislator.bills.length; i++){
 		legBillHTML += "<option> " + legislator.bills[i]["display_number"];
 	}
@@ -830,6 +832,7 @@ function bot_selectBill(){
 	var selects = document.getElementById("bot_selectBill");
   	var selectedText = selects.options[selects.selectedIndex].text;// gives u value2
   	console.log(selectedText);
+  	navStack.push(["Bill", selectedText]);
   	document.getElementById("details").innerHTML = bilPanel;
   	document.getElementById("Bill").innerHTML = "Bill: "+selectedText;
 }
@@ -838,8 +841,45 @@ function right_selectBill(){
 	var selects = document.getElementById("right_selectBill");
   	var selectedText = selects.options[selects.selectedIndex].text;// gives u value2
   	console.log(selectedText);
+  	navStack.push(["Bill", selectedText]);
   	document.getElementById("details").innerHTML = bilPanel;
   	document.getElementById("Bill").innerHTML = "Bill: "+selectedText;
+}
+
+function clickBack()
+{
+	var popedFirst = navStack.pop();
+	var poped = navStack.pop();
+	if(poped != undefined)
+	{
+		if(poped[0] == "Bill")
+		{
+			document.getElementById("details").innerHTML = bilPanel;
+	  		document.getElementById("Bill").innerHTML = "Bill: "+poped[1];
+	  		navStack.push(["Bill", poped[1]]);
+		}
+		else
+		{
+			var legislator = poped[1];
+			document.getElementById("details").innerHTML = legPanel;
+			document.getElementById("legislator_img_src").src = getLegislatorImageURL(legislator.bioguide_id);
+
+			document.getElementById("LegName").innerHTML= "<b>Name: </b> " + legislator.firstname + " " + legislator.lastname;
+			document.getElementById("indiBillCount").innerHTML= "<b>Bill Count:</b> " + legislator.bills.length;
+
+			var legBillHTML = "<SELECT NAME=\"BillSelect\" id=\"right_selectBill\"onchange=\"right_selectBill()  \"SIZE=\"10\"  width=\"300px\" style=\"width: 300px\">";
+			for(var i=0; i<legislator.bills.length; i++){
+				legBillHTML += "<option> " + legislator.bills[i]["display_number"];
+			}
+			legBillHTML += "</select>";
+			document.getElementById("legBills").innerHTML= legBillHTML;
+			navStack.push(["Leg", legislator]);
+		}
+	}
+	else
+	{
+		navStack.push(popedFirst);
+	}
 }
 
 function mapOnHoverEnter(object) {
@@ -908,7 +948,7 @@ function circlesOnClick(object) {
 	// 					<OPTION> Bill5
 	// 					<OPTION> Bill6
 	// 				</SELECT>
-	var legBillHTML = "<SELECT NAME=\"BillSelect\" id=\"right_selectBill\"onchange=\"right_selectBill() \"SIZE=\"10\" MULTIPLE width=\"300px\" style=\"width: 300px\">";
+	var legBillHTML = "<SELECT NAME=\"BillSelect\" id=\"right_selectBill\"onchange=\"right_selectBill() \"SIZE=\"10\"  width=\"300px\" style=\"width: 300px\">";
 	for(var i=0; i<legislator.bills.length; i++){
 		legBillHTML += "<option> " + legislator.bills[i]["display_number"];
 	}
@@ -917,7 +957,7 @@ function circlesOnClick(object) {
 
 	var state = stateData[legislator.state];
 
-	var stateLegHTML = "<B>Legislator List:</B> <BR><SELECT  id=\"bot_legSelect\"  onchange=\"bot_legSelect()\" NAME=\"LegSelect\" SIZE=\"7\" MULTIPLE  style=\"width: 200px\">";
+	var stateLegHTML = "<B>Legislator List:</B> <BR><SELECT  id=\"bot_legSelect\"  onchange=\"bot_legSelect()\" NAME=\"LegSelect\" SIZE=\"7\"  style=\"width: 200px\">";
  	for(var i=0; i<state.representativeCount; i++){
  		stateLegHTML += "<OPTION> " + state.representatives[i].firstname +" "+ state.representatives[i].lastname ;
  	}
@@ -927,7 +967,7 @@ function circlesOnClick(object) {
  	stateLegHTML += "</SELECT>";
  	document.getElementById("LegSelect").innerHTML= stateLegHTML;
 
- 	var stateBillHTML = "<B>Bills:</B> <BR> <SELECT NAME=\"BillSelect\" id=\"bot_selectBill\"onchange=\"bot_selectBill() \"SIZE=\"7\" MULTIPLE style=\"width: 200px\">";
+ 	var stateBillHTML = "<B>Bills:</B> <BR> <SELECT NAME=\"BillSelect\" id=\"bot_selectBill\"onchange=\"bot_selectBill() \"SIZE=\"7\" style=\"width: 200px\">";
  	for(var i=0; i<state.billCount; i++){
  		stateBillHTML += "<OPTION> " + state.bills[i]["display_number"];
  	}
@@ -1243,7 +1283,7 @@ function histOnClick(object) //add stuff here
 	document.getElementById("BillCount").innerHTML= "<b>Bill Count:</b> " + stateChosen.billCount;
 	document.getElementById("StateIMG").innerHTML = "<img src=\"data/resize/"+ stateChosen.name +".gif\" style=\"width: margin-left: 2px; margin-top: 2px;\">";
 
-	var stateLegHTML = "<B>Legislator List:</B> <BR><SELECT  id=\"bot_legSelect\"  onchange=\"bot_legSelect()\"  NAME=\"LegSelect\" SIZE=\"7\" MULTIPLE  style=\"width: 200px\">";
+	var stateLegHTML = "<B>Legislator List:</B> <BR><SELECT  id=\"bot_legSelect\"  onchange=\"bot_legSelect()\"  NAME=\"LegSelect\" SIZE=\"7\"  style=\"width: 200px\">";
  	for(var i=0; i<stateChosen.representativeCount; i++){
  		stateLegHTML += "<OPTION> " + stateChosen.representatives[i].firstname + " " + stateChosen.representatives[i].lastname ;
  	}
@@ -1253,7 +1293,7 @@ function histOnClick(object) //add stuff here
  	stateLegHTML += "</SELECT>";
  	document.getElementById("LegSelect").innerHTML= stateLegHTML;
 
- 	var stateBillHTML = "<B>Bills:</B> <BR> <SELECT id=\"bot_selectBill\"onchange=\"bot_selectBill() \"NAME=\"BillSelect\" SIZE=\"7\" MULTIPLE style=\"width: 200px\">";
+ 	var stateBillHTML = "<B>Bills:</B> <BR> <SELECT id=\"bot_selectBill\"onchange=\"bot_selectBill() \"NAME=\"BillSelect\" SIZE=\"7\" style=\"width: 200px\">";
  	for(var i=0; i<stateChosen.billCount; i++){
  		stateBillHTML += "<OPTION> " + stateChosen.bills[i]["display_number"];
  	}
