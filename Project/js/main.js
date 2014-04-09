@@ -50,6 +50,8 @@ var nameToAbbr = {};
 var xLabel = "kernelLength";
 var yLabel = "kernelWidth";
 
+var scatterList = {}; //used for creating/accessing scatterplot
+
 //declare our data variables for each individual data set
 var rawLegislatorData = null;
 
@@ -590,30 +592,45 @@ function drawScatterplot()
 			.attr("text-anchor", "middle");
 	}
 	console.log(stateArray);
-	for (var legislator in legislatorData)
+	
+	createScatterList(property);
+	
+	for (var node in scatterList)
 	{
-		var value = legislatorData[legislator][property];
-		var offset = stateArray.indexOf(stateData[legislatorData[legislator].state])*barWidth+10;
+		var parse = node.split(",");
+		var value = parse[1];
+		var offset = stateArray.indexOf(stateData[parse[0]])*barWidth+10;
 		
-		var color;
-		if (legislatorData[legislator].party == "D")
-		{
-			color = "#000080";
-		}
-		else if (legislatorData[legislator].party == "R")
-		{
-			color = "#800000";
-		}
-		else
-		{
-			color = "#008000";
-		}
+		// var color;
+		// if (legislatorData[legislator].party == "D")
+		// {
+			// color = "#000080";
+		// }
+		// else if (legislatorData[legislator].party == "R")
+		// {
+			// color = "#800000";
+		// }
+		// else
+		// {
+			// color = "#008000";
+		// }
+		var color = "#000000";
 		svg.append("circle")
-			.attr("id", "scatter"+stateData[state].name)
+			.attr("id", node)
 			.attr("cx", offset)
 			.attr("cy", scatterScale(value))
 			.attr("r", 5)
 			.attr("fill", color)
+			.on("click", function() {
+				scatterOnClick(node);
+			})
+			.attr("title", function(d) { 					
+				return scatterNodeString(node);	
+			});
+			// .tooltip({
+			// 'container': 'body',
+			// 'placement': 'top'
+			// });	
 	}
 	
 	svg.append("text")
@@ -1383,6 +1400,78 @@ function scatterMax(str)
 		}
 	}
 	return max;
+}
+
+function createScatterList(property)
+{
+	scatterList = {};
+	for (var legislator in legislatorData)
+	{
+		var state = legislatorData[legislator].state;
+		
+		if (abbrToName[state] != undefined)
+		{
+			var value = legislatorData[legislator][property];
+			
+			var str = state+","+value;
+			
+			if (scatterList[str] == undefined)
+			{
+				scatterList[str]={};
+				scatterList[str].legislators = [legislator];
+				scatterList[str].count = 0;
+				scatterList[str].rCount = 0;
+				scatterList[str].dCount = 0;
+				scatterList[str].iCount = 0;
+			}
+			else
+			{
+				scatterList[str].legislators.push(legislator);
+			}
+			
+			scatterList[str].count++;
+			if (legislatorData[legislator].party == "R")
+			{
+				scatterList[str].rCount++;
+			}
+			else if (legislatorData[legislator].party == "D")
+			{
+				scatterList[str].dCount++;
+			}
+			else
+			{
+				scatterList[str].iCount
+			}
+		}
+	}
+}
+
+function scatterOnClick(obj)
+{
+	console.log(scatterList[obj]);
+}
+
+function scatterNodeString(obj)
+{
+	var str = "bills: " + obj.split(",")[1];
+	for (var legislator in scatterList[obj].legislators)
+	{
+		str += "\n";
+		if (legislatorData[scatterList[obj].legislators[legislator]].party == "R")
+			{
+				str += "<span style='color:red'>";
+			}
+			else if (legislatorData[scatterList[obj].legislators[legislator]].party == "D")
+			{
+				str += "<span style='color:blue'>";
+			}
+			else
+			{
+				str += "<span style='color:green'>";
+			}
+		str += legislatorData[scatterList[obj].legislators[legislator]].firstname + " " + legislatorData[scatterList[obj].legislators[legislator]].lastname + "</span>";
+	}
+	return str;
 }
 
 function makeAbbrTables()
