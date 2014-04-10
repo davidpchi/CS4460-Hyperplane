@@ -623,7 +623,7 @@ function drawScatterplot()
 			.attr("r", 5)
 			.attr("fill", color)
 			.on("click", function() {
-				scatterOnClick(node);
+				scatterOnClick(this);
 			})
 			.attr("title", function(d) { 					
 				return scatterNodeString(node);	
@@ -1466,7 +1466,7 @@ function createScatterList(property)
 
 function scatterOnClick(obj)
 {
-	console.log(scatterList[obj]);
+	console.log(scatterList[obj.id]);
 }
 
 function scatterNodeString(obj)
