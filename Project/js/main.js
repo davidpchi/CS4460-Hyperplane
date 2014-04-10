@@ -595,6 +595,7 @@ function drawScatterplot()
 	
 	createScatterList(property);
 	
+	var onHoverCircles = [];
 	for (var node in scatterList)
 	{
 		var parse = node.split(",");
@@ -615,7 +616,7 @@ function drawScatterplot()
 			// color = "#008000";
 		// }
 		var color = "#000000";
-		svg.append("circle")
+		var myCircle = svg.append("circle")
 			.attr("id", node)
 			.attr("cx", offset)
 			.attr("cy", scatterScale(value))
@@ -631,6 +632,23 @@ function drawScatterplot()
 			// 'container': 'body',
 			// 'placement': 'top'
 			// });	
+		onHoverCircles.push(myCircle);
+	}
+	
+	//add functionality to the onHover of the circles
+	for (var circle in onHoverCircles) {
+		$(onHoverCircles[circle]).tooltip({
+			'container': 'body',
+			'placement': 'bottom'
+		});	
+		
+		$(onHoverCircles[circle]).hover(function(){
+			$(this).css("stroke","red");
+		},function(){
+			$(this).css("stroke","black");
+		});
+		
+		//$(onHoverCircles[circle]).on('click', function() {circlesOnClick(this);});
 	}
 	
 	svg.append("text")
@@ -1453,24 +1471,25 @@ function scatterOnClick(obj)
 
 function scatterNodeString(obj)
 {
-	var str = "bills: " + obj.split(",")[1];
-	for (var legislator in scatterList[obj].legislators)
-	{
-		str += "\n";
-		if (legislatorData[scatterList[obj].legislators[legislator]].party == "R")
-			{
-				str += "<span style='color:red'>";
-			}
-			else if (legislatorData[scatterList[obj].legislators[legislator]].party == "D")
-			{
-				str += "<span style='color:blue'>";
-			}
-			else
-			{
-				str += "<span style='color:green'>";
-			}
-		str += legislatorData[scatterList[obj].legislators[legislator]].firstname + " " + legislatorData[scatterList[obj].legislators[legislator]].lastname + "</span>";
-	}
+	var str = scatterList[obj].count + " legislators";
+	// var str = "bills: " + obj.split(",")[1];
+	// for (var legislator in scatterList[obj].legislators)
+	// {
+		// str += "\n";
+		// if (legislatorData[scatterList[obj].legislators[legislator]].party == "R")
+			// {
+				// str += "<span style='color:red'>";
+			// }
+			// else if (legislatorData[scatterList[obj].legislators[legislator]].party == "D")
+			// {
+				// str += "<span style='color:blue'>";
+			// }
+			// else
+			// {
+				// str += "<span style='color:green'>";
+			// }
+		// str += legislatorData[scatterList[obj].legislators[legislator]].firstname + " " + legislatorData[scatterList[obj].legislators[legislator]].lastname;// + "</span>";
+	// }
 	return str;
 }
 
