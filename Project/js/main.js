@@ -1233,8 +1233,8 @@ function createData()
 			website: rawLegislatorData[i].website,
 			imageURL: rawLegislatorData[i].imageURL,
 			bills: [],
-			billCount: 0
-			//TODO: NEED TO ADD BILLS
+			billCount: 0,
+			district: rawLegislatorData[i].district
 		};
 		
 		//init our state data
