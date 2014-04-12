@@ -44,7 +44,7 @@
 		<div id="container">
 		<div id="vis">
 			<div id="changer">
-				<span>
+				<!-- <span>
 					<label for="x-axis-select">Year Select: </label>
 					<select id="x-axis-select" font= "20px serif">
 					  <option name="test" value="2007">2007</option>
@@ -53,10 +53,11 @@
 					  <option name="test4" value="2010">2010</option>
 					  <option name="test5" value="2011">2011</option>
 					</select>
-				</span>
+				</span> -->
 
 				<!-- view Change -->
 				<span>
+				<label> View: </label>
 				<select id="viewSelect"  onchange="selectView()">
 			      <option>Map</option>
 			      <option>Histogram</option>  
@@ -128,7 +129,10 @@
 				<div id="backButton"><b>Back</b></div>
 			</div> -->
 			<div id="details">
-				<h><b>Welcome to Team Hyperplane.<br>This is the Map View</b></h>
+				<h><br><br><b>Welcome to Team Hyperplane.<br>This is the Map View</b><br><br>
+				Here, we show the data encoded by state.<br><br>
+				Click on a state to see more information on that particular state that includes the number of legislators, bills, etc.<br><br>
+				You can change what information is displayed on this graph (between number of legislators and number of bills from that state).</h>
 			</div>
 		</div>
 
@@ -138,34 +142,21 @@
 				</div>
 
 				<div id="StateInfo">
-					<div id="StateName"> <B>State Name: </B>Name</div>
-					<div id="RepCount"><B>Rep Count: </B>Num</div>
-					<div id="SenatorCount"><B>Senator Count: </B>Num</div>
-					<div id="BillCount"><B>Bill Count: </B>Num</div>
+					<div id="StateName"> <B>State Name: </B></div>
+					<div id="RepCount"><B>Rep Count: </B></div>
+					<div id="SenatorCount"><B>Senator Count: </B></div>
+					<div id="BillCount"><B>Bill Count: </B></div>
 				</div>
 
 				<div id = "LegSelect">
 					<B>Legislator List:</B> <BR>
 					<SELECT  NAME="LegSelect" SIZE="7"  style="width: 200px">
-					<OPTION SELECTED> Leg1
-					<OPTION> Leg2
-					<OPTION> Leg3
-					<OPTION> Leg4
-					<OPTION> Leg5
-					<OPTION> Leg6
-					<OPTION> Leg7
 					</SELECT>
 				</div>
 
 				<div id ="BillSelect">
 					<B>Bills:</B> <BR>
 					<SELECT NAME="BillSelect" SIZE="7" style="width: 200px">
-					<OPTION SELECTED> Bill1
-					<OPTION> Bill2
-					<OPTION> Bill3
-					<OPTION> Bill4
-					<OPTION> Bill5
-					<OPTION> Bill6
 					</SELECT>
 				</div>
 			</div>

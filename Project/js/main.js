@@ -8,7 +8,8 @@ This function is passed the variables to initially draw on the x and y axes.
 var margin = {top: 80, right: 50, bottom: 30, left: 30}; //this is an object aht has been created
 var width = 950 - margin.left - margin.right;
 var height = 600 - margin.top - margin.bottom;
-var navStack = new Array();
+var navBackStack = new Array();
+var navForwardStack = new Array();
 
 var legPanel = "<div id=\"IMG\"><img id=\"legislator_img_src\" width=\"300\" src=\"\"></div >"+
 				"<div id=\"LegName\"> <B>Legislator Name: </B></div>"+
@@ -17,11 +18,19 @@ var legPanel = "<div id=\"IMG\"><img id=\"legislator_img_src\" width=\"300\" src
 				"<div id=\"legBills\">"+
 				"<SELECT NAME=\"BillSelect\" id=\"bot_selectBill\"onchange=\"bot_selectBill() \" SIZE=\"10\"  width=\"300px\" style=\"width: 300px\"></SELECT></div>"+
 				"<div id=\"indiBillCount\" onC> <B>Number of Bills: </B> </div>"+
-				"<div><button id=\"backButton\" onclick=\"clickBack()\" type=\"button\">Back</button></div>";
+				"<div><button id=\"backButton\" onclick=\"clickBack()\" type=\"button\">Back</button>"+
+				"<button id=\"forwardButton\" onclick=\"clickForward()\" type=\"button\">Forward</button></div>";
 
 var bilPanel = "<div id = \"Bill\"> </div>"+
-				"<div><button id=\"backButton\" onclick=\"clickBack()\" type=\"button\">Back</button></div>";
+				"<div id = \"Title\"> </div>"+
+				"<div><a id = \"Sponsor\" onclick = \"clickLeg()\" => </a></div>"+
+				"<div id = \"Date\"> </div>"+
+				"<div id = \"BillStatus\"> </div>"+
+				"<div id = \"Active\"> </div>"+
+				"<div><button id=\"backButton\" onclick=\"clickBack()\" type=\"button\">Back</button></div>"+
+				"<button id=\"forwardButton\" onclick=\"clickForward()\" type=\"button\">Forward</button></div>";
 
+// var legSelPanel = "";
 var x = d3.scale.linear().range([0, width]);
 var y = d3.scale.linear().range([height,0]);
 
@@ -203,6 +212,10 @@ function draw()
 function drawMap() {
 	//load the map
 	//this custom svg has an overlay of a separate on top to allow for hatches over heatmap
+	document.getElementById("details").innerHTML = "<h><br><br><b>Welcome to Team Hyperplane.<br>This is the Map View</b><br><br>"+
+													"Here, we show the data encoded by state.<br><br>"+
+													"Click on a state to see more information on that particular state that includes the number of legislators, bills, etc.<br><br>"+
+													"You can change what information is displayed on this graph (between number of legislators and number of bills from that state).</h>";
     d3.xml("data/custom.svg", "image/svg+xml", function(xml) {
         document.getElementById('vis').appendChild(xml.documentElement);
 		
@@ -291,7 +304,11 @@ function updateMap() {
 
 function drawHistogram()
 {
-	document.getElementById("details").innerHTML = "<h><b>Welcome to Team Hyperplane.<br>This is the Histogram View</b></h>";
+	document.getElementById("details").innerHTML = "<h><br><br><b>Welcome to Team Hyperplane.<br>This is the Histogram View</b><br><br>"+
+													"The data is organized by state in a histogram bar chart visualization.<br><br>"+
+													"Click a bar to see more information on that particular state that includes the number of legislators, bills, etc.<br><br>"+
+													"You can change what information is displayed on this graph (between number of legislators and number of bills from that state).<br><br>"+
+													" You can also reorganize the order in which these bars are displayed (by ascending state name, ascending legislator count, etc)</h>";
 	var svg = d3.select("#vis").append("svg")
 		.attr("width", width + margin.left + margin.right)
 		.attr("height", height + margin.top + margin.bottom)
@@ -543,7 +560,10 @@ function updateHistogram()
 
 function drawScatterplot()
 {
-	document.getElementById("details").innerHTML = "<h><b>Welcome to Team Hyperplane.<br>This is the Scatterplot View</b></h>";
+	document.getElementById("details").innerHTML = "<h><br><br><b>Welcome to Team Hyperplane.<br>This is the Scatter Plot View</b><br><br>"+
+													"Each mark represents legislator(s) for each state with the number of bills they have created.<br><br>"+
+													"The color of these marks shows their political party.<br><br>"+
+													"Note that several legislators may be represented at a particular point; click on the point to allow for selection of individual legislators.</h>";
 	var svg = d3.select("#vis").append("svg")
 		.attr("width", width + margin.left + margin.right)
 		.attr("height", height + margin.top + margin.bottom)
@@ -819,9 +839,8 @@ function mapOnClick(object) {
 
 }
 
-function bot_legSelect(){
-	var selects = document.getElementById("bot_legSelect");
-  	var selectedText = selects.options[selects.selectedIndex].text;// gives u value2
+function clickLeg(){
+	var selectedText = document.getElementById("Sponsor").innerHTML;
   	var leg;
   	var i = 0;
   	var legislator;
@@ -835,7 +854,8 @@ function bot_legSelect(){
   			break;
   		}
   	}
-  	navStack.push(["Leg", legislator]);
+  	navForwardStack = [];
+  	navBackStack.push(["Leg", legislator]);
   	 //var legislator = legislatorData[1];
 
   	document.getElementById("details").innerHTML = legPanel;
@@ -844,6 +864,7 @@ function bot_legSelect(){
 	//Update right pane
 	//<div id="LegName"> <B>Legislator Name: </B></div>
 	document.getElementById("LegName").innerHTML= "<b>Name: </b> " + legislator.firstname + " " + legislator.lastname;
+	// document.getElementById("District").innerHTML = "<b>District: </b>";
 	document.getElementById("indiBillCount").innerHTML= "<b>Bill Count:</b> " + legislator.bills.length;
 
 	//Legislator bills in Right Pane
@@ -863,37 +884,226 @@ function bot_legSelect(){
 	document.getElementById("legBills").innerHTML= legBillHTML;
 }
 
+function bot_legSelect(){
+	var selects = document.getElementById("bot_legSelect");
+  	var selectedText = selects.options[selects.selectedIndex].text;// gives u value2
+  	var leg;
+  	var i = 0;
+  	var legislator;
+  	var leg2;
+  	for(leg in legislatorData)
+  	{
+  		leg2 = legislatorData[leg];
+  		if(selectedText.indexOf(leg2.firstname) != -1 && selectedText.indexOf(leg2.lastname) != -1)
+  		{
+  			legislator = leg2;
+  			break;
+  		}
+  	}
+  	navForwardStack = [];
+  	navBackStack.push(["Leg", legislator]);
+  	 //var legislator = legislatorData[1];
+
+  	document.getElementById("details").innerHTML = legPanel;
+	document.getElementById("legislator_img_src").src = getLegislatorImageURL(legislator.bioguide_id);
+	
+	//Update right pane
+	//<div id="LegName"> <B>Legislator Name: </B></div>
+	document.getElementById("LegName").innerHTML= "<b>Name: </b> " + legislator.firstname + " " + legislator.lastname;
+	// document.getElementById("District").innerHTML = "<b>District: </b>";
+	document.getElementById("indiBillCount").innerHTML= "<b>Bill Count:</b> " + legislator.bills.length;
+
+	//Legislator bills in Right Pane
+	// <SELECT NAME="BillSelect" SIZE="10" MULTIPLE width="300px" style="width: 300px">
+	// 					<OPTION> Bill1
+	// 					<OPTION> Bill2
+	// 					<OPTION> Bill3
+	// 					<OPTION> Bill4
+	// 					<OPTION> Bill5
+	// 					<OPTION> Bill6
+	// 				</SELECT>
+	var legBillHTML = "<SELECT NAME=\"BillSelect\" id=\"right_selectBill\"onchange=\"right_selectBill()  \"SIZE=\"10\" width=\"300px\" style=\"width: 300px\">";
+	for(var i=0; i<legislator.bills.length; i++){
+		legBillHTML += "<option> " + legislator.bills[i]["display_number"];
+	}
+	legBillHTML += "</select>";
+	document.getElementById("legBills").innerHTML= legBillHTML;
+}
+
+function right_selectLeg(){
+	var selects = document.getElementById("right_selectLeg");
+  	var selectedText = selects.options[selects.selectedIndex].text;// gives u value2
+  	var leg;
+  	var i = 0;
+  	var legislator;
+  	var leg2;
+  	for(leg in legislatorData)
+  	{
+  		leg2 = legislatorData[leg];
+  		if(selectedText.indexOf(leg2.firstname) != -1 && selectedText.indexOf(leg2.lastname) != -1)
+  		{
+  			legislator = leg2;
+  			break;
+  		}
+  	}
+  	navForwardStack = [];
+  	navBackStack.push(["Leg", legislator]);
+  	 //var legislator = legislatorData[1];
+
+  	document.getElementById("details").innerHTML = legPanel;
+	document.getElementById("legislator_img_src").src = getLegislatorImageURL(legislator.bioguide_id);
+	
+	//Update right pane
+	//<div id="LegName"> <B>Legislator Name: </B></div>
+	document.getElementById("LegName").innerHTML= "<b>Name: </b> " + legislator.firstname + " " + legislator.lastname;
+	// document.getElementById("District").innerHTML = "<b>District: </b>";
+	document.getElementById("indiBillCount").innerHTML= "<b>Bill Count:</b> " + legislator.bills.length;
+
+	//Legislator bills in Right Pane
+	// <SELECT NAME="BillSelect" SIZE="10" MULTIPLE width="300px" style="width: 300px">
+	// 					<OPTION> Bill1
+	// 					<OPTION> Bill2
+	// 					<OPTION> Bill3
+	// 					<OPTION> Bill4
+	// 					<OPTION> Bill5
+	// 					<OPTION> Bill6
+	// 				</SELECT>
+	var legBillHTML = "<SELECT NAME=\"BillSelect\" id=\"right_selectBill\"onchange=\"right_selectBill()  \"SIZE=\"10\" width=\"300px\" style=\"width: 300px\">";
+	for(var i=0; i<legislator.bills.length; i++){
+		legBillHTML += "<option> " + legislator.bills[i]["display_number"];
+	}
+	legBillHTML += "</select>";
+	document.getElementById("legBills").innerHTML= legBillHTML;
+
+	state = stateData[legislator.state];
+	document.getElementById("StateName").innerHTML= "<b>State Name:</b> " + state.name;
+	document.getElementById("RepCount").innerHTML= "<b>Rep Count:</b> " + state.representativeCount;
+	document.getElementById("SenatorCount").innerHTML= "<b>Senator Count:</b> " + state.senatorCount;
+	document.getElementById("BillCount").innerHTML= "<b>Bill Count:</b> " + state.billCount;
+	document.getElementById("StateIMG").innerHTML = "<img src=\"data/resize/"+ state.name +".gif\" style=\" margin-left: 2px; margin-top: 2px;\">";
+
+
+	
+	var stateLegHTML = "<B>Legislator List:</B> <BR><SELECT  id=\"bot_legSelect\"  onchange=\"bot_legSelect()\" NAME=\"LegSelect\" SIZE=\"7\"  style=\"width: 200px\">";
+ 	for(var i=0; i<state.representativeCount; i++){
+ 		stateLegHTML += "<OPTION> " + state.representatives[i].firstname +" "+ state.representatives[i].lastname ;
+ 	}
+ 	for(var i=0; i<state.senatorCount; i++){
+ 		stateLegHTML += "<OPTION> " + state.senators[i].firstname +" "+ state.senators[i].lastname ;
+ 	}
+ 	stateLegHTML += "</SELECT>";
+ 	document.getElementById("LegSelect").innerHTML= stateLegHTML;
+
+ 	var stateBillHTML = "<B>Bills:</B> <BR> <SELECT NAME=\"BillSelect\" id=\"bot_selectBill\"onchange=\"bot_selectBill()\" SIZE=\"7\"  style=\"width: 200px\">";
+ 	for(var i=0; i<state.billCount; i++){
+ 		stateBillHTML += "<OPTION> " + state.bills[i]["display_number"];
+ 	}
+ 	stateBillHTML += "</SELECT>";
+ 	document.getElementById("BillSelect").innerHTML= stateBillHTML;
+}
+
+
+
 function bot_selectBill(){
 	var selects = document.getElementById("bot_selectBill");
   	var selectedText = selects.options[selects.selectedIndex].text;// gives u value2
-  	console.log(selectedText);
-  	navStack.push(["Bill", selectedText]);
+  	
+  	navBackStack.push(["Bill", selectedText]);
+  	navForwardStack = [];
+  	var bName = ""+ selectedText;
+  	//console.log(bName);
   	document.getElementById("details").innerHTML = bilPanel;
-  	document.getElementById("Bill").innerHTML = "Bill: "+selectedText;
+  	document.getElementById("Bill").innerHTML = "<br><br><b>Bill: </b>"+selectedText;
+  	for(var bil in billData)
+  	{
+  		 var bill = billData[bil];
+  		if(bName == bill["display_number"])
+  		{
+  			document.getElementById("Title").innerHTML = "<br><b>Title: </b>"+bill.title_without_number;
+  			document.getElementById("Sponsor").innerHTML = "<br><b>Sponsor: </b>"+bill.sponsor.firstname + " " + bill.sponsor.lastname;
+  			document.getElementById("Date").innerHTML = "<br><b>Date Introduced: </b>"+bill.introduced_date;
+  			document.getElementById("BillStatus").innerHTML = "<br><b>Bill Status: </b>"+ bill.current_status_label;
+  			var active;
+  			if(bill.is_alive == true)
+  				active = "Yes";
+  			else
+  				active = "No";
+  			document.getElementById("Active").innerHTML = "<br><b>Active: </b>"+active;
+  			break;
+  		}
+  		
+  	}
+  	 // console.log(billData[0]);
 }
 
 function right_selectBill(){
 	var selects = document.getElementById("right_selectBill");
   	var selectedText = selects.options[selects.selectedIndex].text;// gives u value2
-  	console.log(selectedText);
-  	navStack.push(["Bill", selectedText]);
+  	
+  	navBackStack.push(["Bill", selectedText]);
+  	navForwardStack = [];
   	document.getElementById("details").innerHTML = bilPanel;
-  	document.getElementById("Bill").innerHTML = "Bill: "+selectedText;
+  	document.getElementById("Bill").innerHTML = "<br><br><b>Bill: </b>"+selectedText;
+  	var bName = ""+ selectedText;
+  	//console.log(bName);
+  	for(var bil in billData)
+  	{
+  		 var bill = billData[bil];
+  		if(bName == bill["display_number"])
+  		{
+  			document.getElementById("Title").innerHTML = "<br><b>Title: </b>"+bill.title_without_number;
+  			document.getElementById("Sponsor").innerHTML = "<br><b>Sponsor: </b>"+bill.sponsor.firstname + " " + bill.sponsor.lastname;
+  			document.getElementById("Date").innerHTML = "<br><b>Date Introduced: </b>"+bill.introduced_date;
+  			document.getElementById("BillStatus").innerHTML = "<br><b>Bill Status: </b>"+ bill.current_status_label;
+  			var active;
+  			if(bill.is_alive == true)
+  				active = "Yes";
+  			else
+  				active = "No";
+  			document.getElementById("Active").innerHTML = "<br><b>Active: </b>"+active;
+  			break;
+  		}
+  		
+  	}
+  	
 }
 
 function clickBack()
 {
-	var popedFirst = navStack.pop();
-	var poped = navStack.pop();
+	var popedFirst = navBackStack.pop();
+	var poped = navBackStack.pop();
 	if(poped != undefined)
 	{
+		navForwardStack.push(popedFirst);
 		if(poped[0] == "Bill")
 		{
-			document.getElementById("details").innerHTML = bilPanel;
-	  		document.getElementById("Bill").innerHTML = "Bill: "+poped[1];
-	  		navStack.push(["Bill", poped[1]]);
+			var selectedText = poped[1];
+			var bName = ""+ selectedText;
+		  	//console.log(bName);
+		  	document.getElementById("details").innerHTML = bilPanel;
+		  	document.getElementById("Bill").innerHTML = "<br><br><b>Bill: </b>"+selectedText;
+		  	for(var bil in billData)
+		  	{
+		  		 var bill = billData[bil];
+		  		if(bName == bill["display_number"])
+		  		{
+		  			document.getElementById("Title").innerHTML = "<br><b>Title: </b>"+bill.title_without_number;
+		  			document.getElementById("Sponsor").innerHTML = "<br><b>Sponsor: </b>"+bill.sponsor.firstname + " " + bill.sponsor.lastname;
+		  			document.getElementById("Date").innerHTML = "<br><b>Date Introduced: </b>"+bill.introduced_date;
+		  			document.getElementById("BillStatus").innerHTML = "<br><b>Bill Status: </b>"+ bill.current_status_label;
+		  			var active;
+		  			if(bill.is_alive == true)
+		  				active = "Yes";
+		  			else
+		  				active = "No";
+		  			document.getElementById("Active").innerHTML = "<br><b>Active: </b>"+active;
+		  			break;
+		  		}
+		  		
+		  	}
+	  		navBackStack.push(["Bill", poped[1]]);
 		}
-		else
+		else if(poped[0] == "Leg")
 		{
 			var legislator = poped[1];
 			document.getElementById("details").innerHTML = legPanel;
@@ -908,13 +1118,100 @@ function clickBack()
 			}
 			legBillHTML += "</select>";
 			document.getElementById("legBills").innerHTML= legBillHTML;
-			navStack.push(["Leg", legislator]);
+			navBackStack.push(["Leg", legislator]);
+		}
+		else
+		{
+			var legislators = poped;
+			console.log(poped);
+			var legSelPanel = "<label>Legislators: </label><SELECT NAME=\"LegSelect2\" id=\"right_selectLeg\"onchange=\"right_selectLeg() \" SIZE=\"10\"  width=\"300px\" style=\"width: 300px\">"; 
+			for(var i = 0; i < legislators.length; i++)
+			{
+				var leg= legislatorData[legislators[i]];
+				// console.log(leg.firstname);
+				legSelPanel += "<OPTION> " + leg.firstname + " " + leg.lastname ;
+			}
+			legSelPanel += "</SELECT>";
+			document.getElementById("details").innerHTML = legSelPanel;
+			navBackStack.push("LegSel", legislators);
 		}
 	}
 	else
 	{
-		navStack.push(popedFirst);
+		navBackStack.push(popedFirst);
 	}
+}
+
+function clickForward()
+{
+	// var popedFirst = navForwardStack.pop();
+	var poped = navForwardStack.pop();
+	if(poped != undefined)
+	{
+		navBackStack.push(poped);
+		if(poped[0] == "Bill")
+		{
+			var selectedText = poped[1];
+			var bName = ""+ selectedText;
+		  	//console.log(bName);
+		  	document.getElementById("details").innerHTML = bilPanel;
+		  	document.getElementById("Bill").innerHTML = "<br><br><b>Bill: </b>"+selectedText;
+		  	for(var bil in billData)
+		  	{
+		  		 var bill = billData[bil];
+		  		if(bName == bill["display_number"])
+		  		{
+		  			document.getElementById("Title").innerHTML = "<br><b>Title: </b>"+bill.title_without_number;
+		  			document.getElementById("Sponsor").innerHTML = "<br><b>Sponsor: </b>"+bill.sponsor.firstname + " " + bill.sponsor.lastname;
+		  			document.getElementById("Date").innerHTML = "<br><b>Date Introduced: </b>"+bill.introduced_date;
+		  			document.getElementById("BillStatus").innerHTML = "<br><b>Bill Status: </b>"+ bill.current_status_label;
+		  			var active;
+		  			if(bill.is_alive == true)
+		  				active = "Yes";
+		  			else
+		  				active = "No";
+		  			document.getElementById("Active").innerHTML = "<br><b>Active: </b>"+active;
+		  			break;
+		  		}
+		  		
+		  	}
+		}
+		else if(poped[0] == "Leg")
+		{
+			var legislator = poped[1];
+			document.getElementById("details").innerHTML = legPanel;
+			document.getElementById("legislator_img_src").src = getLegislatorImageURL(legislator.bioguide_id);
+
+			document.getElementById("LegName").innerHTML= "<b>Name: </b> " + legislator.firstname + " " + legislator.lastname;
+			document.getElementById("indiBillCount").innerHTML= "<b>Bill Count:</b> " + legislator.bills.length;
+
+			var legBillHTML = "<SELECT NAME=\"BillSelect\" id=\"right_selectBill\"onchange=\"right_selectBill()  \"SIZE=\"10\"  width=\"300px\" style=\"width: 300px\">";
+			for(var i=0; i<legislator.bills.length; i++){
+				legBillHTML += "<option> " + legislator.bills[i]["display_number"];
+			}
+			legBillHTML += "</select>";
+			document.getElementById("legBills").innerHTML= legBillHTML;
+			// navForwardStack.push(["Leg", legislator]);
+		}
+		else
+		{
+			var legislators = poped[1];
+			var legSelPanel = "<label>Legislators: </label><SELECT NAME=\"LegSelect2\" id=\"right_selectLeg\"onchange=\"right_selectLeg() \" SIZE=\"10\"  width=\"300px\" style=\"width: 300px\">"; 
+			for(var i = 0; i < legislators.length; i++)
+			{
+				var leg= legislatorData[legislators[i]];
+				// console.log(leg.firstname);
+				legSelPanel += "<OPTION> " + leg.firstname + " " + leg.lastname ;
+			}
+			legSelPanel += "</SELECT>";
+			document.getElementById("details").innerHTML = legSelPanel;
+			navBackStack.push("LegSel", legislators);
+		}
+	}
+	// else
+	// {
+	// 	navForwardStack.push(popedFirst);
+	// }
 }
 
 function mapOnHoverEnter(object) {
@@ -936,7 +1233,7 @@ function computeColorByValue(valType, maxVal, stateObj) {
 	
 	if (valType === "legislatorCount") {
 		var totalLegis = stateObj.representativeCount + stateObj.senatorCount;
-		console.log(maxVal);
+		// console.log(maxVal);
 		var colorIndex = Math.round(totalLegis/maxVal * (colorScale.length-1));
 		return (colorScale[colorIndex]);
 	}
@@ -1466,7 +1763,20 @@ function createScatterList(property)
 
 function scatterOnClick(obj)
 {
-	console.log(scatterList[obj.id]);
+	
+	var legislators = scatterList[obj.id].legislators;
+	navBackStack.push("LegSel", legislators);
+	//console.log(legislators[0]);
+	var legSelPanel = "<label>Legislators: </label><SELECT NAME=\"LegSelect2\" id=\"right_selectLeg\"onchange=\"right_selectLeg() \" SIZE=\"10\"  width=\"300px\" style=\"width: 300px\">"; 
+	for(var i = 0; i < legislators.length; i++)
+	{
+		var leg= legislatorData[legislators[i]];
+		// console.log(leg.firstname);
+		legSelPanel += "<OPTION> " + leg.firstname + " " + leg.lastname ;
+	}
+	legSelPanel += "</SELECT>";
+	document.getElementById("details").innerHTML = legSelPanel;
+	// document.getElementById()
 }
 
 function scatterNodeString(obj)

@@ -33,7 +33,7 @@ function onload(){
     }
     
     // Set the initial state of the configuration dropdowns
-    document.querySelector('#x-axis-select option[value="' + INIT_X_VAR + '"]').selected = true;
+    // document.querySelector('#x-axis-select option[value="' + INIT_X_VAR + '"]').selected = true;
     configSelects(getXAxisVal(), getYAxisVal());
 
     // Configure the change() handler
