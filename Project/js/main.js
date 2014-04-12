@@ -14,10 +14,10 @@ var navForwardStack = new Array();
 var legPanel = "<div id=\"IMG\"><img id=\"legislator_img_src\" width=\"300\" src=\"\"></div >"+
 				"<div id=\"LegName\"> <B>Legislator Name: </B></div>"+
 				"<div id=\"District\"><B>District: </B></div>"+
-				"<B>Bills:</B> <BR>"+
+				"<div id=\"LegTitle\"><B>Title: </B></div>"+
+				"<div id=\"indiBillCount\" onC> <B>Number of Bills: </B> </div>"+
 				"<div id=\"legBills\">"+
 				"<SELECT NAME=\"BillSelect\" id=\"bot_selectBill\"onchange=\"bot_selectBill() \" SIZE=\"10\"  width=\"300px\" style=\"width: 300px\"></SELECT></div>"+
-				"<div id=\"indiBillCount\" onC> <B>Number of Bills: </B> </div>"+
 				"<div><button id=\"backButton\" onclick=\"clickBack()\" type=\"button\">Back</button>"+
 				"<button id=\"forwardButton\" onclick=\"clickForward()\" type=\"button\">Forward</button></div>";
 
@@ -864,7 +864,8 @@ function clickLeg(){
 	//Update right pane
 	//<div id="LegName"> <B>Legislator Name: </B></div>
 	document.getElementById("LegName").innerHTML= "<b>Name: </b> " + legislator.firstname + " " + legislator.lastname;
-	// document.getElementById("District").innerHTML = "<b>District: </b>";
+	document.getElementById("District").innerHTML = "<b>District: </b>" + legislator.district;
+	document.getElementById("LegTitle").innerHTML = "<b>Title: </b>" + legislator.title;
 	document.getElementById("indiBillCount").innerHTML= "<b>Bill Count:</b> " + legislator.bills.length;
 
 	//Legislator bills in Right Pane
@@ -910,7 +911,8 @@ function bot_legSelect(){
 	//Update right pane
 	//<div id="LegName"> <B>Legislator Name: </B></div>
 	document.getElementById("LegName").innerHTML= "<b>Name: </b> " + legislator.firstname + " " + legislator.lastname;
-	// document.getElementById("District").innerHTML = "<b>District: </b>";
+	document.getElementById("District").innerHTML = "<b>District: </b>" + legislator.district;
+	document.getElementById("LegTitle").innerHTML = "<b>Title: </b>" + legislator.title;
 	document.getElementById("indiBillCount").innerHTML= "<b>Bill Count:</b> " + legislator.bills.length;
 
 	//Legislator bills in Right Pane
@@ -956,7 +958,8 @@ function right_selectLeg(){
 	//Update right pane
 	//<div id="LegName"> <B>Legislator Name: </B></div>
 	document.getElementById("LegName").innerHTML= "<b>Name: </b> " + legislator.firstname + " " + legislator.lastname;
-	// document.getElementById("District").innerHTML = "<b>District: </b>";
+	document.getElementById("District").innerHTML = "<b>District: </b>" + legislator.district;
+	document.getElementById("LegTitle").innerHTML = "<b>Title: </b>" + legislator.title;
 	document.getElementById("indiBillCount").innerHTML= "<b>Bill Count:</b> " + legislator.bills.length;
 
 	//Legislator bills in Right Pane
@@ -1111,6 +1114,8 @@ function clickBack()
 
 			document.getElementById("LegName").innerHTML= "<b>Name: </b> " + legislator.firstname + " " + legislator.lastname;
 			document.getElementById("indiBillCount").innerHTML= "<b>Bill Count:</b> " + legislator.bills.length;
+			document.getElementById("District").innerHTML = "<b>District: </b>" + legislator.district;
+			document.getElementById("LegTitle").innerHTML = "<b>Title: </b>" + legislator.title;
 
 			var legBillHTML = "<SELECT NAME=\"BillSelect\" id=\"right_selectBill\"onchange=\"right_selectBill()  \"SIZE=\"10\"  width=\"300px\" style=\"width: 300px\">";
 			for(var i=0; i<legislator.bills.length; i++){
@@ -1123,8 +1128,8 @@ function clickBack()
 		else
 		{
 			var legislators = poped;
-			console.log(poped);
-			var legSelPanel = "<label>Legislators: </label><SELECT NAME=\"LegSelect2\" id=\"right_selectLeg\"onchange=\"right_selectLeg() \" SIZE=\"10\"  width=\"300px\" style=\"width: 300px\">"; 
+			// console.log(poped);
+			var legSelPanel = "<br><br><label>Legislators On that Point: </label><SELECT NAME=\"LegSelect2\" id=\"right_selectLeg\"onchange=\"right_selectLeg() \" SIZE=\"10\"  width=\"300px\" style=\"width: 300px\">"; 
 			for(var i = 0; i < legislators.length; i++)
 			{
 				var leg= legislatorData[legislators[i]];
@@ -1184,6 +1189,8 @@ function clickForward()
 
 			document.getElementById("LegName").innerHTML= "<b>Name: </b> " + legislator.firstname + " " + legislator.lastname;
 			document.getElementById("indiBillCount").innerHTML= "<b>Bill Count:</b> " + legislator.bills.length;
+			document.getElementById("District").innerHTML = "<b>District: </b>" + legislator.district;
+			document.getElementById("LegTitle").innerHTML = "<b>Title: </b>" + legislator.title;
 
 			var legBillHTML = "<SELECT NAME=\"BillSelect\" id=\"right_selectBill\"onchange=\"right_selectBill()  \"SIZE=\"10\"  width=\"300px\" style=\"width: 300px\">";
 			for(var i=0; i<legislator.bills.length; i++){
@@ -1196,7 +1203,7 @@ function clickForward()
 		else
 		{
 			var legislators = poped[1];
-			var legSelPanel = "<label>Legislators: </label><SELECT NAME=\"LegSelect2\" id=\"right_selectLeg\"onchange=\"right_selectLeg() \" SIZE=\"10\"  width=\"300px\" style=\"width: 300px\">"; 
+			var legSelPanel = "<br><br><label>Legislators On that Point: </label><SELECT NAME=\"LegSelect2\" id=\"right_selectLeg\"onchange=\"right_selectLeg() \" SIZE=\"10\"  width=\"300px\" style=\"width: 300px\">"; 
 			for(var i = 0; i < legislators.length; i++)
 			{
 				var leg= legislatorData[legislators[i]];
@@ -1767,7 +1774,7 @@ function scatterOnClick(obj)
 	var legislators = scatterList[obj.id].legislators;
 	navBackStack.push("LegSel", legislators);
 	//console.log(legislators[0]);
-	var legSelPanel = "<label>Legislators: </label><SELECT NAME=\"LegSelect2\" id=\"right_selectLeg\"onchange=\"right_selectLeg() \" SIZE=\"10\"  width=\"300px\" style=\"width: 300px\">"; 
+	var legSelPanel = "<br><br><label>Legislators On that Point: </label><SELECT NAME=\"LegSelect2\" id=\"right_selectLeg\"onchange=\"right_selectLeg() \" SIZE=\"10\"  width=\"300px\" style=\"width: 300px\">"; 
 	for(var i = 0; i < legislators.length; i++)
 	{
 		var leg= legislatorData[legislators[i]];
