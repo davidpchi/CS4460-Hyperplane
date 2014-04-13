@@ -84,6 +84,8 @@ var maxValForColorScale;
 //run this at start
 function init(){
 
+	$("body").fadeIn();
+
 	maxLegislatorCountForState = 0;
 	maxBillCountForState = 0;
 	maxBillCountForLegislator = 0;
@@ -1386,8 +1388,7 @@ function selectView()
 	
 	d3.select('svg').remove();
 	console.log(view);
-	
-	
+		
 	if (view == "Map")
 	{
 		document.getElementById("mapOptions").style.display="inline";
@@ -1418,7 +1419,6 @@ function selectView()
 	}
 	
 	draw();
-	
 }
 
 function changeHistSort()
