@@ -13,17 +13,19 @@ var navForwardStack = new Array();
 
 var legPanel = "<div id=\"IMG\"><img id=\"legislator_img_src\" width=\"300\" src=\"\"></div >"+
 				"<div id=\"LegName\"> <B>Legislator Name: </B></div>"+
-				"<div id=\"District\"><B>District: </B></div>"+
+				"<div id=\"Website\"><B>Website: </B></div>"+
+				"<div id= \"Party\"> <B>Party: </B></div>"+
 				"<div id=\"LegTitle\"><B>Title: </B></div>"+
+				"<div id=\"District\"><B>District: </B></div>"+
 				"<div id=\"indiBillCount\" onC> <B>Number of Bills: </B> </div>"+
 				"<div id=\"legBills\">"+
-				"<SELECT NAME=\"BillSelect\" id=\"bot_selectBill\"onchange=\"bot_selectBill() \" SIZE=\"10\"  width=\"300px\" style=\"width: 300px\"></SELECT></div>"+
+				"<SELECT NAME=\"BillSelect\" id=\"bot_selectBill\"onchange=\"bot_selectBill() \" SIZE=\"7\"  width=\"300px\" style=\"width: 300px\"></SELECT></div>"+
 				"<div><button id=\"backButton\" onclick=\"clickBack()\" type=\"button\">Back</button>"+
 				"<button id=\"forwardButton\" onclick=\"clickForward()\" type=\"button\">Forward</button></div>";
 
 var bilPanel = "<div id = \"Bill\"> </div>"+
 				"<div id = \"Title\"> </div>"+
-				"<div><a id = \"Sponsor\" onclick = \"clickLeg()\" => </a></div>"+
+				"<div><br><b>Sponsor: </b><a id = \"Sponsor\" onclick = \"clickLeg()\" => </a></div>"+
 				"<div id = \"Date\"> </div>"+
 				"<div id = \"BillStatus\"> </div>"+
 				"<div id = \"Active\"> </div>"+
@@ -865,6 +867,8 @@ function clickLeg(){
 	//<div id="LegName"> <B>Legislator Name: </B></div>
 	document.getElementById("LegName").innerHTML= "<b>Name: </b> " + legislator.firstname + " " + legislator.lastname;
 	document.getElementById("District").innerHTML = "<b>District: </b>" + legislator.district;
+	document.getElementById("Party").innerHTML = "<b>Party: </b>"+legislator.party;
+	document.getElementById("Website").innerHTML = "<b>Website: </b><a href=\"" + legislator.website+"\" target=\"_blank\">"+ legislator.website+"</a>";
 	document.getElementById("LegTitle").innerHTML = "<b>Title: </b>" + legislator.title;
 	document.getElementById("indiBillCount").innerHTML= "<b>Bill Count:</b> " + legislator.bills.length;
 
@@ -877,7 +881,7 @@ function clickLeg(){
 	// 					<OPTION> Bill5
 	// 					<OPTION> Bill6
 	// 				</SELECT>
-	var legBillHTML = "<SELECT NAME=\"BillSelect\" id=\"right_selectBill\"onchange=\"right_selectBill()  \"SIZE=\"10\" width=\"300px\" style=\"width: 300px\">";
+	var legBillHTML = "<SELECT NAME=\"BillSelect\" id=\"right_selectBill\"onchange=\"right_selectBill()  \"SIZE=\"7\" width=\"300px\" style=\"width: 300px\">";
 	for(var i=0; i<legislator.bills.length; i++){
 		legBillHTML += "<option> " + legislator.bills[i]["display_number"];
 	}
@@ -912,6 +916,8 @@ function bot_legSelect(){
 	//<div id="LegName"> <B>Legislator Name: </B></div>
 	document.getElementById("LegName").innerHTML= "<b>Name: </b> " + legislator.firstname + " " + legislator.lastname;
 	document.getElementById("District").innerHTML = "<b>District: </b>" + legislator.district;
+	document.getElementById("Party").innerHTML = "<b>Party: </b>"+legislator.party;
+	document.getElementById("Website").innerHTML = "<b>Website: </b><a href=\"" + legislator.website+"\" target=\"_blank\">"+ legislator.website+"</a>";
 	document.getElementById("LegTitle").innerHTML = "<b>Title: </b>" + legislator.title;
 	document.getElementById("indiBillCount").innerHTML= "<b>Bill Count:</b> " + legislator.bills.length;
 
@@ -924,7 +930,7 @@ function bot_legSelect(){
 	// 					<OPTION> Bill5
 	// 					<OPTION> Bill6
 	// 				</SELECT>
-	var legBillHTML = "<SELECT NAME=\"BillSelect\" id=\"right_selectBill\"onchange=\"right_selectBill()  \"SIZE=\"10\" width=\"300px\" style=\"width: 300px\">";
+	var legBillHTML = "<SELECT NAME=\"BillSelect\" id=\"right_selectBill\"onchange=\"right_selectBill()  \"SIZE=\"7\" width=\"300px\" style=\"width: 300px\">";
 	for(var i=0; i<legislator.bills.length; i++){
 		legBillHTML += "<option> " + legislator.bills[i]["display_number"];
 	}
@@ -959,6 +965,8 @@ function right_selectLeg(){
 	//<div id="LegName"> <B>Legislator Name: </B></div>
 	document.getElementById("LegName").innerHTML= "<b>Name: </b> " + legislator.firstname + " " + legislator.lastname;
 	document.getElementById("District").innerHTML = "<b>District: </b>" + legislator.district;
+	document.getElementById("Party").innerHTML = "<b>Party: </b>"+legislator.party;
+	document.getElementById("Website").innerHTML = "<b>Website: </b><a href=\"" + legislator.website+"\" target=\"_blank\">"+ legislator.website+"</a>";
 	document.getElementById("LegTitle").innerHTML = "<b>Title: </b>" + legislator.title;
 	document.getElementById("indiBillCount").innerHTML= "<b>Bill Count:</b> " + legislator.bills.length;
 
@@ -971,7 +979,7 @@ function right_selectLeg(){
 	// 					<OPTION> Bill5
 	// 					<OPTION> Bill6
 	// 				</SELECT>
-	var legBillHTML = "<SELECT NAME=\"BillSelect\" id=\"right_selectBill\"onchange=\"right_selectBill()  \"SIZE=\"10\" width=\"300px\" style=\"width: 300px\">";
+	var legBillHTML = "<SELECT NAME=\"BillSelect\" id=\"right_selectBill\"onchange=\"right_selectBill()  \"SIZE=\"7\" width=\"300px\" style=\"width: 300px\">";
 	for(var i=0; i<legislator.bills.length; i++){
 		legBillHTML += "<option> " + legislator.bills[i]["display_number"];
 	}
@@ -1023,7 +1031,7 @@ function bot_selectBill(){
   		if(bName == bill["display_number"])
   		{
   			document.getElementById("Title").innerHTML = "<br><b>Title: </b>"+bill.title_without_number;
-  			document.getElementById("Sponsor").innerHTML = "<br><b>Sponsor: </b>"+bill.sponsor.firstname + " " + bill.sponsor.lastname;
+  			document.getElementById("Sponsor").innerHTML = bill.sponsor.firstname + " " + bill.sponsor.lastname;
   			document.getElementById("Date").innerHTML = "<br><b>Date Introduced: </b>"+bill.introduced_date;
   			document.getElementById("BillStatus").innerHTML = "<br><b>Bill Status: </b>"+ bill.current_status_label;
   			var active;
@@ -1055,7 +1063,7 @@ function right_selectBill(){
   		if(bName == bill["display_number"])
   		{
   			document.getElementById("Title").innerHTML = "<br><b>Title: </b>"+bill.title_without_number;
-  			document.getElementById("Sponsor").innerHTML = "<br><b>Sponsor: </b>"+bill.sponsor.firstname + " " + bill.sponsor.lastname;
+  			document.getElementById("Sponsor").innerHTML = bill.sponsor.firstname + " " + bill.sponsor.lastname;
   			document.getElementById("Date").innerHTML = "<br><b>Date Introduced: </b>"+bill.introduced_date;
   			document.getElementById("BillStatus").innerHTML = "<br><b>Bill Status: </b>"+ bill.current_status_label;
   			var active;
@@ -1091,7 +1099,7 @@ function clickBack()
 		  		if(bName == bill["display_number"])
 		  		{
 		  			document.getElementById("Title").innerHTML = "<br><b>Title: </b>"+bill.title_without_number;
-		  			document.getElementById("Sponsor").innerHTML = "<br><b>Sponsor: </b>"+bill.sponsor.firstname + " " + bill.sponsor.lastname;
+		  			document.getElementById("Sponsor").innerHTML = bill.sponsor.firstname + " " + bill.sponsor.lastname;
 		  			document.getElementById("Date").innerHTML = "<br><b>Date Introduced: </b>"+bill.introduced_date;
 		  			document.getElementById("BillStatus").innerHTML = "<br><b>Bill Status: </b>"+ bill.current_status_label;
 		  			var active;
@@ -1114,10 +1122,12 @@ function clickBack()
 
 			document.getElementById("LegName").innerHTML= "<b>Name: </b> " + legislator.firstname + " " + legislator.lastname;
 			document.getElementById("indiBillCount").innerHTML= "<b>Bill Count:</b> " + legislator.bills.length;
+			document.getElementById("Party").innerHTML = "<b>Party: </b>"+legislator.party;
+			document.getElementById("Website").innerHTML = "<b>Website: </b><a href=\"" + legislator.website+"\" target=\"_blank\">"+ legislator.website+"</a>";
 			document.getElementById("District").innerHTML = "<b>District: </b>" + legislator.district;
 			document.getElementById("LegTitle").innerHTML = "<b>Title: </b>" + legislator.title;
 
-			var legBillHTML = "<SELECT NAME=\"BillSelect\" id=\"right_selectBill\"onchange=\"right_selectBill()  \"SIZE=\"10\"  width=\"300px\" style=\"width: 300px\">";
+			var legBillHTML = "<SELECT NAME=\"BillSelect\" id=\"right_selectBill\"onchange=\"right_selectBill()  \"SIZE=\"7\"  width=\"300px\" style=\"width: 300px\">";
 			for(var i=0; i<legislator.bills.length; i++){
 				legBillHTML += "<option> " + legislator.bills[i]["display_number"];
 			}
@@ -1167,7 +1177,7 @@ function clickForward()
 		  		if(bName == bill["display_number"])
 		  		{
 		  			document.getElementById("Title").innerHTML = "<br><b>Title: </b>"+bill.title_without_number;
-		  			document.getElementById("Sponsor").innerHTML = "<br><b>Sponsor: </b>"+bill.sponsor.firstname + " " + bill.sponsor.lastname;
+		  			document.getElementById("Sponsor").innerHTML = bill.sponsor.firstname + " " + bill.sponsor.lastname;
 		  			document.getElementById("Date").innerHTML = "<br><b>Date Introduced: </b>"+bill.introduced_date;
 		  			document.getElementById("BillStatus").innerHTML = "<br><b>Bill Status: </b>"+ bill.current_status_label;
 		  			var active;
@@ -1189,10 +1199,12 @@ function clickForward()
 
 			document.getElementById("LegName").innerHTML= "<b>Name: </b> " + legislator.firstname + " " + legislator.lastname;
 			document.getElementById("indiBillCount").innerHTML= "<b>Bill Count:</b> " + legislator.bills.length;
+			document.getElementById("Party").innerHTML = "<b>Party: </b>"+legislator.party;
+			document.getElementById("Website").innerHTML = "<b>Website: </b><a href=\"" + legislator.website+"\" target=\"_blank\">"+ legislator.website+"</a>";
 			document.getElementById("District").innerHTML = "<b>District: </b>" + legislator.district;
 			document.getElementById("LegTitle").innerHTML = "<b>Title: </b>" + legislator.title;
 
-			var legBillHTML = "<SELECT NAME=\"BillSelect\" id=\"right_selectBill\"onchange=\"right_selectBill()  \"SIZE=\"10\"  width=\"300px\" style=\"width: 300px\">";
+			var legBillHTML = "<SELECT NAME=\"BillSelect\" id=\"right_selectBill\"onchange=\"right_selectBill()  \"SIZE=\"7\"  width=\"300px\" style=\"width: 300px\">";
 			for(var i=0; i<legislator.bills.length; i++){
 				legBillHTML += "<option> " + legislator.bills[i]["display_number"];
 			}
@@ -1277,7 +1289,10 @@ function circlesOnClick(object) {
 	//<div id="LegName"> <B>Legislator Name: </B></div>
 	document.getElementById("LegName").innerHTML= "<b>Name: </b> " + legislator.firstname + " " + legislator.lastname;
 	document.getElementById("indiBillCount").innerHTML= "<b>Bill Count:</b> " + legislator.bills.length;
-
+	document.getElementById("Party").innerHTML = "<b>Party: </b>"+legislator.party;
+	document.getElementById("Website").innerHTML = "<b>Website: </b><a href=\"" + legislator.website+"\" target=\"_blank\">"+ legislator.website+"</a>";
+	document.getElementById("District").innerHTML = "<b>District: </b>" + legislator.district;
+			document.getElementById("LegTitle").innerHTML = "<b>Title: </b>" + legislator.title;
 	//Legislator bills in Right Pane
 	// <SELECT NAME="BillSelect" SIZE="10" MULTIPLE width="300px" style="width: 300px">
 	// 					<OPTION> Bill1
@@ -1287,7 +1302,7 @@ function circlesOnClick(object) {
 	// 					<OPTION> Bill5
 	// 					<OPTION> Bill6
 	// 				</SELECT>
-	var legBillHTML = "<SELECT NAME=\"BillSelect\" id=\"right_selectBill\"onchange=\"right_selectBill() \"SIZE=\"10\"  width=\"300px\" style=\"width: 300px\">";
+	var legBillHTML = "<SELECT NAME=\"BillSelect\" id=\"right_selectBill\"onchange=\"right_selectBill() \"SIZE=\"7\"  width=\"300px\" style=\"width: 300px\">";
 	for(var i=0; i<legislator.bills.length; i++){
 		legBillHTML += "<option> " + legislator.bills[i]["display_number"];
 	}
