@@ -819,11 +819,11 @@ function mapOnClick(object) {
 	document.getElementById("RepCount").innerHTML= "<b>Rep Count:</b> " + state.representativeCount;
 	document.getElementById("SenatorCount").innerHTML= "<b>Senator Count:</b> " + state.senatorCount;
 	document.getElementById("BillCount").innerHTML= "<b>Bill Count:</b> " + state.billCount;
-	document.getElementById("StateIMG").innerHTML = "<img src=\"data/resize/"+ state.name +".gif\" style=\" margin-left: 2px; margin-top: 2px;\">";
+	document.getElementById("StateIMG").innerHTML = "<table width=\"100%\" height=\"100%\"  align=\"center\" valign=\"center\"><tr><td><img src=\"data/resize/"+ state.name +".gif\"></td></tr></table>";
 
 
 	
-	var stateLegHTML = "<B>Legislator List:</B> <BR><SELECT  id=\"bot_legSelect\"  onchange=\"bot_legSelect()\" NAME=\"LegSelect\" SIZE=\"7\"  style=\"width: 200px\">";
+	var stateLegHTML = "<B>Legislators:</B> <BR><SELECT  id=\"bot_legSelect\"  onchange=\"bot_legSelect()\" NAME=\"LegSelect\" SIZE=\"7\"  style=\"width: 200px\">";
  	for(var i=0; i<state.representativeCount; i++){
  		stateLegHTML += "<OPTION> " + state.representatives[i].firstname +" "+ state.representatives[i].lastname ;
  	}
@@ -993,11 +993,11 @@ function right_selectLeg(){
 	document.getElementById("RepCount").innerHTML= "<b>Rep Count:</b> " + state.representativeCount;
 	document.getElementById("SenatorCount").innerHTML= "<b>Senator Count:</b> " + state.senatorCount;
 	document.getElementById("BillCount").innerHTML= "<b>Bill Count:</b> " + state.billCount;
-	document.getElementById("StateIMG").innerHTML = "<img src=\"data/resize/"+ state.name +".gif\" style=\" margin-left: 2px; margin-top: 2px;\">";
+	document.getElementById("StateIMG").innerHTML = "<table width=\"100%\" height=\"100%\"  align=\"center\" valign=\"center\"><tr><td><img src=\"data/resize/"+ state.name +".gif\"></td></tr></table>";
 
 
 	
-	var stateLegHTML = "<B>Legislator List:</B> <BR><SELECT  id=\"bot_legSelect\"  onchange=\"bot_legSelect()\" NAME=\"LegSelect\" SIZE=\"7\"  style=\"width: 200px\">";
+	var stateLegHTML = "<B>Legislators:</B> <BR><SELECT  id=\"bot_legSelect\"  onchange=\"bot_legSelect()\" NAME=\"LegSelect\" SIZE=\"7\"  style=\"width: 200px\">";
  	for(var i=0; i<state.representativeCount; i++){
  		stateLegHTML += "<OPTION> " + state.representatives[i].firstname +" "+ state.representatives[i].lastname ;
  	}
@@ -1283,7 +1283,7 @@ function circlesOnClick(object) {
 	document.getElementById("RepCount").innerHTML= "<b>Rep Count:</b> " + stateData[legislator.state].representativeCount;
 	document.getElementById("SenatorCount").innerHTML= "<b>Senator Count:</b> " + stateData[legislator.state].senatorCount;
 	document.getElementById("BillCount").innerHTML= "<b>Bill Count:</b> " + stateData[legislator.state].billCount;
-	document.getElementById("StateIMG").innerHTML = "<img src=\"data/resize/"+ stateData[legislator.state].name +".gif\" style=\" margin-left: 2px; margin-top: 2px;\">";
+	document.getElementById("StateIMG").innerHTML = "<table width=\"100%\" height=\"100%\"  align=\"center\" valign=\"center\"><tr><td><img src=\"data/resize/"+ stateData[legislator.state].name  +".gif\"></td></tr></table>";
 
 	document.getElementById("details").innerHTML = legPanel;
 	document.getElementById("legislator_img_src").src = getLegislatorImageURL(legislator.bioguide_id);
@@ -1313,7 +1313,7 @@ function circlesOnClick(object) {
 
 	var state = stateData[legislator.state];
 
-	var stateLegHTML = "<B>Legislator List:</B> <BR><SELECT  id=\"bot_legSelect\"  onchange=\"bot_legSelect()\" NAME=\"LegSelect\" SIZE=\"7\"  style=\"width: 200px\">";
+	var stateLegHTML = "<B>Legislators:</B> <BR><SELECT  id=\"bot_legSelect\"  onchange=\"bot_legSelect()\" NAME=\"LegSelect\" SIZE=\"7\"  style=\"width: 200px\">";
  	for(var i=0; i<state.representativeCount; i++){
  		stateLegHTML += "<OPTION> " + state.representatives[i].firstname +" "+ state.representatives[i].lastname ;
  	}
@@ -1635,9 +1635,10 @@ function histOnClick(object) //add stuff here
 	document.getElementById("RepCount").innerHTML= "<b>Rep Count:</b> " + stateChosen.representativeCount;
 	document.getElementById("SenatorCount").innerHTML= "<b>Senator Count:</b> " + stateChosen.senatorCount;
 	document.getElementById("BillCount").innerHTML= "<b>Bill Count:</b> " + stateChosen.billCount;
-	document.getElementById("StateIMG").innerHTML = "<img src=\"data/resize/"+ stateChosen.name +".gif\" style=\"width: margin-left: 2px; margin-top: 2px;\">";
+	document.getElementById("StateIMG").innerHTML = "<table width=\"100%\" height=\"100%\"  align=\"center\" valign=\"center\"><tr><td><img src=\"data/resize/"+ stateChosen.name +".gif\"></td></tr></table>";
 
-	var stateLegHTML = "<B>Legislator List:</B> <BR><SELECT  id=\"bot_legSelect\"  onchange=\"bot_legSelect()\"  NAME=\"LegSelect\" SIZE=\"7\"  style=\"width: 200px\">";
+
+	var stateLegHTML = "<B>Legislators:</B> <BR><SELECT  id=\"bot_legSelect\"  onchange=\"bot_legSelect()\"  NAME=\"LegSelect\" SIZE=\"7\"  style=\"width: 200px\">";
  	for(var i=0; i<stateChosen.representativeCount; i++){
  		stateLegHTML += "<OPTION> " + stateChosen.representatives[i].firstname + " " + stateChosen.representatives[i].lastname ;
  	}
@@ -1787,6 +1788,7 @@ function scatterOnClick(obj)
 {
 	
 	var legislators = scatterList[obj.id].legislators;
+	navBackStack = [];
 	navBackStack.push("LegSel", legislators);
 	//console.log(legislators[0]);
 	var legSelPanel = "<br><br><label>Legislators On that Point: </label><SELECT NAME=\"LegSelect2\" id=\"right_selectLeg\"onchange=\"right_selectLeg() \" SIZE=\"10\"  width=\"300px\" style=\"width: 300px\">"; 

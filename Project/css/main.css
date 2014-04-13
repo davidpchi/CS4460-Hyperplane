@@ -150,7 +150,7 @@ html, body {
 #changer{
     position: absolute;
     top: 10px;
-    left: 625px;
+    left: 650px;
     font: 20px serif;
 }
 
@@ -181,6 +181,14 @@ html, body {
     height: 200px;
     border: 2px solid #999999;
 }
+
+table
+{ 
+margin-left: auto;
+margin-right: auto;
+text-align: center;
+}
+
 
 #StateInfo
 {
