@@ -7,7 +7,7 @@ This function is passed the variables to initially draw on the x and y axes.
 **/
 var margin = {top: 80, right: 50, bottom: 30, left: 30}; //this is an object aht has been created
 var width = 950 - margin.left - margin.right;
-var height = 600 - margin.top - margin.bottom;
+var height = 300 - margin.top - margin.bottom;
 var navBackStack = new Array();
 var navForwardStack = new Array();
 
@@ -194,34 +194,37 @@ function draw()
 		
 	if (view == "Map")
 	{
-		drawMap();
+		drawMap("#vis");
+		drawHistogram("#vis2");
 	}
 	else if (view == "Histogram")
 	{
-		drawHistogram();
+		drawHistogram("#vis");
 	}
 	else if (view == "Circles")
 	{
-		drawCircles();
+		drawCircles("#vis");
 	}
 	else if (view == "Scatterplot")
 	{
-		drawScatterplot();
+		drawScatterplot("#vis");
 	}
 }
 
 /**
 	Load the svgs, process data, and attach the data over to our vis.
 */
-function drawMap() {
+function drawMap(visId) {
 	//load the map
 	//this custom svg has an overlay of a separate on top to allow for hatches over heatmap
 	document.getElementById("details").innerHTML = "<h><br><br><b>Welcome to Team Hyperplane.<br>This is the Map View</b><br><br>"+
 													"Here, we show the data encoded by state.<br><br>"+
 													"Click on a state to see more information on that particular state that includes the number of legislators, bills, etc.<br><br>"+
 													"You can change what information is displayed on this graph (between number of legislators and number of bills from that state).</h>";
-    d3.xml("data/custom.svg", "image/svg+xml", function(xml) {
-        document.getElementById('vis').appendChild(xml.documentElement);
+    
+	d3.xml("data/custom.svg", "image/svg+xml", function(xml) {
+		if (visId === "#vis") 
+			document.getElementById("vis").appendChild(xml.documentElement);
 		
 		//grab what filter we are using:
 		if (mapOptions === "Legislators") {
@@ -260,21 +263,6 @@ function drawMap() {
 				
 			//for now, remove the overlay
 			d3.selectAll('#overlay_' + stateData[state].name).remove();
-            
-			//label each state with the abv
-            var statePath = document.getElementById(stateData[state].name)
-            if (statePath != null) {
-                var stateBBox = statePath.getBBox()
-
-                var svgMap = document.getElementsByTagName('svg')[0];
-                
-                var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'text'); //Create a path in SVG's namespace
-                newElement.setAttribute("y", stateBBox.y + stateBBox.height/2); 
-                newElement.setAttribute("x", stateBBox.x + stateBBox.width/2); 
-                newElement.setAttribute("fill", "blue"); 
-                newElement.textContent = stateData[state].name;
-                svgMap.appendChild(newElement);
-            }
         }		
     });
 }
@@ -306,14 +294,14 @@ function updateMap() {
 			};
 }		
 
-function drawHistogram()
+function drawHistogram(visId)
 {
 	document.getElementById("details").innerHTML = "<h><br><br><b>Welcome to Team Hyperplane.<br>This is the Histogram View</b><br><br>"+
 													"The data is organized by state in a histogram bar chart visualization.<br><br>"+
 													"Click a bar to see more information on that particular state that includes the number of legislators, bills, etc.<br><br>"+
 													"You can change what information is displayed on this graph (between number of legislators and number of bills from that state).<br><br>"+
 													" You can also reorganize the order in which these bars are displayed (by ascending state name, ascending legislator count, etc)</h>";
-	var svg = d3.select("#vis").append("svg")
+	var svg = d3.select(visId).append("svg")
 		.attr("width", width + margin.left + margin.right)
 		.attr("height", height + margin.top + margin.bottom)
 		.append("g")
@@ -354,8 +342,6 @@ function drawHistogram()
 		});
 	}
 	console.log(stateArray);
-	
-	
 	
 	var histScale = d3.scale.linear()
 		.domain([0, histMax(property)])
@@ -562,13 +548,13 @@ function updateHistogram()
 	
 }
 
-function drawScatterplot()
+function drawScatterplot(visId)
 {
 	document.getElementById("details").innerHTML = "<h><br><br><b>Welcome to Team Hyperplane.<br>This is the Scatter Plot View</b><br><br>"+
 													"Each mark represents legislator(s) for each state with the number of bills they have created.<br><br>"+
 													"The color of these marks shows their political party.<br><br>"+
 													"Note that several legislators may be represented at a particular point; click on the point to allow for selection of individual legislators.</h>";
-	var svg = d3.select("#vis").append("svg")
+	var svg = d3.select(visId).append("svg")
 		.attr("width", width + margin.left + margin.right)
 		.attr("height", height + margin.top + margin.bottom)
 		.append("g")
@@ -687,7 +673,7 @@ function drawScatterplot()
 	
 }
 
-function drawCircles()
+function drawCircles(visId)
 {
 	document.getElementById("details").innerHTML = "<h><b>Welcome to Team Hyperplane.<br>This is the Circle View</b></h>";
 	var root = {
@@ -718,7 +704,7 @@ function drawCircles()
 	//959
 	//700
 	
-	svg = d3.select("#vis").append("svg")
+	svg = d3.select(visId).append("svg")
 		.attr("width", 959)
 		.attr("height", 600)
 		.attr("class", "bubble");
@@ -810,6 +796,7 @@ Call the following function when a state on the map is clicked.
 TODO: Sanat and Ching, update the UI here
 */
 function mapOnClick(object) {
+	//this is for the map
 	resetMapOutlines();
 	d3.select(object).attr('stroke', 'yellow')
 				   .attr('stroke-width', 2);
@@ -820,8 +807,6 @@ function mapOnClick(object) {
 	document.getElementById("SenatorCount").innerHTML= "<b>Senator Count:</b> " + state.senatorCount;
 	document.getElementById("BillCount").innerHTML= "<b>Bill Count:</b> " + state.billCount;
 	document.getElementById("StateIMG").innerHTML = "<table width=\"100%\" height=\"100%\"  align=\"center\" valign=\"center\"><tr><td><img src=\"data/resize/"+ state.name +".gif\"></td></tr></table>";
-
-
 	
 	var stateLegHTML = "<B>Legislators:</B> <BR><SELECT  id=\"bot_legSelect\"  onchange=\"bot_legSelect()\" NAME=\"LegSelect\" SIZE=\"7\"  style=\"width: 200px\">";
  	for(var i=0; i<state.representativeCount; i++){
@@ -840,7 +825,16 @@ function mapOnClick(object) {
  	stateBillHTML += "</SELECT>";
  	document.getElementById("BillSelect").innerHTML= stateBillHTML;
  	
-
+	//this is for the histogram
+	for (var state in stateData)
+	{
+		d3.select("#hist"+stateData[state].name)
+			.attr("stroke-width",0);
+	}
+	d3.select("#hist" + object.id)
+		.attr("stroke", "#00FFFF")
+		.attr("stroke-width",2);
+	
 }
 
 function clickLeg(){
@@ -1238,6 +1232,15 @@ function clickForward()
 function mapOnHoverEnter(object) {
 	d3.select(object).attr('fill', 'yellow');
 	state = stateData[object.id];
+	
+	var histIdFun = "#hist" + object.id;
+	d3.select(histIdFun)
+		.attr("fill", "#008000");
+	d3.select(histIdFun+"name")
+		.attr("y",height+25)
+		.attr("font-size", "16px")
+		.attr("font-weight", "bold")
+		.text(abbrToName[histIdFun.substring(histIdFun.length-2,histIdFun.length)]);
 }
 
 function mapOnHoverExit(object) {
@@ -1247,6 +1250,15 @@ function mapOnHoverExit(object) {
 	var color = computeColorByValue(filterName, maxValForColorScale, state);
 	d3.select(object)
 		.attr('fill', color);
+	
+	var histIdFun = "#hist" + object.id;
+	d3.select(histIdFun)
+		.attr("fill", "#000080");
+	d3.select(histIdFun+"name")
+		.attr("y",height+10)
+		.attr("font-size", "10px")
+		.attr("font-weight", "normal")
+		.text(histIdFun.substring(histIdFun.length-2,histIdFun.length));
 }
 
 function computeColorByValue(valType, maxVal, stateObj) {
@@ -1618,6 +1630,7 @@ function createData()
 
 function histOnClick(object) //add stuff here
 {
+	//this is to handle the histogram
 	for (var state in stateData)
 	{
 		d3.select("#hist"+stateData[state].name)
@@ -1626,6 +1639,13 @@ function histOnClick(object) //add stuff here
 	d3.select(object)
 		.attr("stroke", "#00FFFF")
 		.attr("stroke-width",2);
+	
+	//this is to handle the map
+	var idFun = object.id.substring(4,6);
+	resetMapOutlines();
+	d3.select("#" + idFun).attr('stroke', 'yellow')
+				   .attr('stroke-width', 2);
+	state = stateData[idFun];
 
 	
 	stateID = ""+ object.id[4] + object.id[5];
@@ -1666,6 +1686,10 @@ function histOnHoverEnter(object)
 		.attr("font-size", "16px")
 		.attr("font-weight", "bold")
 		.text(abbrToName[object.id.substring(object.id.length-2,object.id.length)]);
+	
+	var idFun = object.id.substring(4,6);
+	d3.select("#" + idFun).attr('fill', 'yellow');
+	state = stateData[idFun];
 }
 
 function histOnHoverExit(object)
@@ -1677,6 +1701,12 @@ function histOnHoverExit(object)
 		.attr("font-size", "10px")
 		.attr("font-weight", "normal")
 		.text(object.id.substring(object.id.length-2,object.id.length));
+		
+	var idFun = object.id.substring(4,6);
+	var state = stateData[idFun];
+	var color = computeColorByValue(filterName, maxValForColorScale, state);
+	d3.select("#" + idFun)
+		.attr('fill', color);
 }
 
 function histAlphabetSort(a,b) //if b is later, return -1
