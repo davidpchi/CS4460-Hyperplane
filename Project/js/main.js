@@ -199,7 +199,8 @@ function draw()
 	}
 	else if (view == "Histogram")
 	{
-		drawHistogram("#vis");
+		drawMap("#vis");
+		drawHistogram("#vis2");
 	}
 	else if (view == "Circles")
 	{
@@ -207,7 +208,8 @@ function draw()
 	}
 	else if (view == "Scatterplot")
 	{
-		drawScatterplot("#vis");
+		drawMap("#vis");
+		drawScatterplot("#vis2");
 	}
 }
 
@@ -626,23 +628,107 @@ function drawScatterplot(visId)
 			// color = "#008000";
 		// }
 		var color = "#000000";
-		var myCircle = svg.append("circle")
-			.attr("id", node)
-			.attr("cx", offset)
-			.attr("cy", scatterScale(value))
-			.attr("r", 5)
-			.attr("fill", color)
-			.on("click", function() {
-				scatterOnClick(this);
-			})
-			.attr("title", function(d) { 					
-				return scatterNodeString(node);	
-			});
-			// .tooltip({
-			// 'container': 'body',
-			// 'placement': 'top'
-			// });	
-		onHoverCircles.push(myCircle);
+
+		if (scatterList[node].count == 1) {
+			if (scatterList[node].rCount == 1) {
+				var myCircle = svg.append("circle")
+					.attr("id", node)
+					.attr("cx", offset)
+					.attr("cy", scatterScale(value))
+					.attr("r", 5)
+					.attr("fill", "#ef8a62")
+					.on("click", function() {
+						scatterOnClick(this);
+					})
+					.attr("title", function(d) { 					
+						return scatterNodeString(node);	
+					});
+					// .tooltip({
+					// 'container': 'body',
+					// 'placement': 'top'
+					// });
+				onHoverCircles.push(myCircle);
+			}
+			else if (scatterList[node].dCount == 1) {
+				var myCircle = svg.append("circle")
+					.attr("id", node)
+					.attr("cx", offset)
+					.attr("cy", scatterScale(value))
+					.attr("r", 5)
+					.attr("fill", "#67a9cf")
+					.on("click", function() {
+						scatterOnClick(this);
+					})
+					.attr("title", function(d) { 					
+						return scatterNodeString(node);	
+					});
+					// .tooltip({
+					// 'container': 'body',
+					// 'placement': 'top'
+					// });
+				onHoverCircles.push(myCircle);
+			}
+			else if (scatterList[node].iCount == 1) {
+				var myCircle = svg.append("circle")
+					.attr("id", node)
+					.attr("cx", offset)
+					.attr("cy", scatterScale(value))
+					.attr("r", 5)
+					.attr("fill", "#99d594")
+					.on("click", function() {
+						scatterOnClick(this);
+					})
+					.attr("title", function(d) { 					
+						return scatterNodeString(node);	
+					});
+					// .tooltip({
+					// 'container': 'body',
+					// 'placement': 'top'
+					// });
+				onHoverCircles.push(myCircle);
+			}
+		}
+		else {
+			var arc1 = d3.svg.arc()
+				.innerRadius(0)
+				.outerRadius(5)
+				.startAngle(0)
+				.endAngle(Math.PI);
+			svg.append("path")
+				.attr("d", arc1)
+				.attr("transform", "translate(" + offset + "," + scatterScale(value) + ")")
+				.style("fill", "#ef8a62");
+			
+			onHoverCircles.push(arc1);
+			
+			var arc2 = d3.svg.arc()
+				.innerRadius(0)
+				.outerRadius(5)
+				.startAngle(Math.PI)
+				.endAngle(Math.PI * 2);
+			svg.append("path")
+				.attr("d", arc2)
+				.attr("transform", "translate(" + offset + "," + scatterScale(value) + ")")
+				.style("fill", "#67a9cf");
+			
+			var myCircle = svg.append("circle")
+					.attr("id", node)
+					.attr("cx", offset)
+					.attr("cy", scatterScale(value))
+					.attr("r", 5)
+					.attr("fill-opacity", 0.0)
+					.on("click", function() {
+						scatterOnClick(this);
+					})
+					.attr("title", function(d) { 					
+						return scatterNodeString(node);	
+					});
+					// .tooltip({
+					// 'container': 'body',
+					// 'placement': 'top'
+					// });
+			onHoverCircles.push(myCircle);		
+		}
 	}
 	
 	//add functionality to the onHover of the circles
