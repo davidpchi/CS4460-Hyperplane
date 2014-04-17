@@ -7,7 +7,7 @@ This function is passed the variables to initially draw on the x and y axes.
 **/
 var margin = {top: 80, right: 50, bottom: 30, left: 30}; //this is an object aht has been created
 var width = 950 - margin.left - margin.right;
-var height = 300 - margin.top - margin.bottom;
+var height = 550 - margin.top - margin.bottom;
 var navBackStack = new Array();
 var navForwardStack = new Array();
 
