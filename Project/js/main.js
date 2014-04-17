@@ -892,7 +892,7 @@ function mapOnClick(object) {
 	document.getElementById("RepCount").innerHTML= "<b>Rep Count:</b> " + state.representativeCount;
 	document.getElementById("SenatorCount").innerHTML= "<b>Senator Count:</b> " + state.senatorCount;
 	document.getElementById("BillCount").innerHTML= "<b>Bill Count:</b> " + state.billCount;
-	document.getElementById("StateIMG").innerHTML = "<table width=\"100%\" height=\"100%\"  align=\"center\" valign=\"center\"><tr><td><img src=\"data/resize/"+ state.name +".gif\"></td></tr></table>";
+	// document.getElementById("StateIMG").innerHTML = "<table width=\"100%\" height=\"100%\"  align=\"center\" valign=\"center\"><tr><td><img src=\"data/resize/"+ state.name +".gif\"></td></tr></table>";
 	
 	var stateLegHTML = "<B>Legislators:</B> <BR><SELECT  id=\"bot_legSelect\"  onchange=\"bot_legSelect()\" NAME=\"LegSelect\" SIZE=\"7\"  style=\"width: 200px\">";
  	for(var i=0; i<state.representativeCount; i++){
@@ -1073,7 +1073,7 @@ function right_selectLeg(){
 	document.getElementById("RepCount").innerHTML= "<b>Rep Count:</b> " + state.representativeCount;
 	document.getElementById("SenatorCount").innerHTML= "<b>Senator Count:</b> " + state.senatorCount;
 	document.getElementById("BillCount").innerHTML= "<b>Bill Count:</b> " + state.billCount;
-	document.getElementById("StateIMG").innerHTML = "<table width=\"100%\" height=\"100%\"  align=\"center\" valign=\"center\"><tr><td><img src=\"data/resize/"+ state.name +".gif\"></td></tr></table>";
+	// document.getElementById("StateIMG").innerHTML = "<table width=\"100%\" height=\"100%\"  align=\"center\" valign=\"center\"><tr><td><img src=\"data/resize/"+ state.name +".gif\"></td></tr></table>";
 
 
 	
@@ -1381,7 +1381,7 @@ function circlesOnClick(object) {
 	document.getElementById("RepCount").innerHTML= "<b>Rep Count:</b> " + stateData[legislator.state].representativeCount;
 	document.getElementById("SenatorCount").innerHTML= "<b>Senator Count:</b> " + stateData[legislator.state].senatorCount;
 	document.getElementById("BillCount").innerHTML= "<b>Bill Count:</b> " + stateData[legislator.state].billCount;
-	document.getElementById("StateIMG").innerHTML = "<table width=\"100%\" height=\"100%\"  align=\"center\" valign=\"center\"><tr><td><img src=\"data/resize/"+ stateData[legislator.state].name  +".gif\"></td></tr></table>";
+	// document.getElementById("StateIMG").innerHTML = "<table width=\"100%\" height=\"100%\"  align=\"center\" valign=\"center\"><tr><td><img src=\"data/resize/"+ stateData[legislator.state].name  +".gif\"></td></tr></table>";
 
 	document.getElementById("details").innerHTML = legPanel;
 	document.getElementById("legislator_img_src").src = getLegislatorImageURL(legislator.bioguide_id);
@@ -1741,7 +1741,7 @@ function histOnClick(object) //add stuff here
 	document.getElementById("RepCount").innerHTML= "<b>Rep Count:</b> " + stateChosen.representativeCount;
 	document.getElementById("SenatorCount").innerHTML= "<b>Senator Count:</b> " + stateChosen.senatorCount;
 	document.getElementById("BillCount").innerHTML= "<b>Bill Count:</b> " + stateChosen.billCount;
-	document.getElementById("StateIMG").innerHTML = "<table width=\"100%\" height=\"100%\"  align=\"center\" valign=\"center\"><tr><td><img src=\"data/resize/"+ stateChosen.name +".gif\"></td></tr></table>";
+	// document.getElementById("StateIMG").innerHTML = "<table width=\"100%\" height=\"100%\"  align=\"center\" valign=\"center\"><tr><td><img src=\"data/resize/"+ stateChosen.name +".gif\"></td></tr></table>";
 
 
 	var stateLegHTML = "<B>Legislators:</B> <BR><SELECT  id=\"bot_legSelect\"  onchange=\"bot_legSelect()\"  NAME=\"LegSelect\" SIZE=\"7\"  style=\"width: 200px\">";

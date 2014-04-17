@@ -149,7 +149,7 @@ html, body {
 
 #changer{
     position: absolute;
-    top: 10px;
+    top: 350px;
     left: 650px;
     font: 20px serif;
 }
@@ -190,26 +190,34 @@ text-align: center;
 }
 
 
-#StateInfo
+/*#StateInfo
 {
     margin-left: 25px;
     margin-top:25px;
     font: 20px serif;
     float: left;
+}*/
+
+#StateLeft
+{
+
+    font: 20px serif;
+    float: left;
+}
+
+#StateRight
+{
+    margin-left: 25px;
+    font: 20px serif;
+    float: left;
 }
 
 #LegSelect{
-    margin-left: 25px;
     margin-top:25px;
-    font: 20px serif;
-    float: left;
 }
 
 #BillSelect{
-    margin-left: 25px;
     margin-top:25px;
-    font: 20px serif;
-    float: left;
 }
 
 #vis {
@@ -217,13 +225,13 @@ text-align: center;
 }
 
 #details2 {
-    top: 600px;
-    left: 10px;
+    top: 10px;
+    left: 500px;
     position: absolute;
-    width: 900px;
-    height: 250px;
-    border: 2px solid #999999;
-    border-radius: 10px;
+    width: 700px;
+    height: 400px;
+    /*border: 2px solid #999999;*/
+    /*border-radius: 10px;*/
 }
 
 .axis path,
