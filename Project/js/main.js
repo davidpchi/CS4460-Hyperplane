@@ -50,6 +50,8 @@ var svg;
 
 //secondary svg element for breadcrumb drawing
 var breadCrumbsSvg;
+var breadCrumbsHeight = 820;
+var breadCrumbs = [];
 
 //for drop down menus
 var view;
@@ -133,7 +135,22 @@ function init(){
 	//create a look up table to match abbreviations to full state names
 	makeAbbrTables();
 	
-	//
+	//add the breadcrumbs region to the screen
+	breadCrumbsSvg = d3.select("#breadCrumbs").append("svg")
+		.attr("width", 100)
+		.attr("height", 840)
+	
+	var clipPath = breadCrumbsSvg.append("clipPath")
+		.attr('id', 'cut-off-bottom');
+
+	//construct our clipPath
+	for (var i = breadCrumbsHeight-16; i > 0; i-=32) {
+		clipPath	
+			.append("circle")
+			.attr('cx',	16)
+			.attr('cy', i)
+			.attr('r', 16);
+	}
 }
 
 /**
@@ -212,8 +229,9 @@ function isDataOkay() {
 function draw()
 {
 	//clear the visualization
-	d3.select("svg").remove();
-		
+	d3.select("#vis").select("svg").remove();
+	d3.select("#vis2").select("svg").remove();
+	
 	if (view == "Map")
 	{
 		drawMap("#vis");
@@ -1247,6 +1265,26 @@ function right_selectBill(){
 */
 function clickBack()
 {
+	for (var i = 0; i < breadCrumbs.length; i++) {
+		breadCrumbs[i]
+			.transition()
+			.attr('y', breadCrumbsHeight - (32 * (breadCrumbs.length-(i+1))))
+			.delay(100)
+			.duration(100);
+	}
+	
+	console.log("PRE", breadCrumbs);
+	var newArray = [];
+	for (var i = 0; i < breadCrumbs.length-1; i++) {
+		newArray[i] = breadCrumbs[i];
+	}
+	
+	d3.select(breadCrumbs[breadCrumbs.length-1]).remove();
+	
+	breadCrumbs = newArray;
+	console.log("POST", breadCrumbs);
+
+
 	var popedFirst = navBackStack.pop();
 	var poped = navBackStack.pop();
 	if(poped != undefined)
@@ -1328,6 +1366,41 @@ function clickBack()
 */
 function clickForward()
 {
+	for (var i = 0; i < breadCrumbs.length; i++) {
+		breadCrumbs[i]
+			.transition()
+			.attr('y', breadCrumbsHeight - 32 - (32 * (breadCrumbs.length-i)))
+			.delay(100)
+			.duration(100);
+	}
+
+	/*
+	var curBread = breadCrumbsSvg.append("image")
+		.attr('x', 0)
+		.attr('y', breadCrumbsHeight-32)
+		.attr('xlink:href', "http://theunitedstates.io/images/congress/450x550/S001157.jpg")
+		.attr('height', 39)
+		.attr('width', 32)
+		.attr('clip-path', "url(#cut-off-bottom)");
+	*/
+	
+	var curBread = breadCrumbsSvg.append("rect")
+		.attr('x', 0)
+		.attr('y', breadCrumbsHeight-32)
+		.attr('height', 0)
+		.attr('width', 0)
+		.attr('fill', "rgb(" + Math.floor((Math.random()*255)+1) + "," + Math.floor((Math.random()*255)+1) + "," + Math.floor((Math.random()*255)+1) + ")")
+		.attr('clip-path', "url(#cut-off-bottom)");
+		
+	curBread
+		.transition()
+		.attr('height', 32)
+		.attr('width', 32)
+		.delay(200)
+		.duration(100);
+	
+	breadCrumbs.push(curBread);
+		
 	// var popedFirst = navForwardStack.pop();
 	var poped = navForwardStack.pop();
 	if(poped != undefined)
