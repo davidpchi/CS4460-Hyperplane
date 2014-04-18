@@ -312,11 +312,11 @@ function drawHistogram(visId)
 	var barWidth = (width)/50;
 	
 	var property;
-	if (histOptions == "Legislators")
+	if (mapOptions == "Legislators")
 	{
 		property = "legislatorCount";
 	}
-	else //if (histOptions == "Bills")
+	else //if (mapOptions == "Bills")
 	{
 		property = "billCount";
 	}
@@ -387,7 +387,7 @@ function drawHistogram(visId)
 				.attr("x", offset+(barWidth/2)-1)
 				.attr("y", histScale(value)+10)
 				.attr("font-family", "sans-serif")
-				.attr("font-size", "10px")
+				.attr("font-size", "8px")
 				.attr("fill", "white")
 				.attr("text-anchor", "middle")
 				.on("mouseover", function() {
@@ -405,7 +405,7 @@ function drawHistogram(visId)
 				.attr("x", offset+(barWidth/2)-1)
 				.attr("y", histScale(value)-2)
 				.attr("font-family", "sans-serif")
-				.attr("font-size", "10px")
+				.attr("font-size", "8px")
 				.attr("fill", "black")
 				.attr("text-anchor", "middle")
 				.on("mouseover", function() {
@@ -427,16 +427,30 @@ function drawHistogram(visId)
 			.attr("text-anchor", "middle");
 	}
 	
-	svg.append("text")
-		.text("Number of Legislators")
-		.attr("x", width/2)
-		.attr("y", -10)
-		.attr("font-family", "serif")
-		.attr("font-size", "24px")
-		.attr("fill", "black")
-		.attr("text-anchor", "middle");
-	
-	
+	if (mapOptions == "Legislators")
+	{
+		svg.append("text")
+			.attr("id","histTitle")
+			.text("Number of Legislators")
+			.attr("x", width/2)
+			.attr("y", -10)
+			.attr("font-family", "serif")
+			.attr("font-size", "24px")
+			.attr("fill", "black")
+			.attr("text-anchor", "middle");
+	}
+	else // if (mapOptions == "Bills");
+	{
+		svg.append("text")
+			.attr("id","histTitle")
+			.text("Number of Bills")
+			.attr("x", width/2)
+			.attr("y", -10)
+			.attr("font-family", "serif")
+			.attr("font-size", "24px")
+			.attr("fill", "black")
+			.attr("text-anchor", "middle");
+	}
 }
 
 function updateHistogram()
@@ -444,11 +458,11 @@ function updateHistogram()
 	var barWidth = (width)/50;
 	
 	var property;
-	if (histOptions == "Legislators")
+	if (mapOptions == "Legislators")
 	{
 		property = "legislatorCount";
 	}
-	else //if (histOptions == "Bills")
+	else //if (mapOptions == "Bills")
 	{
 		property = "billCount";
 	}
@@ -539,14 +553,16 @@ function updateHistogram()
 			.duration(1000);
 	}
 	
-	// svg.append("text")
-		// .text("Number of Legislators")
-		// .attr("x", width/2)
-		// .attr("y", -10)
-		// .attr("font-family", "serif")
-		// .attr("font-size", "24px")
-		// .attr("fill", "black")
-		// .attr("text-anchor", "middle");
+	if (mapOptions == "Legislators")
+	{
+		d3.select("#histTitle")
+			.text("Number of Legislators")
+	}
+	else // if (mapOptions == "Bills");
+	{
+		d3.select("#histTitle")
+			.text("Number of Bills")
+	}
 	
 }
 
@@ -602,6 +618,13 @@ function drawScatterplot(visId)
 			.attr("font-size", "10px")
 			.attr("fill", "black")
 			.attr("text-anchor", "middle");
+		svg.append("rect")
+			.attr("id", "scatter"+stateData[state].name)
+			.attr("x", offset-(barWidth/2))
+			.attr("width", barWidth-1)
+			.attr("height", height+6)
+			.attr("y", 0)
+			.attr("fill", "#FFFFFF")
 	}
 	console.log(stateArray);
 	
@@ -614,19 +637,6 @@ function drawScatterplot(visId)
 		var value = parse[1];
 		var offset = stateArray.indexOf(stateData[parse[0]])*barWidth+10;
 		
-		// var color;
-		// if (legislatorData[legislator].party == "D")
-		// {
-			// color = "#000080";
-		// }
-		// else if (legislatorData[legislator].party == "R")
-		// {
-			// color = "#800000";
-		// }
-		// else
-		// {
-			// color = "#008000";
-		// }
 		var color = "#000000";
 
 		if (scatterList[node].count == 1) {
@@ -688,6 +698,26 @@ function drawScatterplot(visId)
 				onHoverCircles.push(myCircle);
 			}
 		}
+		else if (scatterList[node].iCount >= 1 && scatterList[node].rCount == 0 && scatterList[node].dCount == 0)
+		{
+			var myCircle = svg.append("circle")
+					.attr("id", node)
+				.attr("cx", offset)
+				.attr("cy", scatterScale(value))
+				.attr("r", 5)
+				.attr("fill", "#99d594")
+				.on("click", function() {
+					scatterOnClick(this);
+				})
+				.attr("title", function(d) { 					
+					return scatterNodeString(node);	
+				});
+				// .tooltip({
+				// 'container': 'body',
+				// 'placement': 'top'
+				// });
+			onHoverCircles.push(myCircle);
+		}
 		else {
 			var arc1 = d3.svg.arc()
 				.innerRadius(0)
@@ -748,7 +778,7 @@ function drawScatterplot(visId)
 	}
 	
 	svg.append("text")
-		.text("Legislators Their Bill Counts")
+		.text("Legislators and Their Bill Counts")
 		.attr("x", width/2)
 		.attr("y", -10)
 		.attr("font-family", "serif")
@@ -920,7 +950,6 @@ function mapOnClick(object) {
 	d3.select("#hist" + object.id)
 		.attr("stroke", "#00FFFF")
 		.attr("stroke-width",2);
-	
 }
 
 function clickLeg(){
@@ -1327,6 +1356,15 @@ function mapOnHoverEnter(object) {
 		.attr("font-size", "16px")
 		.attr("font-weight", "bold")
 		.text(abbrToName[histIdFun.substring(histIdFun.length-2,histIdFun.length)]);
+		
+	var scatterIdFun = "#scatter" + object.id;
+	d3.select(scatterIdFun)
+		.attr("fill", "#00FFFF");
+	d3.select(scatterIdFun+"name")
+		.attr("y",height+30)
+		.attr("font-size", "16px")
+		.attr("font-weight", "bold")
+		.text(abbrToName[scatterIdFun.substring(scatterIdFun.length-2,scatterIdFun.length)]);
 }
 
 function mapOnHoverExit(object) {
@@ -1345,6 +1383,15 @@ function mapOnHoverExit(object) {
 		.attr("font-size", "10px")
 		.attr("font-weight", "normal")
 		.text(histIdFun.substring(histIdFun.length-2,histIdFun.length));
+	
+	var scatterIdFun = "#scatter" + object.id;
+	d3.select(scatterIdFun)
+		.attr("fill", "#FFFFFF");
+	d3.select(scatterIdFun+"name")
+		.attr("y",height+15)
+		.attr("font-size", "10px")
+		.attr("font-weight", "normal")
+		.text(scatterIdFun.substring(scatterIdFun.length-2,scatterIdFun.length));
 }
 
 function computeColorByValue(valType, maxVal, stateObj) {
@@ -1498,7 +1545,7 @@ function selectView()
 	
 	if (view == "Histogram")
 	{
-		document.getElementById("histOptions").style.display="inline";
+		document.getElementById("mapOptions").style.display="inline";
 		document.getElementById("histSort").style.display="inline";
 	}
 	else
@@ -1537,6 +1584,10 @@ function changeMapOptions()
 	// d3.select('svg').remove();
 	console.log(mapOptions);
 	updateMap();
+	if (view == "Histogram")
+	{
+		updateHistogram();
+	}
 }
 
 function changeHistOptions()
