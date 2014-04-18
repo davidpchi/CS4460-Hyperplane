@@ -165,6 +165,16 @@ html, body {
     font: 20px serif;
 }
 
+#bread_crumbs {
+    position: absolute;
+    width: 40px;
+    height: 840px;
+    border-radius: 10px;
+    text-align: left;
+	margin-left: 405px;
+    font: 20px serif;
+}
+
 #IMG{
     margin-left: 45px;
     margin-top:20px;

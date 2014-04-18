@@ -43,9 +43,13 @@ var xAxis = d3.svg.axis()
 var yAxis = d3.svg.axis()
     .scale(y)
     .orient('left');
-	
+
+//main svg elements for drawing	
 var circle;
 var svg;
+
+//secondary svg element for breadcrumb drawing
+var breadCrumbsSvg;
 
 //for drop down menus
 var view;
@@ -55,11 +59,13 @@ var histOptions;
 var circleOptions;
 var scatterOption;
 
+//arrays to keep track of full names vs abbreviations
 var abbrToName = {};
 var nameToAbbr = {};
 
-var xLabel = "kernelLength";
-var yLabel = "kernelWidth";
+//x and y labels for graph
+var xLabel = "";
+var yLabel = "";
 
 var scatterList = {}; //used for creating/accessing scatterplot
 
@@ -72,20 +78,28 @@ var stateData = {};
 var billData = {};
 
 //congress number
-//TODO: Implement a way to switch between congresses
 var selectedCongress = 113;
+
+//maximum values used to calculate various values
 var maxLegislatorCountForState;
 var maxBillCountForState;
 var maxBillCountForLegislator;
 
+//name of filter to arrange data
 var filterName;
+
+//maximum color for color scale
 var maxValForColorScale;
 
-//run this at start
+/**
+## init()
+This method is run at the start of the app
+**/
 function init(){
 
 	$("body").fadeIn();
 
+	//initialize the maximum values for each category to be displayed
 	maxLegislatorCountForState = 0;
 	maxBillCountForState = 0;
 	maxBillCountForLegislator = 0;
@@ -104,6 +118,7 @@ function init(){
         }
     });
 	
+	//map the dropdown box selections with functionality
 	var menu = document.getElementById("viewSelect");
 	view = menu.options[menu.selectedIndex].text;
 	menu = document.getElementById("histSort");
@@ -114,12 +129,17 @@ function init(){
 	histOptions = menu.options[menu.selectedIndex].text;
 	menu = document.getElementById("circleOptions");
 	circleOptions = menu.options[menu.selectedIndex].text;
-	// menu = document.getElementById("scatterOptions");
-	// scatterOptions = menu.options[menu.selectedIndex].text;
 	
+	//create a look up table to match abbreviations to full state names
 	makeAbbrTables();
+	
+	//
 }
 
+/**
+	This method compiles all of the json files associated 
+	with bill data into one array
+*/
 function loadBillsData() {
 	var curIndex = 0; 
 	for (var n = 0; n < bills1[0].objects.length; n++) {
@@ -186,7 +206,9 @@ function isDataOkay() {
     return (rawLegislatorData != null);
 }
 
-
+/**
+	Draw a visualization to the screen based on what view is selected
+*/
 function draw()
 {
 	//clear the visualization
@@ -269,6 +291,9 @@ function drawMap(visId) {
     });
 }
 
+/**
+	Update the map with proper coloring based on what is selected
+*/
 function updateMap() {
 	
 	//grab what filter we are using:
@@ -296,6 +321,9 @@ function updateMap() {
 			};
 }		
 
+/**
+	Draw the histogram visualization
+*/
 function drawHistogram(visId)
 {
 	document.getElementById("details").innerHTML = "<h><br><br><b>Welcome to Team Hyperplane.<br>This is the Histogram View</b><br><br>"+
@@ -453,6 +481,9 @@ function drawHistogram(visId)
 	}
 }
 
+/**
+	Update the histogram visualization based on what is selected
+*/
 function updateHistogram()
 {	
 	var barWidth = (width)/50;
@@ -566,6 +597,9 @@ function updateHistogram()
 	
 }
 
+/**
+	Draw the scatterplot visualization
+*/
 function drawScatterplot(visId)
 {
 	document.getElementById("details").innerHTML = "<h><br><br><b>Welcome to Team Hyperplane.<br>This is the Scatter Plot View</b><br><br>"+
@@ -645,7 +679,7 @@ function drawScatterplot(visId)
 					.attr("id", node)
 					.attr("cx", offset)
 					.attr("cy", scatterScale(value))
-					.attr("r", 5)
+					.attr("r", 0)
 					.attr("fill", "#ef8a62")
 					.on("click", function() {
 						scatterOnClick(this);
@@ -657,6 +691,7 @@ function drawScatterplot(visId)
 					// 'container': 'body',
 					// 'placement': 'top'
 					// });
+					
 				onHoverCircles.push(myCircle);
 			}
 			else if (scatterList[node].dCount == 1) {
@@ -676,6 +711,7 @@ function drawScatterplot(visId)
 					// 'container': 'body',
 					// 'placement': 'top'
 					// });
+				
 				onHoverCircles.push(myCircle);
 			}
 			else if (scatterList[node].iCount == 1) {
@@ -695,6 +731,7 @@ function drawScatterplot(visId)
 					// 'container': 'body',
 					// 'placement': 'top'
 					// });
+				
 				onHoverCircles.push(myCircle);
 			}
 		}
@@ -789,6 +826,9 @@ function drawScatterplot(visId)
 	
 }
 
+/**
+	Draw the circle visualization (DEPRECATED)
+*/
 function drawCircles(visId)
 {
 	document.getElementById("details").innerHTML = "<h><b>Welcome to Team Hyperplane.<br>This is the Circle View</b></h>";
@@ -908,8 +948,7 @@ function drawCircles(visId)
 }
 
 /**
-Call the following function when a state on the map is clicked. 
-TODO: Sanat and Ching, update the UI here
+	Call the following function when a state on the map is clicked. 
 */
 function mapOnClick(object) {
 	//this is for the map
@@ -952,6 +991,9 @@ function mapOnClick(object) {
 		.attr("stroke-width",2);
 }
 
+/**
+	Call the following function with a legislator is clicked
+*/
 function clickLeg(){
 	var selectedText = document.getElementById("Sponsor").innerHTML;
   	var leg;
@@ -1000,6 +1042,9 @@ function clickLeg(){
 	document.getElementById("legBills").innerHTML= legBillHTML;
 }
 
+/**
+	Call the following when a legislator is selected from the listbox
+*/
 function bot_legSelect(){
 	var selects = document.getElementById("bot_legSelect");
   	var selectedText = selects.options[selects.selectedIndex].text;// gives u value2
@@ -1049,6 +1094,9 @@ function bot_legSelect(){
 	document.getElementById("legBills").innerHTML= legBillHTML;
 }
 
+/**
+	Call the following when a legislator is selected in the details pane
+*/
 function right_selectLeg(){
 	var selects = document.getElementById("right_selectLeg");
   	var selectedText = selects.options[selects.selectedIndex].text;// gives u value2
@@ -1124,8 +1172,9 @@ function right_selectLeg(){
  	document.getElementById("BillSelect").innerHTML= stateBillHTML;
 }
 
-
-
+/**
+	Call the following when a bill is selected from the listbox
+*/
 function bot_selectBill(){
 	var selects = document.getElementById("bot_selectBill");
   	var selectedText = selects.options[selects.selectedIndex].text;// gives u value2
@@ -1158,6 +1207,9 @@ function bot_selectBill(){
   	 // console.log(billData[0]);
 }
 
+/**
+	Call the following when a bill is selected from the specific details pane
+*/
 function right_selectBill(){
 	var selects = document.getElementById("right_selectBill");
   	var selectedText = selects.options[selects.selectedIndex].text;// gives u value2
@@ -1190,6 +1242,9 @@ function right_selectBill(){
   	
 }
 
+/**
+	Call the following when you hit back on the legislator list
+*/
 function clickBack()
 {
 	var popedFirst = navBackStack.pop();
@@ -1268,6 +1323,9 @@ function clickBack()
 	}
 }
 
+/**
+	Call the following when you click forward
+*/
 function clickForward()
 {
 	// var popedFirst = navForwardStack.pop();
@@ -1344,6 +1402,9 @@ function clickForward()
 	// }
 }
 
+/**
+	Call the following when you hover over a state on the map
+*/
 function mapOnHoverEnter(object) {
 	d3.select(object).attr('fill', 'yellow');
 	state = stateData[object.id];
@@ -1367,6 +1428,9 @@ function mapOnHoverEnter(object) {
 		.text(abbrToName[scatterIdFun.substring(scatterIdFun.length-2,scatterIdFun.length)]);
 }
 
+/**
+	Call the following when you leave hovering over a state
+*/
 function mapOnHoverExit(object) {
 	var state = stateData[object.id];
 	//TODO: need to provide a way to switch which maximum is being used to compute color
@@ -1394,6 +1458,9 @@ function mapOnHoverExit(object) {
 		.text(scatterIdFun.substring(scatterIdFun.length-2,scatterIdFun.length));
 }
 
+/**
+	Given a value and a maximum value, compute the proper color 
+*/
 function computeColorByValue(valType, maxVal, stateObj) {
 	var colorScale = ['rgb(247,252,253)','rgb(229,245,249)','rgb(204,236,230)','rgb(153,216,201)','rgb(102,194,164)','rgb(65,174,118)','rgb(35,139,69)','rgb(0,88,36)'];
 	
@@ -1413,8 +1480,7 @@ function computeColorByValue(valType, maxVal, stateObj) {
 }
 
 /**
-Call the following functino when a legislator on the circle packing grid is clicked.
-TODO: Sanat and Ching, update the UI here
+	Call the following function when a legislator on the circle packing grid is clicked. (DEPRECATED)
 */
 function circlesOnClick(object) {
 	//to get the legislator, simply pull the ID of the object
@@ -1432,23 +1498,15 @@ function circlesOnClick(object) {
 
 	document.getElementById("details").innerHTML = legPanel;
 	document.getElementById("legislator_img_src").src = getLegislatorImageURL(legislator.bioguide_id);
+	
 	//Update right pane
-	//<div id="LegName"> <B>Legislator Name: </B></div>
 	document.getElementById("LegName").innerHTML= "<b>Name: </b> " + legislator.firstname + " " + legislator.lastname;
 	document.getElementById("indiBillCount").innerHTML= "<b>Bill Count:</b> " + legislator.bills.length;
 	document.getElementById("Party").innerHTML = "<b>Party: </b>"+legislator.party;
 	document.getElementById("Website").innerHTML = "<b>Website: </b><a href=\"" + legislator.website+"\" target=\"_blank\">"+ legislator.website+"</a>";
 	document.getElementById("District").innerHTML = "<b>District: </b>" + legislator.district;
 			document.getElementById("LegTitle").innerHTML = "<b>Title: </b>" + legislator.title;
-	//Legislator bills in Right Pane
-	// <SELECT NAME="BillSelect" SIZE="10" MULTIPLE width="300px" style="width: 300px">
-	// 					<OPTION> Bill1
-	// 					<OPTION> Bill2
-	// 					<OPTION> Bill3
-	// 					<OPTION> Bill4
-	// 					<OPTION> Bill5
-	// 					<OPTION> Bill6
-	// 				</SELECT>
+
 	var legBillHTML = "<SELECT NAME=\"BillSelect\" id=\"right_selectBill\"onchange=\"right_selectBill() \"SIZE=\"7\"  width=\"300px\" style=\"width: 300px\">";
 	for(var i=0; i<legislator.bills.length; i++){
 		legBillHTML += "<option> " + legislator.bills[i]["display_number"];
@@ -1478,6 +1536,10 @@ function circlesOnClick(object) {
 
 }
 
+/**
+##getLegislatorImageURL(gov_id)
+Get the legislator image ULR based on gov_id
+*/
 function getLegislatorImageURL(gov_id) {
 	return ("http://theunitedstates.io/images/congress/450x550/" + gov_id +".jpg");
 }
@@ -1504,7 +1566,6 @@ function onXAxisChange(value){
     draw();
 }
 
-
 /**
 ## onYAxisChange(value)
 This function is called whenever the menu for the variable to display on the
@@ -1526,6 +1587,10 @@ function showDetails(string){
     d3.select('#details').html(string);
 }
 
+/**
+## selectView()
+Allow the user to select which view they want to use
+**/
 function selectView()
 {
     var menu = document.getElementById("viewSelect");
