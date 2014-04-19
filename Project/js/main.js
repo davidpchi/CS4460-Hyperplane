@@ -1266,11 +1266,25 @@ function right_selectBill(){
 function clickBack()
 {
 	for (var i = 0; i < breadCrumbs.length; i++) {
-		breadCrumbs[i]
-			.transition()
-			.attr('y', breadCrumbsHeight - (32 * (breadCrumbs.length-(i+1))))
-			.delay(100)
-			.duration(100);
+		if (i == breadCrumbs.length-1) {
+			breadCrumbs[i]
+				.transition()
+				.attr('width', 0)
+				.attr('height', 0)
+				.delay(100)
+				.duration(100)
+				.each("end",function() { 
+					d3.select(this).       // so far, as above
+					  remove();            // we delete the object instead 
+				  });
+		}
+		else {
+			breadCrumbs[i]
+				.transition()
+				.attr('y', breadCrumbsHeight - (32 * (breadCrumbs.length-(i+1))))
+				.delay(100)
+				.duration(100);
+		}
 	}
 	
 	console.log("PRE", breadCrumbs);
@@ -1278,9 +1292,7 @@ function clickBack()
 	for (var i = 0; i < breadCrumbs.length-1; i++) {
 		newArray[i] = breadCrumbs[i];
 	}
-	
-	d3.select(breadCrumbs[breadCrumbs.length-1]).remove();
-	
+		
 	breadCrumbs = newArray;
 	console.log("POST", breadCrumbs);
 
@@ -1384,14 +1396,24 @@ function clickForward()
 		.attr('clip-path', "url(#cut-off-bottom)");
 	*/
 	
-	var curBread = breadCrumbsSvg.append("rect")
+	var imagetemp;
+	if (Math.random() > 0.5) {
+		imagetemp = 'http://icons.iconarchive.com/icons/yellowicon/game-stars/256/Mario-icon.png';
+	}
+	else 
+		imagetemp = 'http://icons.iconarchive.com/icons/hopstarter/sleek-xp-software/256/Yahoo-Messenger-icon.png';
+	
+	imagetemp = 'http://theunitedstates.io/images/congress/450x550/S001157.jpg';
+	
+	var curBread = breadCrumbsSvg.append("image")
 		.attr('x', 0)
 		.attr('y', breadCrumbsHeight-32)
+		.attr('xlink:href', imagetemp)
 		.attr('height', 0)
 		.attr('width', 0)
-		.attr('fill', "rgb(" + Math.floor((Math.random()*255)+1) + "," + Math.floor((Math.random()*255)+1) + "," + Math.floor((Math.random()*255)+1) + ")")
-		.attr('clip-path', "url(#cut-off-bottom)");
-		
+		//.attr('fill', "rgb(" + Math.floor((Math.random()*255)+1) + "," + Math.floor((Math.random()*255)+1) + "," + Math.floor((Math.random()*255)+1) + ")")
+		//.attr('clip-path', "url(#cut-off-bottom)");
+	
 	curBread
 		.transition()
 		.attr('height', 32)
