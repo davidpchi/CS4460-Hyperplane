@@ -145,11 +145,12 @@ function init(){
 
 	//construct our clipPath
 	for (var i = breadCrumbsHeight-16; i > 0; i-=32) {
-		clipPath	
+		breadCrumbsSvg	
 			.append("circle")
 			.attr('cx',	16)
 			.attr('cy', i)
-			.attr('r', 16);
+			.attr('r', 16)
+			.attr('fill', "white");
 	}
 }
 
@@ -1261,42 +1262,11 @@ function right_selectBill(){
 }
 
 /**
-	Call the following when you hit back on the legislator list
-*/
+## clickBack()
+Call the following when you hit back on the legislator list
+**/
 function clickBack()
 {
-	for (var i = 0; i < breadCrumbs.length; i++) {
-		if (i == breadCrumbs.length-1) {
-			breadCrumbs[i]
-				.transition()
-				.attr('width', 0)
-				.attr('height', 0)
-				.delay(100)
-				.duration(100)
-				.each("end",function() { 
-					d3.select(this).       // so far, as above
-					  remove();            // we delete the object instead 
-				  });
-		}
-		else {
-			breadCrumbs[i]
-				.transition()
-				.attr('y', breadCrumbsHeight - (32 * (breadCrumbs.length-(i+1))))
-				.delay(100)
-				.duration(100);
-		}
-	}
-	
-	console.log("PRE", breadCrumbs);
-	var newArray = [];
-	for (var i = 0; i < breadCrumbs.length-1; i++) {
-		newArray[i] = breadCrumbs[i];
-	}
-		
-	breadCrumbs = newArray;
-	console.log("POST", breadCrumbs);
-
-
 	var popedFirst = navBackStack.pop();
 	var poped = navBackStack.pop();
 	if(poped != undefined)
@@ -1374,55 +1344,11 @@ function clickBack()
 }
 
 /**
-	Call the following when you click forward
-*/
+## clickForward
+Call the following when you click forward
+**/
 function clickForward()
 {
-	for (var i = 0; i < breadCrumbs.length; i++) {
-		breadCrumbs[i]
-			.transition()
-			.attr('y', breadCrumbsHeight - 32 - (32 * (breadCrumbs.length-i)))
-			.delay(100)
-			.duration(100);
-	}
-
-	/*
-	var curBread = breadCrumbsSvg.append("image")
-		.attr('x', 0)
-		.attr('y', breadCrumbsHeight-32)
-		.attr('xlink:href', "http://theunitedstates.io/images/congress/450x550/S001157.jpg")
-		.attr('height', 39)
-		.attr('width', 32)
-		.attr('clip-path', "url(#cut-off-bottom)");
-	*/
-	
-	var imagetemp;
-	if (Math.random() > 0.5) {
-		imagetemp = 'http://icons.iconarchive.com/icons/yellowicon/game-stars/256/Mario-icon.png';
-	}
-	else 
-		imagetemp = 'http://icons.iconarchive.com/icons/hopstarter/sleek-xp-software/256/Yahoo-Messenger-icon.png';
-	
-	imagetemp = 'http://theunitedstates.io/images/congress/450x550/S001157.jpg';
-	
-	var curBread = breadCrumbsSvg.append("image")
-		.attr('x', 0)
-		.attr('y', breadCrumbsHeight-32)
-		.attr('xlink:href', imagetemp)
-		.attr('height', 0)
-		.attr('width', 0)
-		//.attr('fill', "rgb(" + Math.floor((Math.random()*255)+1) + "," + Math.floor((Math.random()*255)+1) + "," + Math.floor((Math.random()*255)+1) + ")")
-		//.attr('clip-path', "url(#cut-off-bottom)");
-	
-	curBread
-		.transition()
-		.attr('height', 32)
-		.attr('width', 32)
-		.delay(200)
-		.duration(100);
-	
-	breadCrumbs.push(curBread);
-		
 	// var popedFirst = navForwardStack.pop();
 	var poped = navForwardStack.pop();
 	if(poped != undefined)
@@ -1495,6 +1421,131 @@ function clickForward()
 	// {
 	// 	navForwardStack.push(popedFirst);
 	// }
+}
+
+/**
+ ## pushBreadgcrumbItem(type, imgData)
+ Pushes a breadcrumb item onto the display stack
+**/
+function pushBreadgcrumbItem(type, imgData) {
+	//if the type is bill, we are just going to push a bill name onto the list
+	//if the type is legislator, we are going to push a picture of the legislator onto there
+	var imagetemp = imgData;
+	//http://icdn.pro/images/en/d/o/document-icone-8253-128.png
+	for (var i = 0; i < breadCrumbs.length; i++) {
+		if (breadCrumbs[i].type === "legislator") {
+			breadCrumbs[i].node
+				.transition()
+				.attr('y', breadCrumbsHeight - 32 - (32 * (breadCrumbs.length-i)))
+				.delay(100)
+				.duration(100);
+		}
+		else {
+			breadCrumbs[i].node
+				.transition()
+				.attr('y', breadCrumbsHeight - 16 - (32 * (breadCrumbs.length-i)))
+				.delay(100)
+				.duration(100);
+		}
+	}
+	
+	var curBread;
+	
+	if (type === "legislator") {
+		var curBreadNode = breadCrumbsSvg.append("image")
+			.attr('x', 0)
+			.attr('y', breadCrumbsHeight-32)
+			.attr('xlink:href', imagetemp)
+			.attr('height', 0)
+			.attr('width', 0);
+			//.attr('fill', "rgb(" + Math.floor((Math.random()*255)+1) + "," + Math.floor((Math.random()*255)+1) + "," + Math.floor((Math.random()*255)+1) + ")")
+			//.attr('clip-path', "url(#cut-off-bottom)");
+		
+		curBread = {
+			node: curBreadNode,
+			type: "legislator"
+		};
+	}
+	else {
+		var curBreadNode = breadCrumbsSvg.append("text")
+			.attr('x', 0)
+			.attr('y', breadCrumbsHeight-16)
+			.text(imgData)
+			.style("font-size","10px");
+			//.attr('fill', "rgb(" + Math.floor((Math.random()*255)+1) + "," + Math.floor((Math.random()*255)+1) + "," + Math.floor((Math.random()*255)+1) + ")")
+			//.attr('clip-path', "url(#cut-off-bottom)");
+		
+		curBread = {
+			node: curBreadNode,
+			type: "bill"
+		};
+	}
+	
+	curBread.node
+		.transition()
+		.attr('height', 32)
+		.attr('width', 32)
+		.delay(200)
+		.duration(100);
+	
+	breadCrumbs.push(curBread);
+}
+
+/**
+## popBreadcrumbItem()
+Pops a breadcrumb item off of the display stack
+**/
+function popBreadcrumbItem() {
+	for (var i = 0; i < breadCrumbs.length; i++) {
+		if (i == breadCrumbs.length-1) {
+			breadCrumbs[i].node
+				.transition()
+				.attr('width', 0)
+				.attr('height', 0)
+				.delay(100)
+				.duration(100)
+				.each("end",function() { 
+					d3.select(this).       // so far, as above
+					  remove();            // we delete the object instead 
+				  });
+		}
+		else {
+			if (breadCrumbs[i].type === "legislator") {
+				breadCrumbs[i].node
+					.transition()
+					.attr('y', breadCrumbsHeight - (32 * (breadCrumbs.length-(i+1))))
+					.delay(100)
+					.duration(100);
+			}
+			else {
+				breadCrumbs[i].node
+					.transition()
+					.attr('y', breadCrumbsHeight + 16 - (32 * (breadCrumbs.length-(i+1))))
+					.delay(100)
+					.duration(100);
+			}
+		}
+	}
+	
+	console.log("PRE", breadCrumbs);
+	var newArray = [];
+	for (var i = 0; i < breadCrumbs.length-1; i++) {
+		newArray[i] = breadCrumbs[i];
+	}
+		
+	breadCrumbs = newArray;
+	console.log("POST", breadCrumbs);
+}
+
+/**
+## clearBreadcrumbItems()
+Clears all of the nodes in the breadcrumb display stack
+**/
+function clearBreadcrumbItems() {
+	var startSize = breadCrumbs.length;
+	for (var i = 0; i < startSize; i++) {
+		popBreadcrumbItem();
+	}
 }
 
 /**
