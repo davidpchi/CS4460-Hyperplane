@@ -630,7 +630,8 @@ function drawScatterplot(visId)
 		.attr("height", height + margin.top + margin.bottom)
 		.append("g")
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-		
+	navBackStack = [];
+	clearBreadcrumbItems();
 	var barWidth = (width)/50;
 	
 	var property;
@@ -1030,6 +1031,7 @@ function clickLeg(){
   	}
   	navForwardStack = [];
   	navBackStack.push(["Leg", legislator]);
+  	pushBreadgcrumbItem("legislator", getLegislatorImageURL(legislator.bioguide_id));
   	 //var legislator = legislatorData[1];
 
   	document.getElementById("details").innerHTML = legPanel;
@@ -1082,6 +1084,8 @@ function bot_legSelect(){
   	}
   	navForwardStack = [];
   	navBackStack.push(["Leg", legislator]);
+  	pushBreadgcrumbItem("legislator", getLegislatorImageURL(legislator.bioguide_id));
+
   	 //var legislator = legislatorData[1];
 
   	document.getElementById("details").innerHTML = legPanel;
@@ -1134,6 +1138,9 @@ function right_selectLeg(){
   	}
   	navForwardStack = [];
   	navBackStack.push(["Leg", legislator]);
+  	pushBreadgcrumbItem("legislator", getLegislatorImageURL(legislator.bioguide_id));
+
+
   	 //var legislator = legislatorData[1];
 
   	document.getElementById("details").innerHTML = legPanel;
@@ -1199,6 +1206,8 @@ function bot_selectBill(){
   	var selectedText = selects.options[selects.selectedIndex].text;// gives u value2
   	
   	navBackStack.push(["Bill", selectedText]);
+  	pushBreadgcrumbItem("bill", selectedText);
+
   	navForwardStack = [];
   	var bName = ""+ selectedText;
   	//console.log(bName);
@@ -1234,6 +1243,8 @@ function right_selectBill(){
   	var selectedText = selects.options[selects.selectedIndex].text;// gives u value2
   	
   	navBackStack.push(["Bill", selectedText]);
+  	pushBreadgcrumbItem("bill", selectedText);
+
   	navForwardStack = [];
   	document.getElementById("details").innerHTML = bilPanel;
   	document.getElementById("Bill").innerHTML = "<br><br><b>Bill: </b>"+selectedText;
@@ -1269,9 +1280,12 @@ function clickBack()
 {
 	var popedFirst = navBackStack.pop();
 	var poped = navBackStack.pop();
+	popBreadcrumbItem();
+	popBreadcrumbItem();
 	if(poped != undefined)
 	{
 		navForwardStack.push(popedFirst);
+		
 		if(poped[0] == "Bill")
 		{
 			var selectedText = poped[1];
@@ -1299,6 +1313,7 @@ function clickBack()
 		  		
 		  	}
 	  		navBackStack.push(["Bill", poped[1]]);
+	  		pushBreadgcrumbItem("bill", poped[1]);
 		}
 		else if(poped[0] == "Leg")
 		{
@@ -1320,6 +1335,8 @@ function clickBack()
 			legBillHTML += "</select>";
 			document.getElementById("legBills").innerHTML= legBillHTML;
 			navBackStack.push(["Leg", legislator]);
+			pushBreadgcrumbItem("legislator", getLegislatorImageURL(legislator.bioguide_id));
+
 		}
 		else
 		{
@@ -1335,11 +1352,17 @@ function clickBack()
 			legSelPanel += "</SELECT>";
 			document.getElementById("details").innerHTML = legSelPanel;
 			navBackStack.push("LegSel", legislators);
+			//pushBreadgcrumbItem("legislator", getLegislatorImageURL(legislator.bioguide_id));
 		}
 	}
 	else
 	{
 		navBackStack.push(popedFirst);
+		if(popedFirst[0] == "Bill")
+			pushBreadgcrumbItem("bill", popedFirst[1]);
+		else if(popedFirst[0] == "Leg")
+			pushBreadgcrumbItem("legislator", getLegislatorImageURL(popedFirst[1].bioguide_id));
+
 	}
 }
 
@@ -1356,6 +1379,7 @@ function clickForward()
 		navBackStack.push(poped);
 		if(poped[0] == "Bill")
 		{
+			pushBreadgcrumbItem("bill", poped[1]);
 			var selectedText = poped[1];
 			var bName = ""+ selectedText;
 		  	//console.log(bName);
@@ -1383,7 +1407,9 @@ function clickForward()
 		}
 		else if(poped[0] == "Leg")
 		{
+
 			var legislator = poped[1];
+			pushBreadgcrumbItem("legislator", getLegislatorImageURL(legislator.bioguide_id));
 			document.getElementById("details").innerHTML = legPanel;
 			document.getElementById("legislator_img_src").src = getLegislatorImageURL(legislator.bioguide_id);
 
@@ -2167,6 +2193,7 @@ function scatterOnClick(obj)
 	
 	var legislators = scatterList[obj.id].legislators;
 	navBackStack = [];
+	clearBreadcrumbItems();
 	navBackStack.push("LegSel", legislators);
 	//console.log(legislators[0]);
 	var legSelPanel = "<br><br><label>Legislators On that Point: </label><SELECT NAME=\"LegSelect2\" id=\"right_selectLeg\"onchange=\"right_selectLeg() \" SIZE=\"10\"  width=\"300px\" style=\"width: 300px\">"; 
