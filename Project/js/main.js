@@ -93,6 +93,9 @@ var filterName;
 //maximum color for color scale
 var maxValForColorScale;
 
+//the color scale being used for the project
+var colorScale = ['rgb(247,252,253)','rgb(229,245,249)','rgb(204,236,230)','rgb(153,216,201)','rgb(102,194,164)','rgb(65,174,118)','rgb(35,139,69)','rgb(0,88,36)'];
+
 /**
 ## init()
 This method is run at the start of the app
@@ -278,10 +281,9 @@ function drawMap(visId) {
 			filterName = "billCount";
 			maxValForColorScale = maxBillCountForState;
 		}
-		else if (mapOptions === "Population") {
-			filterName = "populationCount";
-			//TODO: will we provide support for population data? We currently do not
-		}
+		
+		//update the color scale label
+		document.getElementById("scale_label_end").innerHTML = maxValForColorScale;
 		
         for (var state in stateData) {
 			var color = computeColorByValue(filterName, maxValForColorScale, stateData[state]);
@@ -306,13 +308,14 @@ function drawMap(visId) {
 				
 			//for now, remove the overlay
 			d3.selectAll('#overlay_' + stateData[state].name).remove();
-        }		
+        }
     });
 }
 
 /**
-	Update the map with proper coloring based on what is selected
-*/
+## updateMap()
+Update the map with proper coloring based on what is selected
+**/
 function updateMap() {
 	
 	//grab what filter we are using:
@@ -324,10 +327,9 @@ function updateMap() {
 		filterName = "billCount";
 		maxValForColorScale = maxBillCountForState;
 	}
-	else if (mapOptions === "Population") {
-		filterName = "populationCount";
-		//TODO: will we provide support for population data? We currently do not
-	}
+	
+	//update the color scale label
+	document.getElementById("scale_label_end").innerHTML = maxValForColorScale;
 	
 	for (var state in stateData) {
 		var color = computeColorByValue(filterName, maxValForColorScale, stateData[state]);
@@ -337,12 +339,13 @@ function updateMap() {
 			.attr('fill', function() {
 				return (color);
 			})
-			};
+		};
 }		
 
 /**
-	Draw the histogram visualization
-*/
+## drawHistogram(visId)
+Draw the histogram visualization
+**/
 function drawHistogram(visId)
 {
 	document.getElementById("details").innerHTML = "<h><br><br><b>Welcome to Team Hyperplane.<br>This is the Histogram View</b><br><br>"+
@@ -1633,9 +1636,7 @@ function mapOnHoverExit(object) {
 /**
 	Given a value and a maximum value, compute the proper color 
 */
-function computeColorByValue(valType, maxVal, stateObj) {
-	var colorScale = ['rgb(247,252,253)','rgb(229,245,249)','rgb(204,236,230)','rgb(153,216,201)','rgb(102,194,164)','rgb(65,174,118)','rgb(35,139,69)','rgb(0,88,36)'];
-	
+function computeColorByValue(valType, maxVal, stateObj) {	
 	if (valType === "legislatorCount") {
 		var totalLegis = stateObj.representativeCount + stateObj.senatorCount;
 		// console.log(maxVal);
