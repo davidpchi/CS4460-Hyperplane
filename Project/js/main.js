@@ -145,9 +145,10 @@ function init(){
 }
 
 /**
-	This method compiles all of the json files associated 
-	with bill data into one array
-*/
+## loadBillsData()
+This method compiles all of the json files associated 
+with bill data into one array
+**/
 function loadBillsData() {
 	var curIndex = 0; 
 	for (var n = 0; n < bills1[0].objects.length; n++) {
@@ -207,16 +208,18 @@ function loadBillsData() {
 }
 
 /**
-	Check to see if all the data has been loaded properly
-	This call is necessary for async loaded data
-*/
+## isDataOkay() 
+Check to see if all the data has been loaded properly
+This call is necessary for async loaded data
+**/
 function isDataOkay() {
     return (rawLegislatorData != null);
 }
 
 /**
-	Draw a visualization to the screen based on what view is selected
-*/
+## draw()
+Draw a visualization to the screen based on what view is selected
+**/
 function draw()
 {
 	//clear the visualization
@@ -349,7 +352,6 @@ function drawHistogram(visId)
 		.append("g")
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 	
-	
 	var barWidth = (width)/50;
 	
 	// choose which value to show on y axis
@@ -461,7 +463,6 @@ function drawHistogram(visId)
 					histOnHoverExit(d3.select("#"+this.id.substring(0,this.id.length-5)).node());
 					});
 		}
-		
 		svg.append("text") //creates state labels on bottom
 			.text(stateData[state].name)
 			.attr("id","hist"+stateData[state].name+"name")
@@ -501,8 +502,9 @@ function drawHistogram(visId)
 }
 
 /**
-	Update the histogram visualization based on what is selected
-*/
+## updateHistogram()
+Update the histogram visualization based on what is selected
+**/
 function updateHistogram()
 {	
 	var barWidth = (width)/50;
@@ -556,8 +558,6 @@ function updateHistogram()
 		.transition()
 		.duration(1500)
 		.call(histAxis);
-		
-		
 	
 	for (var state in stateData)
 	{
@@ -622,8 +622,9 @@ function updateHistogram()
 }
 
 /**
-	Draw the scatterplot visualization
-*/
+## drawScatterplot(visId)
+Draw the scatterplot visualization
+**/
 function drawScatterplot(visId)
 {
 	//initialize side pane
@@ -651,7 +652,6 @@ function drawScatterplot(visId)
 	stateArray.sort(function(a, b){
 		return histAlphabetSort(a,b);
 	});
-	
 	
 	//create scale and axis
 	var scatterScale = d3.scale.linear()
@@ -718,10 +718,6 @@ function drawScatterplot(visId)
 					.attr("title", function(d) { 					
 						return scatterNodeString(node);	
 					});
-					// .tooltip({
-					// 'container': 'body',
-					// 'placement': 'top'
-					// });
 					
 				onHoverCircles.push(myCircle);
 			}
@@ -738,10 +734,6 @@ function drawScatterplot(visId)
 					.attr("title", function(d) { 					
 						return scatterNodeString(node);	
 					});
-					// .tooltip({
-					// 'container': 'body',
-					// 'placement': 'top'
-					// });
 				
 				onHoverCircles.push(myCircle);
 			}
@@ -758,11 +750,7 @@ function drawScatterplot(visId)
 					.attr("title", function(d) { 					
 						return scatterNodeString(node);	
 					});
-					// .tooltip({
-					// 'container': 'body',
-					// 'placement': 'top'
-					// });
-				
+					
 				onHoverCircles.push(myCircle);
 			}
 		}
@@ -780,10 +768,6 @@ function drawScatterplot(visId)
 				.attr("title", function(d) { 					
 					return scatterNodeString(node);	
 				});
-				// .tooltip({
-				// 'container': 'body',
-				// 'placement': 'top'
-				// });
 			onHoverCircles.push(myCircle);
 		}
 		else {
@@ -821,10 +805,6 @@ function drawScatterplot(visId)
 					.attr("title", function(d) { 					
 						return scatterNodeString(node);	
 					});
-					// .tooltip({
-					// 'container': 'body',
-					// 'placement': 'top'
-					// });
 			onHoverCircles.push(myCircle);		
 		}
 	}
@@ -841,8 +821,6 @@ function drawScatterplot(visId)
 		},function(){
 			$(this).css("stroke","black");
 		});
-		
-		//$(onHoverCircles[circle]).on('click', function() {circlesOnClick(this);});
 	}
 	
 	//append title
@@ -859,8 +837,9 @@ function drawScatterplot(visId)
 }
 
 /**
-	Draw the circle visualization (DEPRECATED)
-*/
+## drawCircles(visId)
+Draw the circle visualization (DEPRECATED)
+**/
 function drawCircles(visId)
 {
 	document.getElementById("details").innerHTML = "<h><b>Welcome to Team Hyperplane.<br>This is the Circle View</b></h>";
@@ -926,8 +905,6 @@ function drawCircles(visId)
 		.attr("cx", function(d) { return d.x;})
 		.attr("cy", function(d) { return d.y; })
 		.attr("r", function(d) { return d.r; });
-		
-		//.attr("data-toggle", "tooltip")
 
 	var imagePortraits = vis.append("image")
 		.attr("stroke", "black")
@@ -937,8 +914,6 @@ function drawCircles(visId)
 		.attr("xlink:href", function(d) {return "https://cdn3.iconfinder.com/data/icons/pictofoundry-pro-vector-set/512/Avatar-512.png";})
 		.attr('height', function(d) { return d.r;})
 		.attr('width', function(d) { return d.r;});
-		//.attr('clip-path', "url(#cut-off-bottom)")
-		//.attr("data-toggle", "tooltip")
 	
 	var onHoverCircles = vis.append("circle")
 		.attr("stroke", "black")
@@ -980,20 +955,19 @@ function drawCircles(visId)
 }
 
 /**
-	Call the following function when a state on the map is clicked. 
-*/
+## mapOnClick(object)
+Call the following function when a state on the map is clicked. 
+**/
 function mapOnClick(object) {
 	//this is for the map
 	resetMapOutlines();
 	d3.select(object).attr('stroke', 'red')
 				   .attr('stroke-width', 5);
 	state = stateData[object.id];
-	//document.getElementById("details").innerHTML = legPanel;
 	document.getElementById("StateName").innerHTML= "<b>State Name:</b> " + state.name;
 	document.getElementById("RepCount").innerHTML= "<b>Rep Count:</b> " + state.representativeCount;
 	document.getElementById("SenatorCount").innerHTML= "<b>Senator Count:</b> " + state.senatorCount;
 	document.getElementById("BillCount").innerHTML= "<b>Bill Count:</b> " + state.billCount;
-	// document.getElementById("StateIMG").innerHTML = "<table width=\"100%\" height=\"100%\"  align=\"center\" valign=\"center\"><tr><td><img src=\"data/resize/"+ state.name +".gif\"></td></tr></table>";
 	
 	var stateLegHTML = "<B>Legislators:</B> <BR><SELECT  id=\"bot_legSelect\"  onchange=\"bot_legSelect()\" NAME=\"LegSelect\" SIZE=\"7\"  style=\"width: 200px\">";
  	for(var i=0; i<state.representativeCount; i++){
@@ -1024,8 +998,9 @@ function mapOnClick(object) {
 }
 
 /**
-	Call the following function with a legislator is clicked
-*/
+## clickLeg()
+Call the following function with a legislator is clicked
+**/
 function clickLeg(){
 	var selectedText = document.getElementById("Sponsor").innerHTML;
   	var leg;
@@ -1044,13 +1019,11 @@ function clickLeg(){
   	navForwardStack = [];
   	navBackStack.push(["Leg", legislator]);
   	pushBreadgcrumbItem("legislator", getLegislatorImageURL(legislator.bioguide_id));
-  	 //var legislator = legislatorData[1];
-
+	
   	document.getElementById("details").innerHTML = legPanel;
 	document.getElementById("legislator_img_src").src = getLegislatorImageURL(legislator.bioguide_id);
 	
 	//Update right pane
-	//<div id="LegName"> <B>Legislator Name: </B></div>
 	document.getElementById("LegName").innerHTML= "<b>Name: </b> " + legislator.firstname + " " + legislator.lastname;
 	document.getElementById("District").innerHTML = "<b>District: </b>" + legislator.district;
 	document.getElementById("Party").innerHTML = "<b>Party: </b>"+legislator.party;
@@ -1059,14 +1032,6 @@ function clickLeg(){
 	document.getElementById("indiBillCount").innerHTML= "<b>Bill Count:</b> " + legislator.bills.length;
 
 	//Legislator bills in Right Pane
-	// <SELECT NAME="BillSelect" SIZE="10" MULTIPLE width="300px" style="width: 300px">
-	// 					<OPTION> Bill1
-	// 					<OPTION> Bill2
-	// 					<OPTION> Bill3
-	// 					<OPTION> Bill4
-	// 					<OPTION> Bill5
-	// 					<OPTION> Bill6
-	// 				</SELECT>
 	var legBillHTML = "<SELECT NAME=\"BillSelect\" id=\"right_selectBill\"onchange=\"right_selectBill()  \"SIZE=\"7\" width=\"300px\" style=\"width: 300px\">";
 	for(var i=0; i<legislator.bills.length; i++){
 		legBillHTML += "<option> " + legislator.bills[i]["display_number"];
@@ -1076,8 +1041,9 @@ function clickLeg(){
 }
 
 /**
-	Call the following when a legislator is selected from the listbox
-*/
+## bot_legSelect()
+Call the following when a legislator is selected from the listbox
+**/
 function bot_legSelect(){
 	var selects = document.getElementById("bot_legSelect");
   	var selectedText = selects.options[selects.selectedIndex].text;// gives u value2
@@ -1098,13 +1064,10 @@ function bot_legSelect(){
   	navBackStack.push(["Leg", legislator]);
   	pushBreadgcrumbItem("legislator", getLegislatorImageURL(legislator.bioguide_id));
 
-  	 //var legislator = legislatorData[1];
-
   	document.getElementById("details").innerHTML = legPanel;
 	document.getElementById("legislator_img_src").src = getLegislatorImageURL(legislator.bioguide_id);
 	
 	//Update right pane
-	//<div id="LegName"> <B>Legislator Name: </B></div>
 	document.getElementById("LegName").innerHTML= "<b>Name: </b> " + legislator.firstname + " " + legislator.lastname;
 	document.getElementById("District").innerHTML = "<b>District: </b>" + legislator.district;
 	document.getElementById("Party").innerHTML = "<b>Party: </b>"+legislator.party;
@@ -1113,14 +1076,6 @@ function bot_legSelect(){
 	document.getElementById("indiBillCount").innerHTML= "<b>Bill Count:</b> " + legislator.bills.length;
 
 	//Legislator bills in Right Pane
-	// <SELECT NAME="BillSelect" SIZE="10" MULTIPLE width="300px" style="width: 300px">
-	// 					<OPTION> Bill1
-	// 					<OPTION> Bill2
-	// 					<OPTION> Bill3
-	// 					<OPTION> Bill4
-	// 					<OPTION> Bill5
-	// 					<OPTION> Bill6
-	// 				</SELECT>
 	var legBillHTML = "<SELECT NAME=\"BillSelect\" id=\"right_selectBill\"onchange=\"right_selectBill()  \"SIZE=\"7\" width=\"300px\" style=\"width: 300px\">";
 	for(var i=0; i<legislator.bills.length; i++){
 		legBillHTML += "<option> " + legislator.bills[i]["display_number"];
@@ -1130,7 +1085,8 @@ function bot_legSelect(){
 }
 
 /**
-	Call the following when a legislator is selected in the details pane
+## right_selectLeg()
+Call the following when a legislator is selected in the details pane
 */
 function right_selectLeg(){
 	var selects = document.getElementById("right_selectLeg");
@@ -1152,14 +1108,10 @@ function right_selectLeg(){
   	navBackStack.push(["Leg", legislator]);
   	pushBreadgcrumbItem("legislator", getLegislatorImageURL(legislator.bioguide_id));
 
-
-  	 //var legislator = legislatorData[1];
-
   	document.getElementById("details").innerHTML = legPanel;
 	document.getElementById("legislator_img_src").src = getLegislatorImageURL(legislator.bioguide_id);
 	
 	//Update right pane
-	//<div id="LegName"> <B>Legislator Name: </B></div>
 	document.getElementById("LegName").innerHTML= "<b>Name: </b> " + legislator.firstname + " " + legislator.lastname;
 	document.getElementById("District").innerHTML = "<b>District: </b>" + legislator.district;
 	document.getElementById("Party").innerHTML = "<b>Party: </b>"+legislator.party;
@@ -1168,14 +1120,6 @@ function right_selectLeg(){
 	document.getElementById("indiBillCount").innerHTML= "<b>Bill Count:</b> " + legislator.bills.length;
 
 	//Legislator bills in Right Pane
-	// <SELECT NAME="BillSelect" SIZE="10" MULTIPLE width="300px" style="width: 300px">
-	// 					<OPTION> Bill1
-	// 					<OPTION> Bill2
-	// 					<OPTION> Bill3
-	// 					<OPTION> Bill4
-	// 					<OPTION> Bill5
-	// 					<OPTION> Bill6
-	// 				</SELECT>
 	var legBillHTML = "<SELECT NAME=\"BillSelect\" id=\"right_selectBill\"onchange=\"right_selectBill()  \"SIZE=\"7\" width=\"300px\" style=\"width: 300px\">";
 	for(var i=0; i<legislator.bills.length; i++){
 		legBillHTML += "<option> " + legislator.bills[i]["display_number"];
@@ -1188,10 +1132,7 @@ function right_selectLeg(){
 	document.getElementById("RepCount").innerHTML= "<b>Rep Count:</b> " + state.representativeCount;
 	document.getElementById("SenatorCount").innerHTML= "<b>Senator Count:</b> " + state.senatorCount;
 	document.getElementById("BillCount").innerHTML= "<b>Bill Count:</b> " + state.billCount;
-	// document.getElementById("StateIMG").innerHTML = "<table width=\"100%\" height=\"100%\"  align=\"center\" valign=\"center\"><tr><td><img src=\"data/resize/"+ state.name +".gif\"></td></tr></table>";
 
-
-	
 	var stateLegHTML = "<B>Legislators:</B> <BR><SELECT  id=\"bot_legSelect\"  onchange=\"bot_legSelect()\" NAME=\"LegSelect\" SIZE=\"7\"  style=\"width: 200px\">";
  	for(var i=0; i<state.representativeCount; i++){
  		stateLegHTML += "<OPTION> " + state.representatives[i].firstname +" "+ state.representatives[i].lastname ;
@@ -1211,8 +1152,9 @@ function right_selectLeg(){
 }
 
 /**
-	Call the following when a bill is selected from the listbox
-*/
+## bot_selectBill()
+Call the following when a bill is selected from the listbox
+**/
 function bot_selectBill(){
 	var selects = document.getElementById("bot_selectBill");
   	var selectedText = selects.options[selects.selectedIndex].text;// gives u value2
@@ -1222,7 +1164,6 @@ function bot_selectBill(){
 
   	navForwardStack = [];
   	var bName = ""+ selectedText;
-  	//console.log(bName);
   	document.getElementById("details").innerHTML = bilPanel;
   	document.getElementById("Bill").innerHTML = "<br><br><b>Bill: </b>"+selectedText;
   	for(var bil in billData)
@@ -1244,12 +1185,12 @@ function bot_selectBill(){
   		}
   		
   	}
-  	 // console.log(billData[0]);
 }
 
 /**
-	Call the following when a bill is selected from the specific details pane
-*/
+## right_selectBill()
+Call the following when a bill is selected from the specific details pane
+**/
 function right_selectBill(){
 	var selects = document.getElementById("right_selectBill");
   	var selectedText = selects.options[selects.selectedIndex].text;// gives u value2
@@ -1261,7 +1202,6 @@ function right_selectBill(){
   	document.getElementById("details").innerHTML = bilPanel;
   	document.getElementById("Bill").innerHTML = "<br><br><b>Bill: </b>"+selectedText;
   	var bName = ""+ selectedText;
-  	//console.log(bName);
   	for(var bil in billData)
   	{
   		 var bill = billData[bil];
@@ -1302,7 +1242,6 @@ function clickBack()
 		{
 			var selectedText = poped[1];
 			var bName = ""+ selectedText;
-		  	//console.log(bName);
 		  	document.getElementById("details").innerHTML = bilPanel;
 		  	document.getElementById("Bill").innerHTML = "<br><br><b>Bill: </b>"+selectedText;
 		  	for(var bil in billData)
@@ -1353,18 +1292,15 @@ function clickBack()
 		else
 		{
 			var legislators = poped;
-			// console.log(poped);
 			var legSelPanel = "<br><br><label>Legislators On that Point: </label><SELECT NAME=\"LegSelect2\" id=\"right_selectLeg\"onchange=\"right_selectLeg() \" SIZE=\"10\"  width=\"300px\" style=\"width: 300px\">"; 
 			for(var i = 0; i < legislators.length; i++)
 			{
 				var leg= legislatorData[legislators[i]];
-				// console.log(leg.firstname);
 				legSelPanel += "<OPTION> " + leg.firstname + " " + leg.lastname ;
 			}
 			legSelPanel += "</SELECT>";
 			document.getElementById("details").innerHTML = legSelPanel;
 			navBackStack.push("LegSel", legislators);
-			//pushBreadgcrumbItem("legislator", getLegislatorImageURL(legislator.bioguide_id));
 		}
 	}
 	else
@@ -1384,7 +1320,6 @@ Call the following when you click forward
 **/
 function clickForward()
 {
-	// var popedFirst = navForwardStack.pop();
 	var poped = navForwardStack.pop();
 	if(poped != undefined)
 	{
@@ -1394,7 +1329,6 @@ function clickForward()
 			pushBreadgcrumbItem("bill", poped[1]);
 			var selectedText = poped[1];
 			var bName = ""+ selectedText;
-		  	//console.log(bName);
 		  	document.getElementById("details").innerHTML = bilPanel;
 		  	document.getElementById("Bill").innerHTML = "<br><br><b>Bill: </b>"+selectedText;
 		  	for(var bil in billData)
@@ -1438,7 +1372,6 @@ function clickForward()
 			}
 			legBillHTML += "</select>";
 			document.getElementById("legBills").innerHTML= legBillHTML;
-			// navForwardStack.push(["Leg", legislator]);
 		}
 		else
 		{
@@ -1447,7 +1380,6 @@ function clickForward()
 			for(var i = 0; i < legislators.length; i++)
 			{
 				var leg= legislatorData[legislators[i]];
-				// console.log(leg.firstname);
 				legSelPanel += "<OPTION> " + leg.firstname + " " + leg.lastname ;
 			}
 			legSelPanel += "</SELECT>";
@@ -1455,10 +1387,6 @@ function clickForward()
 			navBackStack.push("LegSel", legislators);
 		}
 	}
-	// else
-	// {
-	// 	navForwardStack.push(popedFirst);
-	// }
 }
 
 /**
@@ -1496,8 +1424,6 @@ function pushBreadgcrumbItem(type, imgData) {
 			.attr('xlink:href', imagetemp)
 			.attr('height', 0)
 			.attr('width', 0);
-			//.attr('fill', "rgb(" + Math.floor((Math.random()*255)+1) + "," + Math.floor((Math.random()*255)+1) + "," + Math.floor((Math.random()*255)+1) + ")")
-			//.attr('clip-path', "url(#cut-off-bottom)");
 		
 		curBread = {
 			node: curBreadNode,
@@ -1510,8 +1436,6 @@ function pushBreadgcrumbItem(type, imgData) {
 			.attr('y', breadCrumbsHeight-16)
 			.text(imgData)
 			.style("font-size","10px");
-			//.attr('fill', "rgb(" + Math.floor((Math.random()*255)+1) + "," + Math.floor((Math.random()*255)+1) + "," + Math.floor((Math.random()*255)+1) + ")")
-			//.attr('clip-path', "url(#cut-off-bottom)");
 		
 		curBread = {
 			node: curBreadNode,
@@ -1617,8 +1541,6 @@ function mapOnHoverEnter(object) {
 */
 function mapOnHoverExit(object) {
 	var state = stateData[object.id];
-	//TODO: need to provide a way to switch which maximum is being used to compute color
-	//atm, it is just the maxLegilslatorCount
 	var color = computeColorByValue(filterName, maxValForColorScale, state);
 	d3.select(object)
 		.attr('fill', color);
@@ -1670,7 +1592,6 @@ function circlesOnClick(object) {
 	var legislator = legislatorData[object.id];
 	console.log("id: " + object.id);
 	//Updates bottom pane
-	
 	
 	document.getElementById("StateName").innerHTML= "<b>State Name:</b> " + legislator.state;
 	document.getElementById("RepCount").innerHTML= "<b>Rep Count:</b> " + stateData[legislator.state].representativeCount;
@@ -1822,7 +1743,6 @@ function changeHistSort()
 	var menu = document.getElementById("histSort");
 	histSort = menu.options[menu.selectedIndex].text;
 	
-	// d3.select('svg').remove();
 	console.log(histSort);
 	updateHistogram();
 }
@@ -1837,7 +1757,6 @@ function changeMapOptions()
 	var menu = document.getElementById("mapOptions");
 	mapOptions = menu.options[menu.selectedIndex].text;
 	
-	// d3.select('svg').remove();
 	console.log(mapOptions);
 	updateMap();
 	if (view == "Histogram")
@@ -1855,7 +1774,6 @@ function changeHistOptions()
 	var menu = document.getElementById("histOptions");
 	histOptions = menu.options[menu.selectedIndex].text;
 	
-	// d3.select('svg').remove();
 	console.log(histOptions);
 	updateHistogram();
 }
@@ -2030,7 +1948,6 @@ function createData()
 			maxBillCountForState = stateData[state].billCount;
 		}
 	}	
-	//TODO: NEED TO CALCULATE MAX BILL COUNT FOR LEGISLATORS
 }
 
 /**
@@ -2055,17 +1972,14 @@ function histOnClick(object)
 	d3.select("#" + idFun).attr('stroke', 'red')
 				   .attr('stroke-width', 5);
 	state = stateData[idFun];
-
+	
 	
 	stateID = ""+ object.id[4] + object.id[5];
-	// console.log(stateID);
 	stateChosen = stateData[stateID];
 	document.getElementById("StateName").innerHTML= "<b>State Name:</b> " + stateChosen.name;
 	document.getElementById("RepCount").innerHTML= "<b>Rep Count:</b> " + stateChosen.representativeCount;
 	document.getElementById("SenatorCount").innerHTML= "<b>Senator Count:</b> " + stateChosen.senatorCount;
 	document.getElementById("BillCount").innerHTML= "<b>Bill Count:</b> " + stateChosen.billCount;
-	// document.getElementById("StateIMG").innerHTML = "<table width=\"100%\" height=\"100%\"  align=\"center\" valign=\"center\"><tr><td><img src=\"data/resize/"+ stateChosen.name +".gif\"></td></tr></table>";
-
 
 	var stateLegHTML = "<B>Legislators:</B> <BR><SELECT  id=\"bot_legSelect\"  onchange=\"bot_legSelect()\"  NAME=\"LegSelect\" SIZE=\"7\"  style=\"width: 200px\">";
  	for(var i=0; i<stateChosen.representativeCount; i++){
@@ -2103,6 +2017,7 @@ function histOnHoverEnter(object)
 	d3.select("#" + idFun).attr('fill', 'yellow');
 	state = stateData[idFun];
 }
+
 /**
 ## histOnHoverExit(object)
 Handles the on hover exit event for the histogram
@@ -2265,17 +2180,14 @@ function scatterOnClick(obj)
 	navBackStack = [];
 	clearBreadcrumbItems();
 	navBackStack.push("LegSel", legislators);
-	//console.log(legislators[0]);
 	var legSelPanel = "<br><br><label>Legislators On that Point: </label><SELECT NAME=\"LegSelect2\" id=\"right_selectLeg\"onchange=\"right_selectLeg() \" SIZE=\"10\"  width=\"300px\" style=\"width: 300px\">"; 
 	for(var i = 0; i < legislators.length; i++)
 	{
 		var leg= legislatorData[legislators[i]];
-		// console.log(leg.firstname);
 		legSelPanel += "<OPTION> " + leg.firstname + " " + leg.lastname ;
 	}
 	legSelPanel += "</SELECT>";
 	document.getElementById("details").innerHTML = legSelPanel;
-	// document.getElementById()
 }
 
 /**
@@ -2285,24 +2197,6 @@ Returns the text for the tooltip for a node in the scatterplot
 function scatterNodeString(obj)
 {
 	var str = scatterList[obj].count + " legislators";
-	// var str = "bills: " + obj.split(",")[1];
-	// for (var legislator in scatterList[obj].legislators)
-	// {
-		// str += "\n";
-		// if (legislatorData[scatterList[obj].legislators[legislator]].party == "R")
-			// {
-				// str += "<span style='color:red'>";
-			// }
-			// else if (legislatorData[scatterList[obj].legislators[legislator]].party == "D")
-			// {
-				// str += "<span style='color:blue'>";
-			// }
-			// else
-			// {
-				// str += "<span style='color:green'>";
-			// }
-		// str += legislatorData[scatterList[obj].legislators[legislator]].firstname + " " + legislatorData[scatterList[obj].legislators[legislator]].lastname;// + "</span>";
-	// }
 	return str;
 }
 
