@@ -142,19 +142,6 @@ function init(){
 	breadCrumbsSvg = d3.select("#breadCrumbs").append("svg")
 		.attr("width", 100)
 		.attr("height", 840)
-	
-	var clipPath = breadCrumbsSvg.append("clipPath")
-		.attr('id', 'cut-off-bottom');
-
-	//construct our clipPath
-	for (var i = breadCrumbsHeight-16; i > 0; i-=32) {
-		breadCrumbsSvg	
-			.append("circle")
-			.attr('cx',	16)
-			.attr('cy', i)
-			.attr('r', 16)
-			.attr('fill', "white");
-	}
 }
 
 /**
@@ -860,7 +847,7 @@ function drawScatterplot(visId)
 	
 	//append title
 	svg.append("text")
-		.text("Legislators and Their Bill Counts")
+		.text("Legislators and Bill Counts")
 		.attr("x", width/2)
 		.attr("y", -10)
 		.attr("font-family", "serif")
@@ -998,8 +985,8 @@ function drawCircles(visId)
 function mapOnClick(object) {
 	//this is for the map
 	resetMapOutlines();
-	d3.select(object).attr('stroke', 'yellow')
-				   .attr('stroke-width', 2);
+	d3.select(object).attr('stroke', 'red')
+				   .attr('stroke-width', 5);
 	state = stateData[object.id];
 	//document.getElementById("details").innerHTML = legPanel;
 	document.getElementById("StateName").innerHTML= "<b>State Name:</b> " + state.name;
@@ -2065,8 +2052,8 @@ function histOnClick(object)
 	//this is to handle the map
 	var idFun = object.id.substring(4,6);
 	resetMapOutlines();
-	d3.select("#" + idFun).attr('stroke', 'yellow')
-				   .attr('stroke-width', 2);
+	d3.select("#" + idFun).attr('stroke', 'red')
+				   .attr('stroke-width', 5);
 	state = stateData[idFun];
 
 	
@@ -2095,9 +2082,7 @@ function histOnClick(object)
  		stateBillHTML += "<OPTION> " + stateChosen.bills[i]["display_number"];
  	}
  	stateBillHTML += "</SELECT>";
- 	document.getElementById("BillS
-	elect").innerHTML= stateBillHTML;
-
+ 	document.getElementById("BillSelect").innerHTML= stateBillHTML;
 }
 
 /**
