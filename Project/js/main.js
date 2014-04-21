@@ -236,6 +236,7 @@ function draw()
 	d3.select("#vis").select("svg").remove();
 	d3.select("#vis2").select("svg").remove();
 	
+	//depending on setting, draw certain visualizations
 	if (view == "Map")
 	{
 		drawMap("#vis");
@@ -348,19 +349,23 @@ Draw the histogram visualization
 **/
 function drawHistogram(visId)
 {
+	//initalize side pane to instructions
 	document.getElementById("details").innerHTML = "<h><br><br><b>Welcome to Team Hyperplane.<br>This is the Histogram View</b><br><br>"+
 													"The data is organized by state in a histogram bar chart visualization.<br><br>"+
 													"Click a bar to see more information on that particular state that includes the number of legislators, bills, etc.<br><br>"+
 													"You can change what information is displayed on this graph (between number of legislators and number of bills from that state).<br><br>"+
 													" You can also reorganize the order in which these bars are displayed (by ascending state name, ascending legislator count, etc)</h>";
+	//append an svg
 	var svg = d3.select(visId).append("svg")
 		.attr("width", width + margin.left + margin.right)
 		.attr("height", height + margin.top + margin.bottom)
 		.append("g")
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-		
+	
+	
 	var barWidth = (width)/50;
 	
+	// choose which value to show on y axis
 	var property;
 	if (mapOptions == "Legislators")
 	{
@@ -371,10 +376,12 @@ function drawHistogram(visId)
 		property = "billCount";
 	}
 	
+	//initialize array of all states to use for sorting
 	var stateArray = $.map(stateData, function(value, index) {
 		return [value];
 		});
 	
+	//sort array of states
 	if (histSort == "Legislators")
 	{
 		stateArray.sort(function(a, b){
@@ -395,10 +402,12 @@ function drawHistogram(visId)
 	}
 	console.log(stateArray);
 	
+	//create scale
 	var histScale = d3.scale.linear()
 		.domain([0, histMax(property)])
         .range([height, 0]);
 	
+	//create axis
 	var histAxis = d3.svg.axis()
 		.scale(histScale)
 		.orient("left");
@@ -410,9 +419,9 @@ function drawHistogram(visId)
 	
 	for (var state in stateData)
 	{
-		var value = stateData[state][property];
-		var offset = stateArray.indexOf(stateData[state])*barWidth+10;
-		svg.append("rect")
+		var value = stateData[state][property]; //used for y value
+		var offset = stateArray.indexOf(stateData[state])*barWidth+10; //used for x value, found by finding index in the sorted array
+		svg.append("rect") //creates bar
 			.attr("id", "hist"+stateData[state].name)
 			.attr("x", offset)
 			.attr("width", barWidth-1)
@@ -429,7 +438,7 @@ function drawHistogram(visId)
 				histOnClick(this);
 				});
 			
-		if (histScale(value)<=height-12)
+		if (histScale(value)<=height-12) //creates text above bar if bar is small
 		{
 			svg.append("text")
 				.text(value)
@@ -447,7 +456,7 @@ function drawHistogram(visId)
 					histOnHoverExit(d3.select("#"+this.id.substring(0,this.id.length-5)).node());
 					});
 		}
-		else
+		else //creates text in bar if bar isn't small
 		{
 			svg.append("text")
 				.text(value)
@@ -466,7 +475,7 @@ function drawHistogram(visId)
 					});
 		}
 		
-		svg.append("text")
+		svg.append("text") //creates state labels on bottom
 			.text(stateData[state].name)
 			.attr("id","hist"+stateData[state].name+"name")
 			.attr("x", offset+(barWidth/2)-1)
@@ -477,6 +486,7 @@ function drawHistogram(visId)
 			.attr("text-anchor", "middle");
 	}
 	
+	//creates title
 	if (mapOptions == "Legislators")
 	{
 		svg.append("text")
@@ -510,6 +520,7 @@ function updateHistogram()
 {	
 	var barWidth = (width)/50;
 	
+	//choose value for y axis
 	var property;
 	if (mapOptions == "Legislators")
 	{
@@ -520,6 +531,7 @@ function updateHistogram()
 		property = "billCount";
 	}
 	
+	//creates and sorts array for sorting
 	var stateArray = $.map(stateData, function(value, index) {
 		return [value];
 		});
@@ -544,6 +556,7 @@ function updateHistogram()
 	}
 	console.log(stateArray);
 	
+	//update scale and axis
 	var histScale = d3.scale.linear()
 		.domain([0, histMax(property)])
         .range([height, 0]);
@@ -563,7 +576,7 @@ function updateHistogram()
 	{
 		var value = stateData[state][property];
 		var offset = stateArray.indexOf(stateData[state])*barWidth+10;
-		d3.select("#hist"+stateData[state].name)
+		d3.select("#hist"+stateData[state].name) //updates bar
 			.transition()
 			.delay(((d3.select("#hist"+stateData[state].name).attr("x")-10)/barWidth)*10)
 			.attr("x", offset)
@@ -573,7 +586,7 @@ function updateHistogram()
 			.attr("fill", "#000080")
 			.duration(1000);
 			
-		if (histScale(value)<=height-12)
+		if (histScale(value)<=height-12) //updates text above bar
 		{
 			d3.select("#hist"+stateData[state].name+"value")
 				.transition()
@@ -584,7 +597,7 @@ function updateHistogram()
 				.attr("fill", "white")
 				.duration(1000);
 		}
-		else
+		else //updates text in bar
 		{
 			d3.select("#hist"+stateData[state].name+"value")
 				.transition()
@@ -596,6 +609,7 @@ function updateHistogram()
 				.duration(1000);
 		}
 		
+		//updates state labels
 		d3.select("#hist"+stateData[state].name+"name")
 			.transition()
 			.delay(((d3.select("#hist"+stateData[state].name+"name").attr("x")-10)/barWidth)*10)
@@ -606,6 +620,7 @@ function updateHistogram()
 			.duration(1000);
 	}
 	
+	//updates title
 	if (mapOptions == "Legislators")
 	{
 		d3.select("#histTitle")
@@ -624,6 +639,7 @@ function updateHistogram()
 */
 function drawScatterplot(visId)
 {
+	//initialize side pane
 	document.getElementById("details").innerHTML = "<h><br><br><b>Welcome to Team Hyperplane.<br>This is the Scatter Plot View</b><br><br>"+
 													"Each mark represents legislator(s) for each state with the number of bills they have created.<br><br>"+
 													"The color of these marks shows their political party.<br><br>"+
@@ -640,6 +656,7 @@ function drawScatterplot(visId)
 	var property;
 	property = "billCount";
 	
+	//sorts states alphabetically
 	var stateArray = $.map(stateData, function(value, index) {
 		return [value];
 	});
@@ -649,7 +666,7 @@ function drawScatterplot(visId)
 	});
 	
 	
-	
+	//create scale and axis
 	var scatterScale = d3.scale.linear()
 		.domain([0, scatterMax(property)])
         .range([height, 0]);
@@ -662,7 +679,8 @@ function drawScatterplot(visId)
 		.attr("class", "axis")
 		.attr("id", "histAxis")
 		.call(scatterAxis);
-		
+	
+	//creates state labels at bottom
 	for (var state in stateData)
 	{
 		var offset = stateArray.indexOf(stateData[state])*barWidth+10;
@@ -685,8 +703,10 @@ function drawScatterplot(visId)
 	}
 	console.log(stateArray);
 	
+	//combines nodes that occupy the same space
 	createScatterList(property);
 	
+	//draws circles on scatterplot
 	var onHoverCircles = [];
 	for (var node in scatterList)
 	{
@@ -696,13 +716,14 @@ function drawScatterplot(visId)
 		
 		var color = "#000000";
 
+		//colors based on party counts
 		if (scatterList[node].count == 1) {
 			if (scatterList[node].rCount == 1) {
 				var myCircle = svg.append("circle")
 					.attr("id", node)
 					.attr("cx", offset)
 					.attr("cy", scatterScale(value))
-					.attr("r", 0)
+					.attr("r", 3)
 					.attr("fill", "#ef8a62")
 					.on("click", function() {
 						scatterOnClick(this);
@@ -722,7 +743,7 @@ function drawScatterplot(visId)
 					.attr("id", node)
 					.attr("cx", offset)
 					.attr("cy", scatterScale(value))
-					.attr("r", 5)
+					.attr("r", 3)
 					.attr("fill", "#67a9cf")
 					.on("click", function() {
 						scatterOnClick(this);
@@ -742,7 +763,7 @@ function drawScatterplot(visId)
 					.attr("id", node)
 					.attr("cx", offset)
 					.attr("cy", scatterScale(value))
-					.attr("r", 5)
+					.attr("r", 3)
 					.attr("fill", "#99d594")
 					.on("click", function() {
 						scatterOnClick(this);
@@ -764,7 +785,7 @@ function drawScatterplot(visId)
 					.attr("id", node)
 				.attr("cx", offset)
 				.attr("cy", scatterScale(value))
-				.attr("r", 5)
+				.attr("r", 3)
 				.attr("fill", "#99d594")
 				.on("click", function() {
 					scatterOnClick(this);
@@ -781,7 +802,7 @@ function drawScatterplot(visId)
 		else {
 			var arc1 = d3.svg.arc()
 				.innerRadius(0)
-				.outerRadius(5)
+				.outerRadius(3)
 				.startAngle(0)
 				.endAngle(Math.PI);
 			svg.append("path")
@@ -793,7 +814,7 @@ function drawScatterplot(visId)
 			
 			var arc2 = d3.svg.arc()
 				.innerRadius(0)
-				.outerRadius(5)
+				.outerRadius(3)
 				.startAngle(Math.PI)
 				.endAngle(Math.PI * 2);
 			svg.append("path")
@@ -805,7 +826,7 @@ function drawScatterplot(visId)
 					.attr("id", node)
 					.attr("cx", offset)
 					.attr("cy", scatterScale(value))
-					.attr("r", 5)
+					.attr("r", 3)
 					.attr("fill-opacity", 0.0)
 					.on("click", function() {
 						scatterOnClick(this);
@@ -837,6 +858,7 @@ function drawScatterplot(visId)
 		//$(onHoverCircles[circle]).on('click', function() {circlesOnClick(this);});
 	}
 	
+	//append title
 	svg.append("text")
 		.text("Legislators and Their Bill Counts")
 		.attr("x", width/2)
@@ -1804,6 +1826,10 @@ function selectView()
 	draw();
 }
 
+/**
+## changeHistSort()
+Allows the user to change how the histogram based on a drop down menu
+**/
 function changeHistSort()
 {
 	var menu = document.getElementById("histSort");
@@ -1814,8 +1840,13 @@ function changeHistSort()
 	updateHistogram();
 }
 
+/**
+## changeMapOptions()
+Allows the user to change what the map displays based on a drop down menu
+**/
 function changeMapOptions()
 {
+
 	var menu = document.getElementById("mapOptions");
 	mapOptions = menu.options[menu.selectedIndex].text;
 	
@@ -1828,6 +1859,10 @@ function changeMapOptions()
 	}
 }
 
+/**
+## changeHistOptions()
+Allows the user to change what the histogram displays based on a drop down menu
+**/
 function changeHistOptions()
 {
 	var menu = document.getElementById("histOptions");
@@ -1838,6 +1873,10 @@ function changeHistOptions()
 	updateHistogram();
 }
 
+/**
+## changeCircleOptions()
+Allows the user to change what the circle view displays based on a drop down menu
+**/
 function changeCircleOptions()
 {
 	var menu = document.getElementById("circleOptions");
@@ -1922,6 +1961,10 @@ function genImageData() {
 	});
 }
 
+/**
+## createData()
+Initializes and creates data structures for use in the visualization
+**/
 function createData()
 {
     //loop through all the legislators in our raw data
@@ -2003,7 +2046,11 @@ function createData()
 	//TODO: NEED TO CALCULATE MAX BILL COUNT FOR LEGISLATORS
 }
 
-function histOnClick(object) //add stuff here
+/**
+## histOnClick(object)
+Handles the on click event from the histogram
+**/
+function histOnClick(object)
 {
 	//this is to handle the histogram
 	for (var state in stateData)
@@ -2048,10 +2095,15 @@ function histOnClick(object) //add stuff here
  		stateBillHTML += "<OPTION> " + stateChosen.bills[i]["display_number"];
  	}
  	stateBillHTML += "</SELECT>";
- 	document.getElementById("BillSelect").innerHTML= stateBillHTML;
+ 	document.getElementById("BillS
+	elect").innerHTML= stateBillHTML;
 
 }
 
+/**
+##  histOnHoverEnter(object)
+Handles the on hover enter event for the histogram
+**/
 function histOnHoverEnter(object)
 {
 	d3.select(object)
@@ -2066,7 +2118,10 @@ function histOnHoverEnter(object)
 	d3.select("#" + idFun).attr('fill', 'yellow');
 	state = stateData[idFun];
 }
-
+/**
+## histOnHoverExit(object)
+Handles the on hover exit event for the histogram
+**/
 function histOnHoverExit(object)
 {
 	d3.select(object)
@@ -2084,6 +2139,10 @@ function histOnHoverExit(object)
 		.attr('fill', color);
 }
 
+/**
+## histAlphabetSort(a,b)
+Determines whether a or b comes first alphabetically.
+**/
 function histAlphabetSort(a,b) //if b is later, return -1
 {
 	var nameA=a.name.toLowerCase(), nameB=b.name.toLowerCase()
@@ -2094,6 +2153,10 @@ function histAlphabetSort(a,b) //if b is later, return -1
 	return 0 //default return value (no sorting)
 }
 
+/**
+## histLegislatorSort(a,b)
+Determines if a or b comes first based on legislator count
+**/
 function histLegislatorSort(a,b) //if a is greater, return 1
 {
 	var dif = b.legislatorCount-a.legislatorCount;
@@ -2107,6 +2170,10 @@ function histLegislatorSort(a,b) //if a is greater, return 1
 	}
 }
 
+/**
+## histBillSort(a,b)
+Determines if a or b comes first based on bill count
+**/
 function histBillSort(a,b) //if a is greater, return 1
 {
 	var dif = b.billCount-a.billCount;
@@ -2120,6 +2187,10 @@ function histBillSort(a,b) //if a is greater, return 1
 	}
 }
 
+/**
+## histMax(str)
+Finds the highest value of a certain property between all states
+**/
 function histMax(str)
 {
 	var max = 0;
@@ -2132,6 +2203,11 @@ function histMax(str)
 	}
 	return max;
 }
+
+/**
+## scatterMax(str)
+Finds the highest value of a certain property between all states
+**/
 function scatterMax(str)
 {
 	var max = 0;
@@ -2145,6 +2221,10 @@ function scatterMax(str)
 	return max;
 }
 
+/**
+## createScatterList(property)
+Removes overlapping nodes for the scatterplot by combining them
+**/
 function createScatterList(property)
 {
 	scatterList = {};
@@ -2189,6 +2269,10 @@ function createScatterList(property)
 	}
 }
 
+/**
+## scatterOnClick(obj)
+Handles the on click event for the scatterplot
+**/
 function scatterOnClick(obj)
 {
 	
@@ -2209,6 +2293,10 @@ function scatterOnClick(obj)
 	// document.getElementById()
 }
 
+/**
+## scatterNodeString(obj)
+Returns the text for the tooltip for a node in the scatterplot
+**/
 function scatterNodeString(obj)
 {
 	var str = scatterList[obj].count + " legislators";
@@ -2233,6 +2321,10 @@ function scatterNodeString(obj)
 	return str;
 }
 
+/**
+## makeAbbrTables()
+creates a lookup table for states and abbreviations and their reverse
+**/
 function makeAbbrTables()
 {
 	nameToAbbr = {
